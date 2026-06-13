@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Cursos</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family: 'Segoe UI', sans-serif;
+            background:#f5f7fa;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+        }
+
+        .contenedor{
+            background:white;
+            padding:50px;
+            width:700px;
+            text-align:center;
+            border-radius:15px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        h1{
+            color:#0d6efd;
+            margin-bottom:20px;
+            font-size:42px;
+        }
+
+        p{
+            color:#555;
+            font-size:20px;
+            margin-bottom:30px;
+        }
+
+        .linea{
+            width:80px;
+            height:4px;
+            background:#0d6efd;
+            margin:0 auto 30px auto;
+            border-radius:10px;
+        }
+
+        .footer{
+            margin-top:30px;
+            color:#888;
+            font-size:14px;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <div class="contenedor">
+
+        <h1>Gestor de Cursos</h1>
+
+        <div class="linea"></div>
+
+        <p>{{ mensaje }}</p>
+
+        <div class="footer">
+            Sistema desarrollado con Django
+        </div>
+
+    </div>
+
+</body>
+</html>
