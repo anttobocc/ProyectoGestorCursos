@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados de Búsqueda</title>
+</head>
+<body>
+   <h1>Resultados para la comisión: {{ camada }}</h1>
+<ul>
+{% for curso in cursos %}
+    <li>Curso: {{ curso.nombre }} - Comisión: {{ curso.camada }}</li>
+{% empty %}
+    <li>No se encontraron cursos para esa comisión.</li>
+{% endfor %}
+</ul>
+    <br>
+    <a href="/myApp/buscar-curso/">Buscar otra vez</a>
+</body>
+</html>

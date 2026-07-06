@@ -1,0 +1,74 @@
+{% extends 'myApp/base.html' %}
+
+
+
+{% block contenido %}
+<style>
+    .teacher-card {
+        border: none;
+        border-radius: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        background: #ffffff;
+    }
+    .teacher-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.06) !important;
+    }
+    .avatar-teacher {
+        width: 55px;
+        height: 55px;
+        background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+        color: #6b21a8;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+</style>
+
+<div class="row align-items-center mb-5 g-3">
+    <div class="col-md-8 text-center text-md-start">
+        <h1 class="fw-bold text-dark mb-1">Cuerpo Docente</h1>
+        <p class="text-muted mb-0">Profesores titulares a cargo de las comisiones activas.</p>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for profesor in profesores %}
+    <div class="col">
+       <div class="card h-100 shadow-sm teacher-card p-3" data-bs-toggle="collapse" data-bs-target="#collapseProfesor{{ forloop.counter }}" role="button" aria-expanded="false">
+            <div class="card-body d-flex align-items-center p-2">
+                <div class="avatar-teacher me-3 flex-shrink-0">
+                    <i class="bi bi-person-workspace"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <h5 class="fw-bold text-dark mb-1 text-truncate">{{ profesor.nombre }} {{ profesor.apellido }}</h5>
+                    <p class="text-muted small mb-0">
+                        <i class="bi bi-bookmark-star text-purple me-1"></i>Docente Oficial
+                    </p>
+                </div>
+           </div>
+        
+        
+        <div class="collapse" id="collapseProfesor{{ forloop.counter }}">
+            <div class="card card-body border-0 shadow-sm p-3 mb-3" style="background-color: #f8fafc; border-radius: 14px;">
+                <span class="text-uppercase fw-bold text-secondary tracking-wider mb-2" style="font-size: 0.75rem;">Información del Docente</span>
+                <div class="mb-2">
+                    <p class="text-muted small mb-1"><strong>Email:</strong> {{ profesor.email|default:"sin_email@educontrol.com" }}</p>
+                </div>
+            </div>
+        </div>
+
+    </div> 
+</div> 
+    {% empty %}
+    <div class="col-12 w-100">
+        <div class="text-center p-5 bg-white rounded-4 border shadow-sm">
+            <i class="bi bi-person-x text-muted" style="font-size: 3.5rem;"></i>
+            <h4 class="fw-bold text-dark mt-3">No hay profesores cargados</h4>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

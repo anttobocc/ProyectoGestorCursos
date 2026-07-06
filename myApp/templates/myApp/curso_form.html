@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+{% extends 'myApp/base.html' %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        
+        <!-- Enlace para volver atrás -->
+        <div class="mb-3">
+            <a href="{% url 'lista_cursos' %}" class="text-decoration-none text-secondary small fw-medium">
+                <i class="bi bi-arrow-left me-1"></i> Volver al listado
+            </a>
+        </div>
+
+        <!-- Tarjeta del Formulario -->
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+                
+                <!-- Encabezado con Icono -->
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-info-subtle text-info rounded-circle mb-3" style="width: 60px; height: 60px; font-size: 1.7rem;">
+                        <i class="bi bi-journal-plus"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Alta de Curso</h3>
+                    <p class="text-muted small">Completa los campos para abrir una nueva comisión</p>
+                </div>
+
+                <!-- Formulario -->
+                <form method="POST" action="" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger py-2 small" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Por favor, corrige los errores señalados.
+                    </div>
+                    {% endif %}
+
+                    <!-- Campo: Nombre del Curso -->
+                    <div class="mb-3">
+                        <label for="id_nombre" class="form-label fw-semibold text-secondary small">Nombre del Curso</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-book"></i></span>
+                            <input type="text" 
+                                   name="nombre" 
+                                   id="id_nombre" 
+                                   class="form-control border-start-0 ps-0 {% if form.nombre.errors %}is-invalid{% endif %}" 
+                                   placeholder="Ej: Laboratorio de Programación" 
+                                   value="{{ form.nombre.value|default:'' }}" 
+                                   required>
+                        </div>
+                        {% if form.nombre.errors %}
+                        <div class="invalid-feedback d-block small">{{ form.nombre.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Campo: Número de Comisión (Camada) -->
+                    <div class="mb-4">
+                        <label for="id_camada" class="form-label fw-semibold text-secondary small">Número de Comisión</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-hash"></i></span>
+                            <input type="number" 
+                                   name="camada" 
+                                   id="id_camada" 
+                                   class="form-control border-start-0 ps-0 {% if form.camada.errors %}is-invalid{% endif %}" 
+                                   placeholder="Ej: 24530" 
+                                   value="{{ form.camada.value|default:'' }}" 
+                                   required>
+                        </div>
+                        {% if form.camada.errors %}
+                        <div class="invalid-feedback d-block small">{{ form.camada.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Botón de Envío Principal -->
+                    <button type="submit" class="btn btn-primary w-100 py-2.5 fw-semibold rounded-3 shadow-sm mb-2">
+                        <i class="bi bi-check-circle-fill me-2"></i>Guardar Curso
+                    </button>
+                    
+                    <a href="{% url 'lista_cursos' %}" class="btn btn-light w-100 py-2.5 fw-semibold text-secondary rounded-3 border">
+                        Cancelar
+                    </a>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

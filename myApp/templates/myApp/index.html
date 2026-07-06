@@ -1,0 +1,23 @@
+{% extends 'myApp/base.html' %}
+
+{% block contenido %}
+<!-- Tarjeta de Bienvenida Principal (Hero) -->
+<div class="p-5 mb-4 bg-white rounded-4 border shadow-sm">
+    <div class="container-fluid py-3 text-center text-md-start">
+        <h1 class="display-5 fw-bold text-dark mb-3">¡Bienvenidos Alumnos!</h1>
+        <p class="col-md-10 fs-5 text-muted mb-4">{{ mensaje }}</p>
+        <hr class="my-4 text-secondary-heading opacity-25">
+        <p class="small text-uppercase fw-semibold text-secondary tracking-wider">Accesos rápidos al panel:</p>
+        
+        <!-- Botones de navegación rápida -->
+        <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2">
+            <a href="{% url 'lista_cursos' %}" class="btn btn-primary px-4 py-2 rounded-3 fw-medium shadow-sm">
+                <i class="bi bi-journal-bookmark me-2"></i>Ver Cursos
+            </a>
+            <a href="{% url 'lista_estudiantes' %}" class="btn btn-outline-secondary px-4 py-2 rounded-3 fw-medium">
+                <i class="bi bi-people me-2"></i>Sección Estudiantes
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

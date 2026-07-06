@@ -1,0 +1,11 @@
+{% extends 'myApp/base.html' %}
+
+{% block titulo %}Buscar Curso{% endblock %}
+
+{% block contenido %}
+    <h1>Buscar Curso por Número de Comision</h1>
+    <form action="/myApp/buscar-curso/" method="GET">
+        <input type="number" name="camada" placeholder="Ej: 23410" required>
+        <button type="submit">Buscar</button>
+    </form>
+{% endblock %}
