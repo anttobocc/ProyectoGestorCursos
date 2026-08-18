@@ -1,6 +1,6 @@
-Proyecto Gestor de Cursos
+#Proyecto Gestor de Cursos
 
-Descripción
+##Descripción
 
 Proyecto Gestor de Cursos es una aplicación web desarrollada para facilitar la gestión académica de cursos, estudiantes, profesores y entregables. El sistema permite administrar la información mediante operaciones CRUD, realizar búsquedas, registrar y modificar datos, gestionar entregables y asociarlos con los estudiantes correspondientes.
 
@@ -8,7 +8,7 @@ El proyecto fue desarrollado utilizando Python y Django, con SQLite como base de
 
 El desarrollo y control de versiones se realizó mediante Visual Studio Code y Git/GitHub, permitiendo registrar los avances y cambios realizados durante las distintas etapas del proyecto.
 
-Integrantes
+##Integrantes
 
 - Antonella Boccalandro
 - Candela Mimbi Cáceres
@@ -25,7 +25,7 @@ Tecnologías utilizadas
 - GitHub
 - Visual Studio Code
 
-Historial y organización del trabajo
+#Historial y organización del trabajo
 
 A continuación se deja constancia de la evolución del proyecto y de una situación ocurrida durante la integración del trabajo de los integrantes del equipo.
 
