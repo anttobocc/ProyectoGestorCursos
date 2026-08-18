@@ -7,7 +7,7 @@
         
         <!-- Enlace para volver atrás -->
         <div class="mb-3">
-            <a href="{% url 'lista_cursos' %}" class="text-decoration-none text-secondary small fw-medium">
+            <a href="{% url 'myapp:cursos' %}" class="text-decoration-none text-secondary small fw-medium">
                 <i class="bi bi-arrow-left me-1"></i> Volver al listado
             </a>
         </div>
@@ -76,7 +76,7 @@
                         <i class="bi bi-check-circle-fill me-2"></i>Guardar Curso
                     </button>
                     
-                    <a href="{% url 'lista_cursos' %}" class="btn btn-light w-100 py-2.5 fw-semibold text-secondary rounded-3 border">
+                    <a href="{% url 'myapp:cursos' %}" class="btn btn-light w-100 py-2.5 fw-semibold text-secondary rounded-3 border">
                         Cancelar
                     </a>
                 </form>

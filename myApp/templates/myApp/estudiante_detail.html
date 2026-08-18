@@ -1,10 +1,59 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Detalle del Estudiante</title>
-</head>
-<body>
-    <h1>{{ estudiante.nombre }} {{ estudiante.apellido }}</h1>
-    <p>Email: {{ estudiante.email }}</p>
-</body>
-</html>
+{% extends 'myApp/base.html' %}
+
+{% block title %}Detalle del Estudiante{% endblock %}
+
+{% block contenido %}
+<div class="mb-3">
+    <a href="{% url 'myapp:estudiantes' %}" class="text-decoration-none text-secondary small fw-medium">
+        <i class="bi bi-arrow-left me-1"></i> Volver al listado
+    </a>
+</div>
+
+<div class="card shadow border-0 rounded-4 mx-auto" style="max-width:600px;">
+    <div class="card-body p-4">
+
+        <div class="d-flex align-items-center mb-4">
+            <div class="d-flex align-items-center justify-content-center bg-info bg-opacity-10 text-info rounded-circle me-3" style="width:56px;height:56px;font-size:1.5rem;">
+                <i class="bi bi-person-vcard"></i>
+            </div>
+            <div>
+                <h2 class="fw-bold text-dark mb-0">{{ estudiante.nombre }} {{ estudiante.apellido }}</h2>
+                <p class="text-muted small mb-0">{{ estudiante.email }}</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row g-3 mt-1">
+            <div class="col-sm-6">
+                <p class="text-muted small fw-semibold mb-1">Asistencia</p>
+                <p class="fw-bold text-dark">{{ estudiante.asistencia }}%</p>
+            </div>
+            <div class="col-sm-6">
+                <p class="text-muted small fw-semibold mb-1">Promedio General</p>
+                <p class="fw-bold text-dark">{{ estudiante.promedio }}</p>
+            </div>
+            <div class="col-sm-6">
+                <p class="text-muted small fw-semibold mb-1">Proyectos Realizados</p>
+                <p class="fw-bold text-dark">{{ estudiante.proyectos_hechos }}</p>
+            </div>
+            <div class="col-sm-6">
+                <p class="text-muted small fw-semibold mb-1">Proyectos Totales</p>
+                <p class="fw-bold text-dark">{{ estudiante.proyectos_totales }}</p>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="d-flex gap-2 mt-3">
+            <a href="{% url 'myapp:estudianteEditar' estudiante.id %}" class="btn btn-warning btn-sm">
+                <i class="bi bi-pencil me-1"></i>Editar
+            </a>
+            <a href="{% url 'myapp:estudianteEliminar' estudiante.id %}" class="btn btn-danger btn-sm">
+                <i class="bi bi-trash me-1"></i>Eliminar
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

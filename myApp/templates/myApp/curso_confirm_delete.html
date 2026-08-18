@@ -1,0 +1,36 @@
+{% extends 'myApp/base.html' %}
+
+{% block title %}Eliminar Curso{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4 p-md-5 text-center">
+
+                <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mb-3" style="width:64px;height:64px;font-size:1.9rem;">
+                    <i class="bi bi-trash3"></i>
+                </div>
+
+                <h3 class="fw-bold text-dark mb-2">¿Eliminar este curso?</h3>
+                <p class="text-muted mb-1">Estás por eliminar el siguiente curso:</p>
+                <p class="fw-semibold text-dark fs-5 mb-4">{{ curso.nombre }} <span class="text-muted fw-normal fs-6">— Camada {{ curso.camada }}</span></p>
+
+                <p class="text-danger small mb-4">Esta acción no se puede deshacer.</p>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold rounded-3 mb-2">
+                        <i class="bi bi-trash3 me-2"></i>Sí, eliminar
+                    </button>
+                </form>
+                <a href="{% url 'myapp:cursos' %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
+                    Cancelar
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduControl | Panel de Gestión</title>
+    <title>{% block title %}Gestor de Cursos{% endblock %}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -43,7 +43,7 @@
     <!-- Navbar Principal -->
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3">
         <div class="container">
-            <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'index' %}">
+            <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'myapp:index' %}">
                 <i class="bi bi-rocket-takeoff-fill text-info me-2"></i>Edu<span class="text-info">Control</span>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -52,27 +52,27 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                <ul class="navbar-nav ms-auto gap-2">
     <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'index' %}">
+        <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'myapp:index' %}">
             <i class="bi bi-house-door me-1"></i> Inicio
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'lista_cursos' or request.resolver_match.url_name == 'cursoFormulario' %}active{% endif %}" href="{% url 'lista_cursos' %}">
+        <a class="nav-link {% if request.resolver_match.url_name == 'cursos' or request.resolver_match.url_name == 'cursoFormulario' %}active{% endif %}" href="{% url 'myapp:cursos' %}">
             <i class="bi bi-journal-bookmark me-1"></i> Cursos
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'lista_estudiantes' %}active{% endif %}" href="{% url 'lista_estudiantes' %}">
+        <a class="nav-link {% if request.resolver_match.url_name == 'estudiantes' %}active{% endif %}" href="{% url 'myapp:estudiantes' %}">
             <i class="bi bi-people me-1"></i> Estudiantes
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'lista_profesores' %}active{% endif %}" href="{% url 'lista_profesores' %}">
+        <a class="nav-link {% if request.resolver_match.url_name == 'profesores' %}active{% endif %}" href="{% url 'myapp:profesores' %}">
             <i class="bi bi-person-workspace me-1"></i> Profesores
         </a>
     </li>
     <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'lista_entregables' %}active{% endif %}" href="{% url 'lista_entregables' %}">
+        <a class="nav-link {% if request.resolver_match.url_name == 'entregables' %}active{% endif %}" href="{% url 'myapp:entregables' %}">
             <i class="bi bi-folder-check me-1"></i> Entregables
         </a>
     </li>
@@ -80,6 +80,18 @@
             </div>
         </div>
     </nav>
+
+    <!-- Mensajes del sistema -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <!-- Contenido Inyectado dinámicamente -->
     <div class="container my-5">

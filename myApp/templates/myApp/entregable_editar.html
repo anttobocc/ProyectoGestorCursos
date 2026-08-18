@@ -1,0 +1,80 @@
+{% extends 'myApp/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Editar Entregable{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+
+        <div class="mb-3">
+            <a href="{% url 'myapp:entregables' %}" class="text-decoration-none text-secondary small fw-medium">
+                <i class="bi bi-arrow-left me-1"></i> Volver al listado
+            </a>
+        </div>
+
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width:60px;height:60px;font-size:1.7rem;">
+                        <i class="bi bi-pencil-square"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Editar Entregable</h3>
+                    <p class="text-muted small">{{ entregable.nombre }}</p>
+                </div>
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="id_nombre" class="form-label fw-semibold text-secondary small">Nombre</label>
+                        {{ form.nombre|add_class:"form-control" }}
+                        {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small d-block">Publicado</label>
+                        <p class="form-control-plaintext mb-0">
+                            {% if entregable.fecha_publicacion %}{{ entregable.fecha_publicacion|date:"d/m/Y H:i" }}{% else %}<span class="text-muted">No definida</span>{% endif %}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_fecha_vencimiento" class="form-label fw-semibold text-secondary small">Fecha de vencimiento</label>
+                        {{ form.fecha_vencimiento|add_class:"form-control" }}
+                        {% if form.fecha_vencimiento.errors %}<div class="text-danger small mt-1">{{ form.fecha_vencimiento.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary small d-block">Alumnos que entregaron</label>
+                        <div class="border rounded-3 p-3">
+                            {% for checkbox in form.estudiantes %}
+                            <div class="form-check">
+                                {{ checkbox.tag }}
+                                <label class="form-check-label small" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted small mb-0">No hay estudiantes registrados.</p>
+                            {% endfor %}
+                        </div>
+                        {% if form.estudiantes.errors %}<div class="text-danger small mt-1">{{ form.estudiantes.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold rounded-3 mb-2">
+                        <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
+                    </button>
+                    <a href="{% url 'myapp:entregables' %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
+                        Cancelar
+                    </a>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

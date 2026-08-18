@@ -42,18 +42,23 @@
         <h1 class="fw-bold text-dark mb-1">Control de Estudiantes</h1>
         <p class="text-muted mb-0">Listado oficial de alumnos matriculados en el sistema.</p>
     </div>
+    <div class="col-md-4 text-center text-md-end">
+        <a href="{% url 'myapp:estudianteFormulario' %}" class="btn btn-secondary shadow-sm px-4 py-2 fw-semibold rounded-3">
+            <i class="bi bi-plus-lg me-2"></i>Agregar Estudiante
+        </a>
+    </div>
 </div>
 
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for estudiante in estudiantes %}
     <div class="col">
         
-        <div class="card shadow-sm student-card p-3 mb-2" 
-             data-bs-toggle="collapse" 
-             data-bs-target="#collapseEstudiante{{ forloop.counter }}" 
-             aria-expanded="false"
-             role="button">
-            <div class="card-body d-flex align-items-center justify-content-between p-1">
+        <div class="card shadow-sm student-card p-3 mb-2">
+            <div class="card-body d-flex align-items-center justify-content-between p-1"
+                 data-bs-toggle="collapse"
+                 data-bs-target="#collapseEstudiante{{ forloop.counter }}"
+                 aria-expanded="false"
+                 role="button">
                 <div class="d-flex align-items-center">
                     <div class="avatar-circle me-3 flex-shrink-0">
                         <i class="bi bi-person-vcard"></i>
@@ -75,21 +80,10 @@
                 
                <div class="mb-2">
     <div class="d-flex justify-content-between small text-muted mb-1">
-        <span>Asistencia</span>
-        <strong>{{ estudiante.asistencia }}%</strong>
-    </div>
-    <div class="progress progress-micro">
-        <div class="progress-bar bg-success" role="progressbar" style="width: {{ estudiante.asistencia }}%"></div>
+        <span>Promedio General</span>
+        <strong>{{ estudiante.promedio }}</strong>
     </div>
 </div>
-
-                <div class="mb-2">
-    <div class="d-flex justify-content-between small text-muted mb-1">
-        <span>Promedio General</span>
-        <strong id="linea89">{{ estudiante.promedio }}</strong>
-    </div> <div class="progress progress-micro">
-        <div class="progress-bar bg-info" role="progressbar" style="width: {{ estudiante.promedio }}0%"></div>
-    </div> </div> 
 
                <div class="mb-2">
             <div class="d-flex justify-content-between small text-muted mb-1">
@@ -99,12 +93,22 @@
             <div class="progress progress-micro">
                 {% if estudiante.proyectos_totales > 0 %}
            <div class="progress-bar bg-warning" role="progressbar" style="width: {% widthratio estudiante.proyectos_hechos estudiante.proyectos_totales 100 %}%"></div>
-               
+
            {% else %}
                     <div class="progress-bar bg-warning" role="progressbar" style="width: 0%"></div>
                 {% endif %}
             </div>
         </div>
+
+               <div class="mb-2">
+    <div class="d-flex justify-content-between small text-muted mb-1">
+        <span>Asistencia</span>
+        <strong>{{ estudiante.asistencia }}%</strong>
+    </div>
+    <div class="progress progress-micro">
+        <div class="progress-bar bg-success" role="progressbar" style="width: {{ estudiante.asistencia }}%"></div>
+    </div>
+</div>
                 <hr class="my-2 opacity-25">
                 <p class="text-muted small mb-0 text-truncate">
                     <i class="bi bi-envelope me-2 text-secondary"></i>{{ estudiante.email|default:"alumno@educontrol.com" }}
@@ -112,6 +116,14 @@
             </div>
         </div>
 
+        <div class="card-footer bg-transparent border-top text-center mt-2">
+            <a href="{% url 'myapp:estudianteEditar' estudiante.id %}" class="btn btn-warning btn-sm me-2">
+                <i class="bi bi-pencil"></i> Editar
+            </a>
+            <a href="{% url 'myapp:estudianteEliminar' estudiante.id %}" class="btn btn-danger btn-sm">
+                <i class="bi bi-trash"></i> Eliminar
+            </a>
+        </div>
     </div>
     {% empty %}
     <div class="col-12 w-100">
