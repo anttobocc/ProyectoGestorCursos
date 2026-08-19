@@ -1,14 +1,20 @@
 from django import forms
 from .models import Curso, Profesor, Estudiante, Entregable
 
-class CursoFormulario(forms.Form):
-    nombre = forms.CharField(max_length=100)
-    camada = forms.IntegerField()
-
 class CursoForm(forms.ModelForm):
+    alumnos = forms.ModelMultipleChoiceField(
+        queryset=Estudiante.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        label='Alumnos',
+    )
+
     class Meta:
         model = Curso
-        fields = ['nombre', 'camada']
+        fields = ['nombre', 'camada', 'profesores']
+        widgets = {
+            'profesores': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+        }
 
 class ProfesorFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")

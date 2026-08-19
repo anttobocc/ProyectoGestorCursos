@@ -49,6 +49,36 @@
                         {% endif %}
                     </div>
 
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small d-block">Profesores</label>
+                        <div class="border rounded-3 p-3">
+                            {% for checkbox in form.profesores %}
+                            <div class="form-check">
+                                {{ checkbox.tag }}
+                                <label class="form-check-label small" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted small mb-0">No hay profesores registrados.</p>
+                            {% endfor %}
+                        </div>
+                        {% if form.profesores.errors %}<div class="text-danger small mt-1">{{ form.profesores.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary small d-block">Alumnos</label>
+                        <div class="border rounded-3 p-3">
+                            {% for checkbox in form.alumnos %}
+                            <div class="form-check">
+                                {{ checkbox.tag }}
+                                <label class="form-check-label small" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted small mb-0">No hay alumnos registrados.</p>
+                            {% endfor %}
+                        </div>
+                        {% if form.alumnos.errors %}<div class="text-danger small mt-1">{{ form.alumnos.errors.0 }}</div>{% endif %}
+                    </div>
+
                     <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold rounded-3 mb-2">
                         <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
                     </button>

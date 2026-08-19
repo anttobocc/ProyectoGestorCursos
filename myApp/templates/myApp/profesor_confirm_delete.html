@@ -18,6 +18,15 @@
                 <p class="fw-semibold text-dark fs-5 mb-1">{{ profesor.apellido }} {{ profesor.nombre }}</p>
                 <p class="text-muted small mb-4">{{ profesor.profesion }}</p>
 
+                <p class="text-muted small mb-1">
+                    Se quitará a este profesor de los cursos donde esté asignado, pero los cursos no se eliminarán.
+                </p>
+                {% if profesor.user %}
+                <p class="text-muted small mb-4">
+                    Su cuenta de usuario ({{ profesor.user.username }}) no se eliminará.
+                </p>
+                {% endif %}
+
                 <p class="text-danger small mb-4">Esta acción no se puede deshacer.</p>
 
                 <form method="POST">

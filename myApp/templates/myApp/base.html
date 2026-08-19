@@ -51,31 +51,41 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                <ul class="navbar-nav ms-auto gap-2">
-    <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'myapp:index' %}">
-            <i class="bi bi-house-door me-1"></i> Inicio
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'cursos' or request.resolver_match.url_name == 'cursoFormulario' %}active{% endif %}" href="{% url 'myapp:cursos' %}">
-            <i class="bi bi-journal-bookmark me-1"></i> Cursos
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'estudiantes' %}active{% endif %}" href="{% url 'myapp:estudiantes' %}">
-            <i class="bi bi-people me-1"></i> Estudiantes
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'profesores' %}active{% endif %}" href="{% url 'myapp:profesores' %}">
-            <i class="bi bi-person-workspace me-1"></i> Profesores
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link {% if request.resolver_match.url_name == 'entregables' %}active{% endif %}" href="{% url 'myapp:entregables' %}">
-            <i class="bi bi-folder-check me-1"></i> Entregables
-        </a>
-    </li>
+    {% if user.is_authenticated %}
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'myapp:index' %}">
+                <i class="bi bi-house-door me-1"></i> Inicio
+            </a>
+        </li>
+        {% if es_admin %}
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'cursos' or request.resolver_match.url_name == 'cursoFormulario' %}active{% endif %}" href="{% url 'myapp:cursos' %}">
+                <i class="bi bi-journal-bookmark me-1"></i> Cursos
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'estudiantes' %}active{% endif %}" href="{% url 'myapp:estudiantes' %}">
+                <i class="bi bi-people me-1"></i> Estudiantes
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'profesores' %}active{% endif %}" href="{% url 'myapp:profesores' %}">
+                <i class="bi bi-person-workspace me-1"></i> Profesores
+            </a>
+        </li>
+        {% elif es_profesor %}
+        <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'mis_cursos' %}active{% endif %}" href="{% url 'myapp:mis_cursos' %}">
+                <i class="bi bi-journal-bookmark me-1"></i> Mis Cursos
+            </a>
+        </li>
+        {% endif %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'myapp:logout' %}">
+                <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
+            </a>
+        </li>
+    {% endif %}
 </ul>
             </div>
         </div>

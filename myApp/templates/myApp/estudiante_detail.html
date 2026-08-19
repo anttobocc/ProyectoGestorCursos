@@ -24,24 +24,31 @@
 
         <hr>
 
-        <div class="row g-3 mt-1">
-            <div class="col-sm-6">
-                <p class="text-muted small fw-semibold mb-1">Asistencia</p>
-                <p class="fw-bold text-dark">{{ estudiante.asistencia }}%</p>
-            </div>
-            <div class="col-sm-6">
-                <p class="text-muted small fw-semibold mb-1">Promedio General</p>
-                <p class="fw-bold text-dark">{{ estudiante.promedio }}</p>
-            </div>
-            <div class="col-sm-6">
-                <p class="text-muted small fw-semibold mb-1">Proyectos Realizados</p>
-                <p class="fw-bold text-dark">{{ estudiante.proyectos_hechos }}</p>
-            </div>
-            <div class="col-sm-6">
-                <p class="text-muted small fw-semibold mb-1">Proyectos Totales</p>
-                <p class="fw-bold text-dark">{{ estudiante.proyectos_totales }}</p>
+        <p class="text-uppercase fw-bold text-secondary mb-3" style="font-size: 0.75rem;">Cursos</p>
+
+        {% for inscripcion in inscripciones %}
+        <div class="card border-0 shadow-sm mb-3" style="background-color: #f8fafc; border-radius: 14px;">
+            <div class="card-body p-3">
+                <h6 class="fw-bold text-dark mb-2">{{ inscripcion.curso.nombre }}</h6>
+                <div class="row g-2">
+                    <div class="col-sm-6">
+                        <p class="text-muted small fw-semibold mb-1">Asistencia</p>
+                        <p class="fw-bold text-dark mb-0">{{ inscripcion.asistencia }}%</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted small fw-semibold mb-1">Promedio</p>
+                        <p class="fw-bold text-dark mb-0">{{ inscripcion.promedio }}</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="text-muted small fw-semibold mb-1">Proyectos</p>
+                        <p class="fw-bold text-dark mb-0">{{ inscripcion.proyectos_hechos }}/{{ inscripcion.proyectos_totales }}</p>
+                    </div>
+                </div>
             </div>
         </div>
+        {% empty %}
+        <p class="text-muted small">Este alumno no está inscripto en ningún curso.</p>
+        {% endfor %}
 
         <hr>
 

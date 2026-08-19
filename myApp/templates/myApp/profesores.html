@@ -72,7 +72,16 @@
                 <span class="text-uppercase fw-bold text-secondary tracking-wider mb-2" style="font-size: 0.75rem;">Información del Docente</span>
                 <div class="mb-1">
                     <p class="text-muted small mb-1"><strong>Email:</strong> {{ profesor.email|default:"sin_email@educontrol.com" }}</p>
-                    <p class="text-muted small mb-0"><strong>Profesión:</strong> {{ profesor.profesion }}</p>
+                    <p class="text-muted small mb-1"><strong>Profesión:</strong> {{ profesor.profesion }}</p>
+                    <p class="text-muted small mb-1"><strong>Usuario:</strong> {{ profesor.user.username|default:"—" }}</p>
+                    <p class="text-muted small mb-0">
+                        <strong>Estado:</strong>
+                        {% if profesor.user %}
+                            <span class="badge bg-success-subtle text-success">Cuenta vinculada</span>
+                        {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary">Sin cuenta</span>
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>

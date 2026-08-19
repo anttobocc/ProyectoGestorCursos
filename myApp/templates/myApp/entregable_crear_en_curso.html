@@ -8,9 +8,15 @@
     <div class="col-md-6 col-lg-5">
 
         <div class="mb-3">
-            <a href="{% url 'myapp:entregables' %}" class="text-decoration-none text-secondary small fw-medium">
-                <i class="bi bi-arrow-left me-1"></i> Volver al listado
+            {% if es_admin %}
+            <a href="{% url 'myapp:cursoDetalleAdmin' curso.id %}" class="text-decoration-none text-secondary small fw-medium">
+                <i class="bi bi-arrow-left me-1"></i> Volver a {{ curso.nombre }}
             </a>
+            {% else %}
+            <a href="{% url 'myapp:curso_detail' curso.id %}" class="text-decoration-none text-secondary small fw-medium">
+                <i class="bi bi-arrow-left me-1"></i> Volver a {{ curso.nombre }}
+            </a>
+            {% endif %}
         </div>
 
         <div class="card shadow border-0 rounded-4">
@@ -21,7 +27,7 @@
                         <i class="bi bi-folder-plus"></i>
                     </div>
                     <h3 class="fw-bold text-dark mb-1">Agregar Entregable</h3>
-                    <p class="text-muted small">Completá los campos para registrar un nuevo entregable</p>
+                    <p class="text-muted small">{{ curso.nombre }}</p>
                 </div>
 
                 <form method="POST" novalidate>
@@ -46,9 +52,15 @@
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3 mb-2">
                         <i class="bi bi-check-circle-fill me-2"></i>Guardar Entregable
                     </button>
-                    <a href="{% url 'myapp:entregables' %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
+                    {% if es_admin %}
+                    <a href="{% url 'myapp:cursoDetalleAdmin' curso.id %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
                         Cancelar
                     </a>
+                    {% else %}
+                    <a href="{% url 'myapp:curso_detail' curso.id %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
+                        Cancelar
+                    </a>
+                    {% endif %}
                 </form>
 
             </div>

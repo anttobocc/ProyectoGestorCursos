@@ -76,39 +76,15 @@
 
         <div class="collapse" id="collapseEstudiante{{ forloop.counter }}">
             <div class="card card-body border-0 shadow-sm p-3 mb-3" style="background-color: #f8fafc; border-radius: 14px;">
-                <span class="text-uppercase fw-bold text-secondary tracking-wider mb-2" style="font-size: 0.75rem;">Rendimiento General</span>
-                
-               <div class="mb-2">
-    <div class="d-flex justify-content-between small text-muted mb-1">
-        <span>Promedio General</span>
-        <strong>{{ estudiante.promedio }}</strong>
-    </div>
-</div>
+                <span class="text-uppercase fw-bold text-secondary tracking-wider mb-2" style="font-size: 0.75rem;">Información</span>
 
-               <div class="mb-2">
-            <div class="d-flex justify-content-between small text-muted mb-1">
-                <span>Proyectos Completados</span>
-                <strong>{{ estudiante.proyectos_hechos }}/{{ estudiante.proyectos_totales }}</strong>
-            </div>
-            <div class="progress progress-micro">
-                {% if estudiante.proyectos_totales > 0 %}
-           <div class="progress-bar bg-warning" role="progressbar" style="width: {% widthratio estudiante.proyectos_hechos estudiante.proyectos_totales 100 %}%"></div>
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small text-muted mb-1">
+                        <span>Cursos</span>
+                        <strong>{{ estudiante.inscripciones.count }}</strong>
+                    </div>
+                </div>
 
-           {% else %}
-                    <div class="progress-bar bg-warning" role="progressbar" style="width: 0%"></div>
-                {% endif %}
-            </div>
-        </div>
-
-               <div class="mb-2">
-    <div class="d-flex justify-content-between small text-muted mb-1">
-        <span>Asistencia</span>
-        <strong>{{ estudiante.asistencia }}%</strong>
-    </div>
-    <div class="progress progress-micro">
-        <div class="progress-bar bg-success" role="progressbar" style="width: {{ estudiante.asistencia }}%"></div>
-    </div>
-</div>
                 <hr class="my-2 opacity-25">
                 <p class="text-muted small mb-0 text-truncate">
                     <i class="bi bi-envelope me-2 text-secondary"></i>{{ estudiante.email|default:"alumno@educontrol.com" }}
@@ -117,6 +93,9 @@
         </div>
 
         <div class="card-footer bg-transparent border-top text-center mt-2">
+            <a href="{% url 'myapp:detalle_estudiante' estudiante.id %}" class="btn btn-outline-primary btn-sm me-2">
+                <i class="bi bi-eye"></i> Ver
+            </a>
             <a href="{% url 'myapp:estudianteEditar' estudiante.id %}" class="btn btn-warning btn-sm me-2">
                 <i class="bi bi-pencil"></i> Editar
             </a>
