@@ -6,7 +6,7 @@ from .views import (
     lista_estudiantes, detalle_estudiante, estudianteFormulario, estudiante_editar, estudiante_eliminar,
     profesores, profesorFormulario, profesor_editar, profesor_eliminar,
     entregable_editar, entregable_eliminar,
-    mis_cursos, curso_detail, estudiante_curso_eliminar, entregable_crear_en_curso, inscripcion_editar,
+    mis_cursos, curso_detail, curso_entregables, estudiante_curso_eliminar, entregable_crear_en_curso, inscripcion_editar,
 )
 
 app_name = "myapp"
@@ -40,6 +40,7 @@ urlpatterns = [
     # Profesor
     path('mis-cursos/', mis_cursos, name='mis_cursos'),
     path('mis-cursos/<int:id>/', curso_detail, name='curso_detail'),
+    path('mis-cursos/<int:id>/entregables/', curso_entregables, name='curso_entregables'),
     path('mis-cursos/<int:curso_id>/alumno/<int:estudiante_id>/baja/', estudiante_curso_eliminar, name='estudianteCursoEliminar'),
     path('mis-cursos/<int:curso_id>/entregables/crear/', entregable_crear_en_curso, name='entregableCrearEnCurso'),
     path('mis-cursos/<int:curso_id>/alumno/<int:estudiante_id>/editar/', inscripcion_editar, name='inscripcionEditar'),

@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<div class="mt-4" id="alumnos">
+<div class="mt-4">
     <h4 class="fw-bold text-dark mb-3">Alumnos del curso</h4>
 
     <div class="table-responsive">
@@ -67,70 +67,5 @@
             </tbody>
         </table>
     </div>
-</div>
-
-<div class="mt-5" id="entregables">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h4 class="fw-bold text-dark mb-0">Entregables del curso</h4>
-        <a href="{% url 'myapp:entregableCrearEnCurso' curso.id %}" class="btn btn-secondary shadow-sm px-3 py-2 fw-semibold rounded-3">
-            <i class="bi bi-plus-lg me-2"></i>Agregar Entregable
-        </a>
-    </div>
-
-    {% for item in entregables_info %}
-    <div class="card shadow-sm border-0 rounded-4 mb-3">
-        <div class="card-body p-3 p-md-4">
-            <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
-                <h5 class="fw-bold text-dark mb-0">{{ item.entregable.nombre }}</h5>
-                <div>
-                    <a href="{% url 'myapp:entregableEditar' item.entregable.id %}" class="btn btn-warning btn-sm me-1">
-                        <i class="bi bi-pencil"></i> Editar
-                    </a>
-                    <a href="{% url 'myapp:entregableEliminar' item.entregable.id %}" class="btn btn-danger btn-sm">
-                        <i class="bi bi-trash"></i> Eliminar
-                    </a>
-                </div>
-            </div>
-
-            <div class="row g-2 small text-muted mb-2">
-                <div class="col-sm-6">
-                    Publicado:
-                    {% if item.entregable.fecha_publicacion %}{{ item.entregable.fecha_publicacion|date:"d/m/Y H:i" }}{% else %}—{% endif %}
-                </div>
-                <div class="col-sm-6">
-                    Vence:
-                    {% if item.entregable.fecha_vencimiento %}{{ item.entregable.fecha_vencimiento|date:"d/m/Y H:i" }}{% else %}—{% endif %}
-                </div>
-            </div>
-
-            <p class="mb-1">
-                <strong>{{ item.cantidad_entregados }} / {{ item.total_alumnos }}</strong> entregaron
-                <span class="text-muted">({{ item.porcentaje }}%)</span>
-            </p>
-            <div class="progress mb-3" style="height: 8px; border-radius: 4px;">
-                <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.porcentaje }}%"></div>
-            </div>
-
-            <ul class="list-unstyled mb-0 small">
-                {% for fila in item.detalle %}
-                <li class="mb-1">
-                    {% if fila.entrego %}
-                        <i class="bi bi-check-circle-fill text-success me-1"></i>{{ fila.estudiante.nombre }} {{ fila.estudiante.apellido }}
-                    {% else %}
-                        <i class="bi bi-circle text-muted me-1"></i>{{ fila.estudiante.nombre }} {{ fila.estudiante.apellido }}
-                    {% endif %}
-                </li>
-                {% empty %}
-                <li class="text-muted">No hay alumnos inscriptos en este curso.</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-    {% empty %}
-    <div class="text-center p-5 bg-white rounded-4 border shadow-sm">
-        <i class="bi bi-folder-x text-muted" style="font-size: 3rem;"></i>
-        <h5 class="fw-bold text-dark mt-3">No hay entregables cargados en este curso</h5>
-    </div>
-    {% endfor %}
 </div>
 {% endblock %}

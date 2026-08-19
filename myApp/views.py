@@ -235,7 +235,7 @@ def entregable_editar(request, id):
                 entregable.save(update_fields=['cantidad_entregados'])
 
             messages.success(request, "Entregable actualizado correctamente.")
-            return redirect('myapp:curso_detail', id=curso.id)
+            return redirect('myapp:curso_entregables', id=curso.id)
     else:
         form = EntregableForm(instance=entregable)
         form.fields['estudiantes'].queryset = alumnos_del_curso
@@ -265,7 +265,7 @@ def entregable_eliminar(request, id):
             Inscripcion.objects.filter(curso=curso, proyectos_totales__lt=0).update(proyectos_totales=0)
 
         messages.success(request, "Entregable eliminado correctamente.")
-        return redirect('myapp:curso_detail', id=curso.id)
+        return redirect('myapp:curso_entregables', id=curso.id)
     return render(request, 'myApp/entregable_confirm_delete.html', {'entregable': entregable, 'curso': curso})
 
 
@@ -380,11 +380,21 @@ def mis_cursos(request):
 def curso_detail(request, id):
     curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
     inscripciones = Inscripcion.objects.filter(curso=curso).select_related('estudiante')
-    entregables_info = _entregables_info_de_curso(curso, inscripciones)
 
     return render(request, 'myApp/curso_detail.html', {
         'curso': curso,
         'inscripciones': inscripciones,
+    })
+
+@login_required
+@profesor_required
+def curso_entregables(request, id):
+    curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
+    inscripciones = Inscripcion.objects.filter(curso=curso).select_related('estudiante')
+    entregables_info = _entregables_info_de_curso(curso, inscripciones)
+
+    return render(request, 'myApp/curso_entregables.html', {
+        'curso': curso,
         'entregables_info': entregables_info,
     })
 
@@ -439,7 +449,7 @@ def entregable_crear_en_curso(request, curso_id):
                 )
                 Inscripcion.objects.filter(curso=curso).update(proyectos_totales=F('proyectos_totales') + 1)
             messages.success(request, "Entregable agregado correctamente.")
-            return redirect('myapp:curso_detail', id=curso.id)
+            return redirect('myapp:curso_entregables', id=curso.id)
     else:
         form = EntregableFormulario()
     return render(request, 'myApp/entregable_crear_en_curso.html', {'form': form, 'curso': curso})

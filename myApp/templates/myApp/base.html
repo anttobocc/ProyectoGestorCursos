@@ -52,12 +52,12 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                <ul class="navbar-nav ms-auto gap-2">
     {% if user.is_authenticated %}
+        {% if es_admin %}
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'myapp:index' %}">
                 <i class="bi bi-house-door me-1"></i> Inicio
             </a>
         </li>
-        {% if es_admin %}
         <li class="nav-item">
             <a class="nav-link {% if request.resolver_match.url_name == 'cursos' or request.resolver_match.url_name == 'cursoFormulario' %}active{% endif %}" href="{% url 'myapp:cursos' %}">
                 <i class="bi bi-journal-bookmark me-1"></i> Cursos
@@ -81,12 +81,12 @@
         </li>
         {% if curso %}
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'myapp:curso_detail' curso.id %}#alumnos">
+            <a class="nav-link {% if request.resolver_match.url_name == 'curso_detail' %}active{% endif %}" href="{% url 'myapp:curso_detail' curso.id %}">
                 <i class="bi bi-people me-1"></i> Alumnos
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'myapp:curso_detail' curso.id %}#entregables">
+            <a class="nav-link {% if request.resolver_match.url_name == 'curso_entregables' %}active{% endif %}" href="{% url 'myapp:curso_entregables' curso.id %}">
                 <i class="bi bi-folder-check me-1"></i> Entregables
             </a>
         </li>
