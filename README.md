@@ -78,11 +78,11 @@ La versión actual del proyecto se encuentra organizada utilizando **Django**, s
 
 El proyecto continúa siendo actualizado mediante Git y GitHub, registrando los avances y modificaciones realizados durante las diferentes etapas.
 
-Historial y organización del trabajo
+# 📋 Historial y organización del trabajo
 
 A continuación se deja constancia de la evolución del proyecto y de una situación ocurrida durante la integración del trabajo de los integrantes del equipo.
 
-1. Creación del repositorio y primera entrega — 13/06/2026
+ ## 1. 📁 Creación del repositorio y primera entrega — 13/06/2026
 
 Se creó el repositorio ProyectoGestorCursos y se realizó la primera entrega del proyecto Django.
 
