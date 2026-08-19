@@ -1,6 +1,6 @@
-# 📚 Proyecto Gestor de Cursos
+# Proyecto Gestor de Cursos
 
-## 📖 Descripción
+## Descripción
 
 **Proyecto Gestor de Cursos** es una aplicación web desarrollada para facilitar la gestión académica de **cursos, estudiantes, profesores y entregables**.
 
@@ -12,31 +12,31 @@ El desarrollo y control de versiones se realizó mediante **Visual Studio Code y
 
 ---
 
-## 👩‍💻 Integrantes
+## Integrantes
 
 - **Antonella Boccalandro**
 - **Candela Mimbi Cáceres**
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## Tecnologías utilizadas
 
-### 💻 Lenguajes y Frameworks
+### Lenguajes y Frameworks
 
 - **Python**
 - **Django**
 - **HTML5**
 - **CSS3**
 
-### 🗄️ Base de datos
+### Base de datos
 
 - **SQLite**
 
-### 🎨 Interfaz
+### Interfaz
 
 - **Bootstrap**
 
-### 🔧 Herramientas de desarrollo
+### Herramientas de desarrollo
 
 - **Visual Studio Code**
 - **Git**
@@ -44,45 +44,45 @@ El desarrollo y control de versiones se realizó mediante **Visual Studio Code y
 
 ---
 
-## ⚙️ Funcionalidades principales
+## Funcionalidades principales
 
-- 📚 Gestión de cursos
-- 👩‍🎓 Gestión de estudiantes
-- 👨‍🏫 Gestión de profesores
-- 📋 Gestión de entregables
-- ➕ Registro de información
-- ✏️ Modificación de datos
-- 🗑️ Eliminación de registros
-- 🔎 Búsqueda de cursos
-- 🔗 Asociación de entregables con estudiantes
-- ✅ Validación de datos mediante formularios
-- 🗃️ Gestión de cambios mediante migraciones de Django
+- Gestión de cursos
+- Gestión de estudiantes
+- Gestión de profesores
+- Gestión de entregables
+- Registro de información
+- Modificación de datos
+- Eliminación de registros
+- Búsqueda de cursos
+- Asociación de entregables con estudiantes
+- Validación de datos mediante formularios
+- Gestión de cambios mediante migraciones de Django
 
 ---
 
-## 🚀 Objetivo del proyecto
+## Objetivo del proyecto
 
 El objetivo del proyecto es desarrollar una aplicación web que permita **centralizar y facilitar la gestión de información académica**, utilizando herramientas y tecnologías estudiadas durante la formación en Desarrollo de Software.
 
 ---
 
-## 📂 Estructura del proyecto
+## Estructura del proyecto
 
 La versión actual del proyecto se encuentra organizada utilizando **Django**, separando la configuración del proyecto de la aplicación encargada de las funcionalidades principales.
 
 ---
 
-## 📌 Estado del proyecto
+## Estado del proyecto
 
 **En desarrollo.**
 
 El proyecto continúa siendo actualizado mediante Git y GitHub, registrando los avances y modificaciones realizados durante las diferentes etapas.
 
-# 📋 Historial y organización del trabajo
+# Historial y organización del trabajo
 
 A continuación se deja constancia de la evolución del proyecto y de una situación ocurrida durante la integración del trabajo de los integrantes del equipo.
 
- ## 1. 📁 Creación del repositorio y primera entrega — 13/06/2026
+ ## 1. Creación del repositorio y primera entrega — 13/06/2026
 
 Se creó el repositorio ProyectoGestorCursos y se realizó la primera entrega del proyecto Django.
 
