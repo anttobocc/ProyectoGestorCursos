@@ -1,5 +1,5 @@
 from django import forms
-from .models import Curso, Profesor, Estudiante, Entregable
+from .models import Curso, Profesor, Estudiante, Entregable, Inscripcion
 
 class CursoForm(forms.ModelForm):
     alumnos = forms.ModelMultipleChoiceField(
@@ -31,15 +31,20 @@ class EstudianteFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
     apellido = forms.CharField(max_length=100, label="Apellido")
     email = forms.EmailField(label="Correo Electrónico")
-    asistencia = forms.IntegerField(label="Asistencia (%)", min_value=0, max_value=100)
-    promedio = forms.FloatField(label="Promedio (0-10)", min_value=0.0, max_value=10.0)
-    proyectos_hechos = forms.IntegerField(label="Proyectos realizados", min_value=0)
-    proyectos_totales = forms.IntegerField(label="Proyectos totales", min_value=0)
 
 class EstudianteForm(forms.ModelForm):
     class Meta:
         model = Estudiante
-        fields = ['nombre', 'apellido', 'email', 'asistencia', 'promedio']
+        fields = ['nombre', 'apellido', 'email']
+
+class InscripcionForm(forms.ModelForm):
+    class Meta:
+        model = Inscripcion
+        fields = ['asistencia', 'promedio']
+        labels = {
+            'asistencia': 'Asistencia (%)',
+            'promedio': 'Promedio (0-10)',
+        }
 
 class EntregableFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")

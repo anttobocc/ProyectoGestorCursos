@@ -43,22 +43,10 @@
                         {% if form.apellido.errors %}<div class="text-danger small mt-1">{{ form.apellido.errors.0 }}</div>{% endif %}
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <label for="id_email" class="form-label fw-semibold text-secondary small">Correo Electrónico</label>
                         {{ form.email|add_class:"form-control" }}
                         {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="id_asistencia" class="form-label fw-semibold text-secondary small">Asistencia (%)</label>
-                        {{ form.asistencia|add_class:"form-control" }}
-                        {% if form.asistencia.errors %}<div class="text-danger small mt-1">{{ form.asistencia.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="id_promedio" class="form-label fw-semibold text-secondary small">Promedio (0-10)</label>
-                        {{ form.promedio|add_class:"form-control" }}
-                        {% if form.promedio.errors %}<div class="text-danger small mt-1">{{ form.promedio.errors.0 }}</div>{% endif %}
                     </div>
 
                     <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold rounded-3 mb-2">

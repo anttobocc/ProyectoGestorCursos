@@ -1,0 +1,62 @@
+{% extends 'myApp/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Editar Datos Académicos{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+
+        <div class="mb-3">
+            <a href="{% url 'myapp:curso_detail' curso.id %}#alumnos" class="text-decoration-none text-secondary small fw-medium">
+                <i class="bi bi-arrow-left me-1"></i> Volver a {{ curso.nombre }}
+            </a>
+        </div>
+
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4 p-md-5">
+
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-3" style="width:60px;height:60px;font-size:1.7rem;">
+                        <i class="bi bi-clipboard-data"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Editar Datos Académicos</h3>
+                    <p class="text-muted small">{{ inscripcion.estudiante.nombre }} {{ inscripcion.estudiante.apellido }} — {{ curso.nombre }}</p>
+                </div>
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="id_asistencia" class="form-label fw-semibold text-secondary small">Asistencia (%)</label>
+                        {{ form.asistencia|add_class:"form-control" }}
+                        {% if form.asistencia.errors %}<div class="text-danger small mt-1">{{ form.asistencia.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_promedio" class="form-label fw-semibold text-secondary small">Promedio (0-10)</label>
+                        {{ form.promedio|add_class:"form-control" }}
+                        {% if form.promedio.errors %}<div class="text-danger small mt-1">{{ form.promedio.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <p class="text-muted small mb-4">
+                        Estos valores corresponden únicamente a {{ inscripcion.estudiante.nombre }} en {{ curso.nombre }}. No afectan su información en otros cursos.
+                    </p>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3 mb-2">
+                        <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
+                    </button>
+                    <a href="{% url 'myapp:curso_detail' curso.id %}#alumnos" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
+                        Cancelar
+                    </a>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

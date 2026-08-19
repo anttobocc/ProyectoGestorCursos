@@ -8,15 +8,9 @@
     <div class="col-md-6 col-lg-5">
 
         <div class="mb-3">
-            {% if es_admin %}
-            <a href="{% url 'myapp:cursoDetalleAdmin' curso.id %}" class="text-decoration-none text-secondary small fw-medium">
+            <a href="{% url 'myapp:curso_detail' curso.id %}#entregables" class="text-decoration-none text-secondary small fw-medium">
                 <i class="bi bi-arrow-left me-1"></i> Volver a {{ curso.nombre }}
             </a>
-            {% else %}
-            <a href="{% url 'myapp:curso_detail' curso.id %}" class="text-decoration-none text-secondary small fw-medium">
-                <i class="bi bi-arrow-left me-1"></i> Volver a {{ curso.nombre }}
-            </a>
-            {% endif %}
         </div>
 
         <div class="card shadow border-0 rounded-4">
@@ -52,15 +46,9 @@
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3 mb-2">
                         <i class="bi bi-check-circle-fill me-2"></i>Guardar Entregable
                     </button>
-                    {% if es_admin %}
-                    <a href="{% url 'myapp:cursoDetalleAdmin' curso.id %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
+                    <a href="{% url 'myapp:curso_detail' curso.id %}#entregables" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
                         Cancelar
                     </a>
-                    {% else %}
-                    <a href="{% url 'myapp:curso_detail' curso.id %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
-                        Cancelar
-                    </a>
-                    {% endif %}
                 </form>
 
             </div>

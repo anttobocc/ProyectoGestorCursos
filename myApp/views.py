@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
@@ -8,8 +7,8 @@ from django.db import transaction
 from django.db.models import Q, F
 from django.utils import timezone
 from .models import Curso, Profesor, Estudiante, Entregable, Inscripcion
-from .forms import CursoForm, ProfesorFormulario, ProfesorForm, EstudianteFormulario, EstudianteForm, EntregableFormulario, EntregableForm
-from .decorators import admin_required, profesor_required, es_administrador, profesor_tiene_acceso_a_curso
+from .forms import CursoForm, ProfesorFormulario, ProfesorForm, EstudianteFormulario, EstudianteForm, EntregableFormulario, EntregableForm, InscripcionForm
+from .decorators import admin_required, profesor_required, es_administrador
 
 
 def _entregables_info_de_curso(curso, inscripciones):
@@ -62,11 +61,12 @@ def logout_view(request):
 
 @login_required
 def index(request):
+    if not es_administrador(request.user):
+        return redirect('myapp:mis_cursos')
     context = {
         "total_cursos": Curso.objects.count(),
         "total_estudiantes": Estudiante.objects.count(),
         "total_profesores": Profesor.objects.count(),
-        "total_entregables": Entregable.objects.count(),
     }
     return render(request, 'myApp/index.html', context)
 
@@ -89,12 +89,12 @@ def lista_cursos(request):
     cursos = cursos.prefetch_related('profesores', 'inscripciones')
     return render(request, 'myApp/cursos_list.html', {'cursos': cursos})
 
-@login_required
+@admin_required
 def lista_estudiantes(request):
     estudiantes = Estudiante.objects.all()
     return render(request, 'myApp/estudiantes_list.html', {'estudiantes': estudiantes})
 
-@login_required
+@admin_required
 def detalle_estudiante(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     inscripciones = estudiante.inscripciones.select_related('curso').all()
@@ -157,14 +157,17 @@ def estudianteFormulario(request):
     if request.method == 'POST':
         form = EstudianteFormulario(request.POST)
         if form.is_valid():
+            # asistencia/promedio/proyectos_* son campos heredados del modelo Estudiante
+            # que ya no se usan como fuente real (ver Inscripcion); se completan en 0
+            # porque la base de datos todavía los exige (NOT NULL sin default).
             Estudiante(
                 nombre=form.cleaned_data['nombre'],
                 apellido=form.cleaned_data['apellido'],
                 email=form.cleaned_data['email'],
-                asistencia=form.cleaned_data['asistencia'],
-                promedio=form.cleaned_data['promedio'],
-                proyectos_hechos=form.cleaned_data['proyectos_hechos'],
-                proyectos_totales=form.cleaned_data['proyectos_totales'],
+                asistencia=0,
+                promedio=0,
+                proyectos_hechos=0,
+                proyectos_totales=0,
             ).save()
             messages.success(request, "Estudiante agregado correctamente.")
             return redirect('myapp:estudiantes')
@@ -195,11 +198,10 @@ def estudiante_eliminar(request, id):
     return render(request, 'myApp/estudiante_confirm_delete.html', {'estudiante': estudiante})
 
 @login_required
+@profesor_required
 def entregable_editar(request, id):
-    entregable = get_object_or_404(Entregable, id=id)
+    entregable = get_object_or_404(Entregable, id=id, curso__profesores__user=request.user)
     curso = entregable.curso
-    if curso is None or not profesor_tiene_acceso_a_curso(request.user, curso):
-        raise PermissionDenied
     alumnos_del_curso = Estudiante.objects.filter(inscripciones__curso=curso)
 
     if request.method == 'POST':
@@ -233,20 +235,17 @@ def entregable_editar(request, id):
                 entregable.save(update_fields=['cantidad_entregados'])
 
             messages.success(request, "Entregable actualizado correctamente.")
-            if es_administrador(request.user):
-                return redirect('myapp:cursoDetalleAdmin', id=curso.id)
             return redirect('myapp:curso_detail', id=curso.id)
     else:
         form = EntregableForm(instance=entregable)
         form.fields['estudiantes'].queryset = alumnos_del_curso
-    return render(request, 'myApp/entregable_editar.html', {'form': form, 'entregable': entregable})
+    return render(request, 'myApp/entregable_editar.html', {'form': form, 'entregable': entregable, 'curso': curso})
 
 @login_required
+@profesor_required
 def entregable_eliminar(request, id):
-    entregable = get_object_or_404(Entregable, id=id)
+    entregable = get_object_or_404(Entregable, id=id, curso__profesores__user=request.user)
     curso = entregable.curso
-    if curso is None or not profesor_tiene_acceso_a_curso(request.user, curso):
-        raise PermissionDenied
     if request.method == 'POST':
         with transaction.atomic():
             estudiantes_que_entregaron = list(
@@ -266,8 +265,6 @@ def entregable_eliminar(request, id):
             Inscripcion.objects.filter(curso=curso, proyectos_totales__lt=0).update(proyectos_totales=0)
 
         messages.success(request, "Entregable eliminado correctamente.")
-        if es_administrador(request.user):
-            return redirect('myapp:cursoDetalleAdmin', id=curso.id)
         return redirect('myapp:curso_detail', id=curso.id)
     return render(request, 'myApp/entregable_confirm_delete.html', {'entregable': entregable, 'curso': curso})
 
@@ -341,11 +338,9 @@ def curso_editar(request, id):
 def admin_curso_detail(request, id):
     curso = get_object_or_404(Curso, id=id)
     inscripciones = Inscripcion.objects.filter(curso=curso).select_related('estudiante')
-    entregables_info = _entregables_info_de_curso(curso, inscripciones)
     return render(request, 'myApp/admin_curso_detail.html', {
         'curso': curso,
         'inscripciones': inscripciones,
-        'entregables_info': entregables_info,
     })
 
 @login_required
@@ -409,10 +404,28 @@ def estudiante_curso_eliminar(request, curso_id, estudiante_id):
     })
 
 @login_required
+@profesor_required
+def inscripcion_editar(request, curso_id, estudiante_id):
+    curso = get_object_or_404(Curso, id=curso_id, profesores__user=request.user)
+    inscripcion = get_object_or_404(Inscripcion, curso=curso, estudiante_id=estudiante_id)
+    if request.method == 'POST':
+        form = InscripcionForm(request.POST, instance=inscripcion)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Datos académicos actualizados correctamente.")
+            return redirect('myapp:curso_detail', id=curso.id)
+    else:
+        form = InscripcionForm(instance=inscripcion)
+    return render(request, 'myApp/inscripcion_editar.html', {
+        'form': form,
+        'curso': curso,
+        'inscripcion': inscripcion,
+    })
+
+@login_required
+@profesor_required
 def entregable_crear_en_curso(request, curso_id):
-    curso = get_object_or_404(Curso, id=curso_id)
-    if not profesor_tiene_acceso_a_curso(request.user, curso):
-        raise PermissionDenied
+    curso = get_object_or_404(Curso, id=curso_id, profesores__user=request.user)
     if request.method == 'POST':
         form = EntregableFormulario(request.POST)
         if form.is_valid():
@@ -426,8 +439,6 @@ def entregable_crear_en_curso(request, curso_id):
                 )
                 Inscripcion.objects.filter(curso=curso).update(proyectos_totales=F('proyectos_totales') + 1)
             messages.success(request, "Entregable agregado correctamente.")
-            if es_administrador(request.user):
-                return redirect('myapp:cursoDetalleAdmin', id=curso.id)
             return redirect('myapp:curso_detail', id=curso.id)
     else:
         form = EntregableFormulario()

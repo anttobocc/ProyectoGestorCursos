@@ -5,7 +5,7 @@
 <!-- Encabezado del dashboard -->
 <div class="mb-5">
     <h1 class="fw-bold text-dark mb-1">Panel de Gestión</h1>
-    <p class="text-muted">Bienvenido al sistema Gestor de Cursos. Desde aquí podés administrar cursos, estudiantes, profesores y entregables.</p>
+    <p class="text-muted">Bienvenido al sistema Gestor de Cursos. Desde aquí podés administrar cursos, estudiantes y profesores.</p>
 </div>
 
 <!-- Tarjetas de estadísticas -->
@@ -49,25 +49,11 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex align-items-center gap-3 p-4">
-                <div class="d-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-3" style="width:56px;height:56px;font-size:1.6rem;">
-                    <i class="bi bi-folder-check"></i>
-                </div>
-                <div>
-                    <div class="fs-2 fw-bold text-dark">{{ total_entregables }}</div>
-                    <div class="text-muted small fw-medium">Entregables</div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- Accesos rápidos -->
 <h5 class="fw-semibold text-dark mb-3">Accesos rápidos</h5>
 <div class="row g-3">
-    {% if es_admin %}
     <div class="col-sm-6 col-lg-3">
         <a href="{% url 'myapp:cursos' %}" class="btn btn-primary w-100 py-2 fw-medium">
             <i class="bi bi-journal-bookmark me-2"></i>Cursos
@@ -83,13 +69,6 @@
             <i class="bi bi-person-workspace me-2"></i>Profesores
         </a>
     </div>
-    {% elif es_profesor %}
-    <div class="col-sm-6 col-lg-3">
-        <a href="{% url 'myapp:mis_cursos' %}" class="btn btn-primary w-100 py-2 fw-medium">
-            <i class="bi bi-journal-bookmark me-2"></i>Mis Cursos
-        </a>
-    </div>
-    {% endif %}
 </div>
 
 {% endblock %}
