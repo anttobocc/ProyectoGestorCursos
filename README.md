@@ -78,6 +78,40 @@ La versión actual del proyecto se encuentra organizada utilizando **Django**, s
 
 El proyecto continúa siendo actualizado mediante Git y GitHub, registrando los avances y modificaciones realizados durante las diferentes etapas.
 
+## Evidencia
+### Panel de Gestión
+![Panel de Gestión](screenshots/captura-233401.png)
+
+### Cursos
+![Cursos](screenshots/captura-233434.png)
+
+### Alta de Cursos
+![Alta de Cursos](screenshots/captura-234054.png)
+
+### Estudiantes
+![Estudiantes](screenshots/captura-233446.png)
+
+### Editar estudiante
+![editar estudiante](screenshots/captura-234105.png)
+
+### Eliminar estudiante
+![Eliminar estudiante](screenshots/captura-234114.png)
+
+### Profesores
+![Profesores](screenshots/captura-233459.png)
+
+### Editar profesor
+![Editar profesor](screenshots/captura-234128.png)
+
+### Eliminar profesor
+![Eliminar profesor](screenshots/captura-234136.png)
+
+### Entregables
+![Entregables](screenshots/captura-233508.png)
+
+### Editar entregables
+![Editar entregables](screenshots/captura-234149.png)
+
 # Historial y organización del trabajo
 
 A continuación se deja constancia de la evolución del proyecto y de una situación ocurrida durante la integración del trabajo de los integrantes del equipo.
