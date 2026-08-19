@@ -1,31 +1,84 @@
-#Proyecto Gestor de Cursos
+# 📚 Proyecto Gestor de Cursos
 
-##Descripción
+## 📖 Descripción
 
-Proyecto Gestor de Cursos es una aplicación web desarrollada para facilitar la gestión académica de cursos, estudiantes, profesores y entregables. El sistema permite administrar la información mediante operaciones CRUD, realizar búsquedas, registrar y modificar datos, gestionar entregables y asociarlos con los estudiantes correspondientes.
+**Proyecto Gestor de Cursos** es una aplicación web desarrollada para facilitar la gestión académica de **cursos, estudiantes, profesores y entregables**.
 
-El proyecto fue desarrollado utilizando Python y Django, con SQLite como base de datos y HTML, CSS y Bootstrap para la interfaz. También se utilizaron formularios y migraciones de Django para la gestión y validación de los datos.
+El sistema permite administrar la información mediante operaciones **CRUD**, realizar búsquedas, registrar y modificar datos, gestionar entregables y asociarlos con los estudiantes correspondientes.
 
-El desarrollo y control de versiones se realizó mediante Visual Studio Code y Git/GitHub, permitiendo registrar los avances y cambios realizados durante las distintas etapas del proyecto.
+El proyecto fue desarrollado utilizando **Python y Django**, con **SQLite** como base de datos y **HTML, CSS y Bootstrap** para la interfaz. También se utilizaron formularios y migraciones de Django para la gestión y validación de los datos.
 
-##Integrantes
+El desarrollo y control de versiones se realizó mediante **Visual Studio Code y Git/GitHub**, permitiendo registrar los avances y cambios realizados durante las distintas etapas del proyecto.
 
-- Antonella Boccalandro
-- Candela Mimbi Cáceres
+---
 
-Tecnologías utilizadas
+## 👩‍💻 Integrantes
 
-- Python
-- Django
-- SQLite
-- HTML5
-- CSS3
-- Bootstrap
-- Git
-- GitHub
-- Visual Studio Code
+- **Antonella Boccalandro**
+- **Candela Mimbi Cáceres**
 
-#Historial y organización del trabajo
+---
+
+## 🛠️ Tecnologías utilizadas
+
+### 💻 Lenguajes y Frameworks
+
+- **Python**
+- **Django**
+- **HTML5**
+- **CSS3**
+
+### 🗄️ Base de datos
+
+- **SQLite**
+
+### 🎨 Interfaz
+
+- **Bootstrap**
+
+### 🔧 Herramientas de desarrollo
+
+- **Visual Studio Code**
+- **Git**
+- **GitHub**
+
+---
+
+## ⚙️ Funcionalidades principales
+
+- 📚 Gestión de cursos
+- 👩‍🎓 Gestión de estudiantes
+- 👨‍🏫 Gestión de profesores
+- 📋 Gestión de entregables
+- ➕ Registro de información
+- ✏️ Modificación de datos
+- 🗑️ Eliminación de registros
+- 🔎 Búsqueda de cursos
+- 🔗 Asociación de entregables con estudiantes
+- ✅ Validación de datos mediante formularios
+- 🗃️ Gestión de cambios mediante migraciones de Django
+
+---
+
+## 🚀 Objetivo del proyecto
+
+El objetivo del proyecto es desarrollar una aplicación web que permita **centralizar y facilitar la gestión de información académica**, utilizando herramientas y tecnologías estudiadas durante la formación en Desarrollo de Software.
+
+---
+
+## 📂 Estructura del proyecto
+
+La versión actual del proyecto se encuentra organizada utilizando **Django**, separando la configuración del proyecto de la aplicación encargada de las funcionalidades principales.
+
+---
+
+## 📌 Estado del proyecto
+
+**En desarrollo.**
+
+El proyecto continúa siendo actualizado mediante Git y GitHub, registrando los avances y modificaciones realizados durante las diferentes etapas.
+
+Historial y organización del trabajo
 
 A continuación se deja constancia de la evolución del proyecto y de una situación ocurrida durante la integración del trabajo de los integrantes del equipo.
 
