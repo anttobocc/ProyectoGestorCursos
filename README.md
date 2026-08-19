@@ -87,57 +87,57 @@ A continuación se deja constancia de la evolución del proyecto y de una situac
 Se creó el repositorio ProyectoGestorCursos y se realizó la primera entrega del proyecto Django.
 
 La estructura inicial desarrollada fue:
-
+```text
 config/
 cursos/
 manage.py
-
+```
 Esta primera versión incluía las funcionalidades iniciales para la gestión de Cursos, Estudiantes, Profesores y Entregables.
 
-2. Incorporación de un proyecto desarrollado de forma independiente — 06/07/2026
+## 2. Incorporación de un proyecto desarrollado de forma independiente — 06/07/2026
 
 Posteriormente, una integrante del equipo incorporó al repositorio una nueva estructura de proyecto Django creada de manera independiente, en lugar de continuar trabajando sobre los archivos y la estructura que ya se encontraban en el repositorio.
 
 La nueva estructura incorporada fue:
-
+```text
 Proyecto1/
 myApp/
 manage.py
-
+```
 Esto puede comprobarse directamente en el commit correspondiente al 06/07/2026, donde aparecen archivos nuevos de Django como "Proyecto1/settings.py", "Proyecto1/urls.py", "Proyecto1/wsgi.py", "myApp/models.py", "myApp/views.py", "myApp/urls.py" y las distintas plantillas.
 
 Es importante aclarar que esta nueva estructura no consistió en modificaciones de los archivos originales "config/" y "cursos/", sino en la creación e incorporación de otra estructura de proyecto ("Proyecto1/" y "myApp/").
 
 Además, el historial de Git muestra que ambas estructuras no provenían de una misma línea de commits, lo que explica la coexistencia de ambos proyectos dentro del repositorio.
 
-3. Problema generado durante la sincronización local
+## 3. Problema generado durante la sincronización local
 
 Al realizar posteriormente un "git pull" para sincronizar el repositorio, los cambios incorporados hicieron que en el entorno local coexistieran las dos estructuras de proyecto.
 
 Como consecuencia, en el entorno de desarrollo local llegaron a aparecer simultáneamente:
-
+```text
 config/
 cursos/
-
+```
 y
-
+```text
 Proyecto1/
 myApp/
-
+```
 Esto generó confusión sobre cuál era la estructura que debía utilizarse para continuar el desarrollo.
 
-4. Reorganización y continuidad del proyecto
+## 4. Reorganización y continuidad del proyecto
 
 Para evitar continuar trabajando con dos proyectos Django diferentes, se revisó el historial de Git y se identificó cuál de las estructuras había continuado recibiendo modificaciones.
 
 A partir de esa revisión se decidió continuar el desarrollo sobre:
-
+```text
 Proyecto1/
 myApp/
-
+```
 La estructura original "config/" y "cursos/" corresponde a la primera etapa del proyecto y se conserva en el historial como parte de la evolución del repositorio.
 
-5. Desarrollo posterior
+## 5. Desarrollo posterior
 
 Sobre la estructura "Proyecto1/myApp" se continuó trabajando en las funcionalidades del sistema, incluyendo:
 
@@ -155,13 +155,13 @@ Sobre la estructura "Proyecto1/myApp" se continuó trabajando en las funcionalid
 
 Los cambios realizados pueden verificarse mediante los commits correspondientes del repositorio.
 
-6. Situación actual
+## 6. Situación actual
 
 Actualmente el desarrollo continúa sobre la estructura:
-
+```text
 Proyecto1/
 myApp/
-
+```
 La aclaración de las dos estructuras se deja documentada para mantener la trazabilidad del proyecto y explicar por qué durante una etapa intermedia coexistieron dos proyectos Django dentro del repositorio y del entorno local.
 
 El historial de commits permanece disponible para verificar cronológicamente las distintas entregas, incorporaciones y modificaciones realizadas durante el desarrollo.
