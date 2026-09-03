@@ -41,7 +41,7 @@
 <body class="d-flex flex-column min-vh-100">
 
     <!-- Navbar Principal -->
-    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3">
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-2">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'myapp:index' %}">
                 <i class="bi bi-rocket-takeoff-fill text-info me-2"></i>Edu<span class="text-info">Control</span>
@@ -116,13 +116,13 @@
     {% endif %}
 
     <!-- Contenido Inyectado dinámicamente -->
-    <div class="container my-5">
+    <div class="container my-2 flex-grow-1">
         {% block contenido %}
         {% endblock %}
     </div>
 
     <!-- Footer -->
-    <footer class="footer text-center py-4 border-top mt-auto shadow-sm">
+    <footer class="footer text-center py-2 border-top mt-auto shadow-sm">
         <div class="container">
             <p class="mb-0 small fw-medium">&copy; 2026 EduControl — Diseñado de forma responsiva.</p>
         </div>

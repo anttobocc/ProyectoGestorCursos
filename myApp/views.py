@@ -59,8 +59,9 @@ def logout_view(request):
 
 # 1. Vista de inicio
 
-@login_required
 def index(request):
+    if not request.user.is_authenticated:
+        return render(request, 'myApp/welcome.html')
     if not es_administrador(request.user):
         return redirect('myapp:mis_cursos')
     context = {

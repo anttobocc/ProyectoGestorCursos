@@ -1,0 +1,451 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenido — EduControl</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --navy-950: #060b18;
+            --navy-900: #0a1226;
+            --navy-800: #0f1c38;
+            --blue-500: #2563eb;
+            --blue-400: #3b82f6;
+            --blue-300: #60a5fa;
+            --teal-300: #2dd4bf;
+            --slate-300: #94a3b8;
+            --slate-200: #cbd5e1;
+        }
+
+        * { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at 80% 15%, #0d1a3a 0%, var(--navy-950) 55%) fixed;
+            color: #e2e8f0;
+        }
+
+        /* ---------- Hero ---------- */
+        .welcome-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 5vw 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 3rem;
+            align-items: center;
+            max-width: 1280px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .eyebrow {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: #f1f5f9;
+            margin-bottom: .5rem;
+            letter-spacing: .01em;
+        }
+
+        .brand-title {
+            font-weight: 800;
+            font-size: clamp(2.6rem, 6vw, 4.4rem);
+            line-height: 1.05;
+            margin: 0 0 1.5rem;
+            letter-spacing: -0.02em;
+        }
+        .brand-title .brand-accent {
+            background: linear-gradient(90deg, var(--blue-400), var(--teal-300));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .brand-underline {
+            width: 64px;
+            height: 4px;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--blue-400), var(--teal-300));
+            margin-bottom: 1.75rem;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            color: var(--slate-300);
+            max-width: 480px;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .feature-strip {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: .85rem;
+            color: var(--slate-200);
+            font-weight: 500;
+            font-size: .95rem;
+            margin-bottom: 2.5rem;
+        }
+        .feature-strip .feature-item { display: inline-flex; align-items: center; gap: .5rem; }
+        .feature-strip .feature-item i { color: var(--blue-300); }
+        .feature-strip .dot { color: #475569; }
+
+        .hero-actions { display: flex; flex-wrap: wrap; gap: 1rem; }
+
+        .btn-hero-primary {
+            background: linear-gradient(90deg, var(--blue-500), var(--blue-400));
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: .85rem 1.75rem;
+            border-radius: .8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .6rem;
+            text-decoration: none;
+            box-shadow: 0 8px 24px -6px rgba(37, 99, 235, .55);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .btn-hero-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px -6px rgba(37, 99, 235, .7);
+            color: #fff;
+        }
+
+        .btn-hero-secondary {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            font-weight: 600;
+            padding: .85rem 1.75rem;
+            border-radius: .8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: .6rem;
+            text-decoration: none;
+            transition: border-color .15s ease, background .15s ease, color .15s ease;
+        }
+        .btn-hero-secondary:hover {
+            border-color: var(--blue-400);
+            background: rgba(59, 130, 246, .08);
+            color: #fff;
+        }
+
+        /* ---------- Illustration ---------- */
+        .illustration-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 420px;
+        }
+
+        .glow-ring {
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border: 1px dashed rgba(96, 165, 250, .35);
+            border-radius: 50%;
+            animation: spin 40s linear infinite;
+        }
+        .glow-ring.outer { width: 460px; height: 460px; border-color: rgba(96, 165, 250, .18); animation-duration: 60s; animation-direction: reverse; }
+
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .core-glow {
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(59,130,246,.45) 0%, rgba(59,130,246,0) 70%);
+            filter: blur(6px);
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: .7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.08); }
+        }
+
+        .stack-icon {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: float-stack 4.5s ease-in-out infinite;
+        }
+        @keyframes float-stack {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-14px); }
+        }
+
+        .platform-glow {
+            position: absolute;
+            bottom: 10px;
+            width: 230px;
+            height: 36px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse, rgba(59,130,246,.65) 0%, rgba(59,130,246,.15) 55%, rgba(59,130,246,0) 75%);
+            filter: blur(2px);
+            animation: pulse-glow 4.5s ease-in-out infinite;
+        }
+
+        .books-image {
+            width: min(300px, 62vw);
+            height: auto;
+            display: block;
+            filter: drop-shadow(0 0 18px rgba(59,130,246,.35)) drop-shadow(0 0 40px rgba(37,99,235,.22));
+        }
+
+        .cap-image {
+            position: absolute;
+            left: 50%;
+            bottom: 60%;
+            width: 75%;
+            transform: translateX(-50%);
+            filter: drop-shadow(0 12px 16px rgba(2,6,23,.55)) drop-shadow(0 0 22px rgba(59,130,246,.3));
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .badge-orbit {
+            position: absolute;
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            background: rgba(15, 28, 56, .85);
+            border: 1px solid rgba(96, 165, 250, .35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--blue-300);
+            box-shadow: 0 0 24px rgba(37, 99, 235, .25);
+            animation: float-badge 5s ease-in-out infinite;
+        }
+        @keyframes float-badge {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .badge-orbit.b1 { top: 4%; left: 8%; color: var(--blue-300); animation-delay: 0s; }
+        .badge-orbit.b2 { top: 2%; right: 4%; animation-delay: .6s; }
+        .badge-orbit.b3 { bottom: 10%; left: 2%; color: var(--teal-300); animation-delay: 1.2s; }
+        .badge-orbit.b4 { bottom: 6%; right: 10%; animation-delay: 1.8s; }
+
+        .dot { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: var(--blue-300); opacity: .7; animation: twinkle 3s ease-in-out infinite; }
+        .dot.d1 { top: 20%; left: 30%; animation-delay: 0s; }
+        .dot.d2 { top: 60%; right: 18%; animation-delay: 1s; }
+        .dot.d3 { bottom: 22%; left: 42%; animation-delay: 2s; }
+        @keyframes twinkle {
+            0%, 100% { opacity: .3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.6); }
+        }
+
+        .scroll-cue {
+            text-align: center;
+            margin-top: 2.5rem;
+        }
+        .scroll-cue a {
+            color: #64748b;
+            font-size: 1.4rem;
+            display: inline-flex;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+        /* ---------- Info section ---------- */
+        .info-section {
+            background: var(--navy-900);
+            border-top: 1px solid rgba(148, 163, 184, .1);
+            padding: 5rem 5vw;
+        }
+        .info-section .section-title {
+            font-weight: 800;
+            font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+            text-align: center;
+            margin-bottom: .75rem;
+        }
+        .info-section .section-sub {
+            text-align: center;
+            color: var(--slate-300);
+            max-width: 620px;
+            margin: 0 auto 3rem;
+        }
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .info-card {
+            background: var(--navy-800);
+            border: 1px solid rgba(148, 163, 184, .12);
+            border-radius: 1rem;
+            padding: 1.75rem 1.5rem;
+        }
+        .info-card i {
+            font-size: 1.6rem;
+            color: var(--blue-300);
+            background: rgba(59, 130, 246, .12);
+            width: 48px;
+            height: 48px;
+            border-radius: .75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .info-card h6 { font-weight: 700; margin-bottom: .4rem; }
+        .info-card p { color: var(--slate-300); font-size: .9rem; margin: 0; line-height: 1.5; }
+
+        .info-footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #475569;
+            font-size: .85rem;
+        }
+
+        @media (max-width: 991px) {
+            .welcome-grid { grid-template-columns: 1fr; text-align: center; }
+            .hero-desc { margin-left: auto; margin-right: auto; }
+            .feature-strip, .hero-actions { justify-content: center; }
+            .brand-underline { margin-left: auto; margin-right: auto; }
+            .illustration-wrap { min-height: 320px; margin-top: 1rem; }
+            .info-cards { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 575px) {
+            .welcome-hero { padding: 3rem 6vw 2.5rem; }
+            .hero-actions { flex-direction: column; align-items: stretch; }
+            .btn-hero-primary, .btn-hero-secondary { justify-content: center; }
+            .glow-ring { width: 280px; height: 280px; }
+            .glow-ring.outer { width: 340px; height: 340px; }
+            .badge-orbit { width: 50px; height: 50px; font-size: 1.1rem; }
+            .info-cards { grid-template-columns: 1fr; }
+            .illustration-wrap { transform: scale(.82); min-height: 260px; }
+        }
+    </style>
+</head>
+<body>
+
+    <section class="welcome-hero">
+        <div class="welcome-grid">
+            <div>
+                <p class="eyebrow">Bienvenido a</p>
+                <h1 class="brand-title">Edu<span class="brand-accent">Control</span></h1>
+                <div class="brand-underline"></div>
+                <p class="hero-desc">
+                    Una plataforma para administrar cursos, estudiantes,
+                    profesores y entregables de forma simple y organizada.
+                </p>
+
+                <div class="feature-strip">
+                    <span class="feature-item"><i class="bi bi-shield-check"></i>Seguro</span>
+                    <span class="dot">&bull;</span>
+                    <span class="feature-item"><i class="bi bi-clock-history"></i>Fácil de usar</span>
+                    <span class="dot">&bull;</span>
+                    <span class="feature-item"><i class="bi bi-bar-chart-line"></i>Organizado</span>
+                </div>
+
+                <div class="hero-actions">
+                    <a href="{% url 'myapp:login' %}" class="btn-hero-primary">
+                        <i class="bi bi-box-arrow-in-right"></i>Iniciar sesión
+                    </a>
+                    <a href="#mas-informacion" class="btn-hero-secondary">
+                        <i class="bi bi-info-circle"></i>Más información
+                    </a>
+                </div>
+            </div>
+
+            <div class="illustration-wrap">
+                <div class="glow-ring outer"></div>
+                <div class="glow-ring"></div>
+                <div class="core-glow"></div>
+
+                <span class="badge-orbit b1"><i class="bi bi-book-half"></i></span>
+                <span class="badge-orbit b2"><i class="bi bi-people-fill"></i></span>
+                <span class="badge-orbit b3" style="color:var(--teal-300);"><i class="bi bi-mortarboard-fill"></i></span>
+                <span class="badge-orbit b4"><i class="bi bi-clipboard2-check-fill"></i></span>
+
+                <span class="dot d1"></span>
+                <span class="dot d2"></span>
+                <span class="dot d3"></span>
+
+                <div class="platform-glow"></div>
+
+                <div class="stack-icon">
+                    <!-- Libros: imagen real del proyecto -->
+                    <img src="{% static 'myApp/images/libros.png' %}" alt="Pila de libros" class="books-image">
+
+                    <!-- Birrete: imagen real del proyecto, apoyada sobre el libro superior -->
+                    <img src="{% static 'myApp/images/birrete.png' %}" alt="Birrete de graduación" class="cap-image">
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-cue">
+            <a href="#mas-informacion" aria-label="Ver más información">
+                <i class="bi bi-chevron-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <section class="info-section" id="mas-informacion">
+        <h2 class="section-title">Todo tu sistema académico en un solo lugar</h2>
+        <p class="section-sub">
+            EduControl centraliza la gestión de cursos, estudiantes, profesores y entregables
+            para que administradores y profesores trabajen de forma más ordenada.
+        </p>
+
+        <div class="info-cards">
+            <div class="info-card">
+                <i class="bi bi-journal-bookmark-fill"></i>
+                <h6>Cursos</h6>
+                <p>Creá y administrá cursos, camadas e inscripciones desde un solo panel.</p>
+            </div>
+            <div class="info-card">
+                <i class="bi bi-people-fill"></i>
+                <h6>Estudiantes</h6>
+                <p>Seguimiento de asistencia, promedio y avance de cada estudiante.</p>
+            </div>
+            <div class="info-card">
+                <i class="bi bi-person-workspace"></i>
+                <h6>Profesores</h6>
+                <p>Cada profesor accede solo a sus propios cursos y alumnos asignados.</p>
+            </div>
+            <div class="info-card">
+                <i class="bi bi-clipboard2-check-fill"></i>
+                <h6>Entregables</h6>
+                <p>Registrá entregas y controlá el porcentaje de cumplimiento por curso.</p>
+            </div>
+        </div>
+
+        <div class="hero-actions" style="justify-content:center; margin-top:3rem;">
+            <a href="{% url 'myapp:login' %}" class="btn-hero-primary">
+                <i class="bi bi-box-arrow-in-right"></i>Iniciar sesión
+            </a>
+        </div>
+
+        <p class="info-footer">&copy; 2026 EduControl — Proyecto Gestor de Cursos.</p>
+    </section>
+
+</body>
+</html>
