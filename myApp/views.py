@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, Group
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Q, F
 from django.utils import timezone
@@ -92,8 +94,20 @@ def lista_cursos(request):
 
 @admin_required
 def lista_estudiantes(request):
-    estudiantes = Estudiante.objects.all()
-    return render(request, 'myApp/estudiantes_list.html', {'estudiantes': estudiantes})
+    query = request.GET.get('q', '').strip()
+    estudiantes = Estudiante.objects.all().order_by('nombre', 'apellido')
+    if query:
+        estudiantes = estudiantes.filter(
+            Q(nombre__icontains=query) | Q(apellido__icontains=query)
+        )
+    total_estudiantes = estudiantes.count()
+    paginator = Paginator(estudiantes, 8)
+    page_obj = paginator.get_page(request.GET.get('page'))
+    return render(request, 'myApp/estudiantes_list.html', {
+        'estudiantes': page_obj,
+        'query': query,
+        'total_estudiantes': total_estudiantes,
+    })
 
 @admin_required
 def detalle_estudiante(request, pk):
@@ -119,12 +133,20 @@ def profesorFormulario(request):
     if request.method == 'POST':
         form = ProfesorFormulario(request.POST)
         if form.is_valid():
-            Profesor(
+            profesor = Profesor(
                 nombre=form.cleaned_data['nombre'],
                 apellido=form.cleaned_data['apellido'],
                 email=form.cleaned_data['email'],
                 profesion=form.cleaned_data['profesion'],
-            ).save()
+            )
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            if username and password:
+                grupo_profesor, _ = Group.objects.get_or_create(name='Profesor')
+                user = User.objects.create_user(username=username, password=password)
+                user.groups.add(grupo_profesor)
+                profesor.user = user
+            profesor.save()
             messages.success(request, "Profesor agregado correctamente.")
             return redirect('myapp:profesores')
     else:
@@ -137,7 +159,21 @@ def profesor_editar(request, id):
     if request.method == 'POST':
         form = ProfesorForm(request.POST, instance=profesor)
         if form.is_valid():
-            form.save()
+            profesor = form.save(commit=False)
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            if username:
+                if profesor.user:
+                    profesor.user.username = username
+                    if password:
+                        profesor.user.set_password(password)
+                    profesor.user.save()
+                else:
+                    grupo_profesor, _ = Group.objects.get_or_create(name='Profesor')
+                    user = User.objects.create_user(username=username, password=password)
+                    user.groups.add(grupo_profesor)
+                    profesor.user = user
+            profesor.save()
             messages.success(request, "Profesor actualizado correctamente.")
             return redirect('myapp:profesores')
     else:

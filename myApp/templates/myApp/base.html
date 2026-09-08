@@ -14,6 +14,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
+        /* Escala general compacta para todas las vistas internas (no afecta a welcome.html,
+           que es un documento standalone y no incluye este bloque). */
+        html {
+            font-size: 14px;
+        }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #f8fafc;
@@ -35,6 +40,48 @@
         .footer {
             background-color: #ffffff;
             color: #64748b;
+        }
+
+        /* Tipografía más compacta para títulos de sección/tarjetas en todas las vistas internas */
+        h1 { font-size: 1.6rem; }
+        h2 { font-size: 1.4rem; }
+        h3 { font-size: 1.3rem; }
+        h4 { font-size: 1.1rem; }
+        h5 { font-size: 1.05rem; }
+        h6 { font-size: 0.9rem; }
+        .fs-2 { font-size: 1.4rem !important; }
+        .fs-5 { font-size: 1.05rem !important; }
+
+        /* Espaciados grandes de Bootstrap reducidos de forma centralizada */
+        .mb-5 { margin-bottom: 2rem !important; }
+        .mt-5 { margin-top: 2rem !important; }
+        .p-5 { padding: 2rem !important; }
+        .g-4 { --bs-gutter-x: 1rem; --bs-gutter-y: 1rem; }
+        .p-4 { padding: 1.15rem !important; }
+        @media (min-width: 768px) {
+            .p-md-5 { padding: 1.5rem !important; }
+        }
+
+        /* Tarjetas de formulario/confirmación centradas (col-md-6 col-lg-5) más angostas */
+        .col-md-6.col-lg-5 { max-width: 592px; }
+
+        .table { font-size: 0.92rem; }
+
+        /* Mensajes/notificaciones flotantes, no forman parte del flujo de la página */
+        .toast-messages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1080;
+            width: 100%;
+            max-width: 360px;
+        }
+        @media (max-width: 575.98px) {
+            .toast-messages {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
         }
     </style>
 </head>
@@ -103,11 +150,11 @@
         </div>
     </nav>
 
-    <!-- Mensajes del sistema -->
+    <!-- Mensajes del sistema (flotantes, no ocupan espacio en el flujo de la página) -->
     {% if messages %}
-    <div class="container mt-3">
+    <div class="toast-messages">
         {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-lg" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
         </div>
@@ -116,7 +163,7 @@
     {% endif %}
 
     <!-- Contenido Inyectado dinámicamente -->
-    <div class="container my-2 flex-grow-1">
+    <div class="container mt-4 mb-2 flex-grow-1">
         {% block contenido %}
         {% endblock %}
     </div>

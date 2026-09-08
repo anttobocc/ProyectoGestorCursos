@@ -1,117 +1,227 @@
 {% extends 'myApp/base.html' %}
 
+{% block title %}Estudiantes{% endblock %}
 
 {% block contenido %}
 <style>
-    /* Tarjeta principal del estudiante */
-    .student-card {
-        border: none;
-        border-radius: 16px;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        background: #ffffff;
-        cursor: pointer;
-    }
-    .student-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
-    }
-    
-    /* Avatar circular */
     .avatar-circle {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
         background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
         color: #0369a1;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .estudiantes-table thead th {
+        background-color: #eef2ff;
+        color: #475569;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+        letter-spacing: 0.03em;
+        font-weight: 700;
+        border-bottom: none;
+        padding: 0.9rem 1rem;
+    }
+    .estudiantes-table tbody td {
+        padding: 0.85rem 1rem;
+        vertical-align: middle;
+    }
+    .estudiantes-table tbody tr:not(:last-child) td {
+        border-bottom: 1px solid #eef1f5;
+    }
+    .page-btn {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
     }
 
-    /* Pequeña barra de progreso para las métricas */
-    .progress-micro {
-        height: 6px;
-        border-radius: 3px;
-        background-color: #f1f5f9;
+    /* En pantallas chicas, la fila sigue siendo una fila de tabla, pero todo se compacta
+       para que Estudiante / Estado / Acciones entren sin desbordar ni apilarse. */
+    @media (max-width: 575.98px) {
+        .btn-agregar-estudiante {
+            width: 100%;
+        }
+        .estudiantes-table thead th {
+            font-size: 0.58rem;
+            padding: 0.5rem 0.35rem;
+        }
+        .estudiantes-table thead th:last-child,
+        .estudiantes-table tbody td.td-acciones {
+            padding-right: 0.35rem;
+        }
+        .estudiantes-table tbody td {
+            padding: 0.4rem 0.35rem;
+        }
+        .avatar-circle {
+            width: 26px;
+            height: 26px;
+            font-size: 0.7rem;
+        }
+        .estudiantes-table .estudiante-nombre {
+            font-size: 0.74rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 24vw;
+            display: inline-block;
+        }
+        .estudiantes-table .badge {
+            padding: 0.25rem 0.4rem !important;
+            font-size: 0.58rem;
+            white-space: nowrap;
+        }
+        .estudiantes-table .acciones-wrap {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            gap: 0.2rem;
+        }
+        .estudiantes-table .acciones-wrap .btn {
+            margin: 0 !important;
+            padding: 0.2rem 0.32rem;
+            font-size: 0.58rem;
+        }
     }
 </style>
 
-<div class="row align-items-center mb-5 g-3">
+<div class="row align-items-center mb-4 g-3">
     <div class="col-md-8 text-center text-md-start">
         <h1 class="fw-bold text-dark mb-1">Control de Estudiantes</h1>
         <p class="text-muted mb-0">Listado oficial de alumnos matriculados en el sistema.</p>
     </div>
     <div class="col-md-4 text-center text-md-end">
-        <a href="{% url 'myapp:estudianteFormulario' %}" class="btn btn-secondary shadow-sm px-4 py-2 fw-semibold rounded-3">
+        <a href="{% url 'myapp:estudianteFormulario' %}" class="btn btn-primary shadow-sm px-4 py-2 fw-semibold rounded-3 btn-agregar-estudiante">
             <i class="bi bi-plus-lg me-2"></i>Agregar Estudiante
         </a>
     </div>
 </div>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {% for estudiante in estudiantes %}
-    <div class="col">
-        
-        <div class="card shadow-sm student-card p-3 mb-2">
-            <div class="card-body d-flex align-items-center justify-content-between p-1"
-                 data-bs-toggle="collapse"
-                 data-bs-target="#collapseEstudiante{{ forloop.counter }}"
-                 aria-expanded="false"
-                 role="button">
-                <div class="d-flex align-items-center">
-                    <div class="avatar-circle me-3 flex-shrink-0">
-                        <i class="bi bi-person-vcard"></i>
-                    </div>
-                    <div class="overflow-hidden">
-                        <h5 class="fw-bold text-dark mb-1 text-truncate">{{ estudiante.nombre }} {{ estudiante.apellido }}</h5>
-                        <p class="text-muted small mb-0">
-                            <i class="bi bi-shield-check text-success me-1"></i>Regular
-                        </p>
-                    </div>
-                </div>
-                <i class="bi bi-chevron-down text-muted small"></i>
-            </div>
-        </div>
-
-        <div class="collapse" id="collapseEstudiante{{ forloop.counter }}">
-            <div class="card card-body border-0 shadow-sm p-3 mb-3" style="background-color: #f8fafc; border-radius: 14px;">
-                <span class="text-uppercase fw-bold text-secondary tracking-wider mb-2" style="font-size: 0.75rem;">Información</span>
-
-                <div class="mb-2">
-                    <div class="d-flex justify-content-between small text-muted mb-1">
-                        <span>Cursos</span>
-                        <strong>{{ estudiante.inscripciones.count }}</strong>
-                    </div>
-                </div>
-
-                <hr class="my-2 opacity-25">
-                <p class="text-muted small mb-0 text-truncate">
-                    <i class="bi bi-envelope me-2 text-secondary"></i>{{ estudiante.email|default:"alumno@educontrol.com" }}
-                </p>
-            </div>
-        </div>
-
-        <div class="card-footer bg-transparent border-top text-center mt-2">
-            <a href="{% url 'myapp:detalle_estudiante' estudiante.id %}" class="btn btn-outline-primary btn-sm me-2">
-                <i class="bi bi-eye"></i> Ver
-            </a>
-            <a href="{% url 'myapp:estudianteEditar' estudiante.id %}" class="btn btn-warning btn-sm me-2">
-                <i class="bi bi-pencil"></i> Editar
-            </a>
-            <a href="{% url 'myapp:estudianteEliminar' estudiante.id %}" class="btn btn-danger btn-sm">
-                <i class="bi bi-trash"></i> Eliminar
-            </a>
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-8">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" name="q" class="form-control border-start-0 ps-0" placeholder="Buscar estudiante por nombre..." value="{{ query|default_if_none:'' }}">
         </div>
     </div>
-    {% empty %}
-    <div class="col-12 w-100">
-        <div class="text-center p-5 bg-white rounded-4 border shadow-sm">
-            <i class="bi bi-people text-muted" style="font-size: 3.5rem;"></i>
-            <h4 class="fw-bold text-dark mt-3">No hay estudiantes cargados</h4>
+    <div class="col-md-4">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0"><i class="bi bi-funnel text-muted"></i></span>
+            <select class="form-select border-start-0 ps-0" disabled>
+                <option>Todos los estados</option>
+            </select>
         </div>
     </div>
-    {% endfor %}
+</form>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+        <table class="table mb-0 estudiantes-table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">Estudiante</th>
+                    <th scope="col" class="text-center">Estado</th>
+                    <th scope="col" class="text-center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for estudiante in estudiantes %}
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="avatar-circle">
+                                <i class="bi bi-person-vcard"></i>
+                            </div>
+                            <span class="fw-bold text-dark estudiante-nombre">{{ estudiante.nombre }} {{ estudiante.apellido }}</span>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2 fw-semibold">
+                            <i class="bi bi-shield-check me-1"></i>Regular
+                        </span>
+                    </td>
+                    <td class="text-center td-acciones">
+                        <div class="acciones-wrap">
+                            <a href="{% url 'myapp:detalle_estudiante' estudiante.id %}" class="btn btn-outline-primary btn-sm me-1">
+                                <i class="bi bi-eye"></i> Ver
+                            </a>
+                            <a href="{% url 'myapp:estudianteEditar' estudiante.id %}" class="btn btn-warning btn-sm me-1">
+                                <i class="bi bi-pencil"></i> Editar
+                            </a>
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteEstudiante{{ estudiante.id }}">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="text-center text-muted py-5">
+                        <i class="bi bi-people text-muted d-block mb-2" style="font-size: 2.5rem;"></i>
+                        No hay estudiantes cargados
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-{% endblock %}
 
+{% if estudiantes.paginator.count %}
+<div class="d-flex align-items-center justify-content-center gap-3 mt-3">
+    <span class="text-muted small">Mostrando {{ estudiantes.paginator.count }} estudiante{{ estudiantes.paginator.count|pluralize }}</span>
+    {% if estudiantes.paginator.num_pages > 1 %}
+    <div class="d-flex align-items-center gap-2">
+        {% if estudiantes.has_previous %}
+        <a class="page-btn btn btn-outline-secondary btn-sm" href="?{% if query %}q={{ query }}&{% endif %}page={{ estudiantes.previous_page_number }}">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+        {% else %}
+        <span class="page-btn btn btn-outline-secondary btn-sm disabled"><i class="bi bi-chevron-left"></i></span>
+        {% endif %}
+
+        <span class="page-btn btn btn-primary btn-sm fw-semibold">{{ estudiantes.number }}</span>
+
+        {% if estudiantes.has_next %}
+        <a class="page-btn btn btn-outline-secondary btn-sm" href="?{% if query %}q={{ query }}&{% endif %}page={{ estudiantes.next_page_number }}">
+            <i class="bi bi-chevron-right"></i>
+        </a>
+        {% else %}
+        <span class="page-btn btn btn-outline-secondary btn-sm disabled"><i class="bi bi-chevron-right"></i></span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+{% for estudiante in estudiantes %}
+<div class="modal fade" id="deleteEstudiante{{ estudiante.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mb-3" style="width:56px;height:56px;font-size:1.5rem;">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <h5 class="fw-bold mb-2">¿Eliminar estudiante?</h5>
+                <p class="text-muted small mb-4">Esta acción no se puede deshacer. Se eliminará a <strong>{{ estudiante.nombre }} {{ estudiante.apellido }}</strong> del sistema.</p>
+                <form method="POST" action="{% url 'myapp:estudianteEliminar' estudiante.id %}">
+                    {% csrf_token %}
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-light border w-50" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger w-50">
+                            <i class="bi bi-trash me-1"></i>Eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

@@ -4,54 +4,95 @@
 {% block title %}Editar Curso{% endblock %}
 
 {% block contenido %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
+<style>
+    .curso-panel {
+        border: 1px solid #e5e9f0;
+        border-radius: 1rem;
+        padding: 0.85rem;
+        height: 100%;
+    }
+    .curso-panel-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        margin-bottom: 0.5rem;
+    }
+    .curso-panel-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+    .curso-checklist {
+        border: 1px solid #e5e9f0;
+        border-radius: 0.75rem;
+        padding: 0.6rem 0.85rem;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+    .compact-form-body { padding: 1rem 1.75rem; }
+</style>
 
-        <div class="mb-3">
-            <a href="{% url 'myapp:cursos' %}" class="text-decoration-none text-secondary small fw-medium">
-                <i class="bi bi-arrow-left me-1"></i> Volver al listado
-            </a>
+<div class="mb-2">
+    <a href="{% url 'myapp:cursos' %}" class="text-decoration-none text-secondary small fw-medium">
+        <i class="bi bi-arrow-left me-1"></i> Volver al listado
+    </a>
+</div>
+
+<div class="card shadow border-0 rounded-4">
+    <div class="card-body compact-form-body">
+
+        <div class="text-center mb-2">
+            <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-2" style="width:44px;height:44px;font-size:1.2rem;">
+                <i class="bi bi-pencil-square"></i>
+            </div>
+            <h3 class="fw-bold text-dark mb-1">Editar Curso</h3>
+            <p class="text-muted small mb-0">{{ curso.nombre }} — Ciclo Lectivo {{ curso.camada }}</p>
         </div>
 
-        <div class="card shadow border-0 rounded-4">
-            <div class="card-body p-4 p-md-5">
+        <form method="POST">
+            {% csrf_token %}
 
-                <div class="text-center mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width:60px;height:60px;font-size:1.7rem;">
-                        <i class="bi bi-pencil-square"></i>
-                    </div>
-                    <h3 class="fw-bold text-dark mb-1">Editar Curso</h3>
-                    <p class="text-muted small">{{ curso.nombre }} — Camada {{ curso.camada }}</p>
-                </div>
+            {% if form.errors %}
+            <div class="alert alert-danger py-2 small" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> Por favor, corregí los errores señalados.
+            </div>
+            {% endif %}
 
-                <form method="POST">
-                    {% csrf_token %}
-
-                    {% if form.errors %}
-                    <div class="alert alert-danger py-2 small" role="alert">
-                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Por favor, corregí los errores señalados.
-                    </div>
+            <div class="row g-3 mb-2">
+                <div class="col-md-6">
+                    <label for="id_nombre" class="form-label fw-semibold text-secondary small">Nombre del Curso</label>
+                    {{ form.nombre|add_class:"form-control" }}
+                    {% if form.nombre.errors %}
+                    <div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>
                     {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label for="id_camada" class="form-label fw-semibold text-secondary small">Ciclo Lectivo</label>
+                    {{ form.camada|add_class:"form-control" }}
+                    {% if form.camada.errors %}
+                    <div class="text-danger small mt-1">{{ form.camada.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
 
-                    <div class="mb-3">
-                        <label for="id_nombre" class="form-label fw-semibold text-secondary small">Nombre del Curso</label>
-                        {{ form.nombre|add_class:"form-control" }}
-                        {% if form.nombre.errors %}
-                        <div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="id_camada" class="form-label fw-semibold text-secondary small">Número de Comisión</label>
-                        {{ form.camada|add_class:"form-control" }}
-                        {% if form.camada.errors %}
-                        <div class="text-danger small mt-1">{{ form.camada.errors.0 }}</div>
-                        {% endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-secondary small d-block">Profesores</label>
-                        <div class="border rounded-3 p-3">
+            <div class="row g-3 mb-2">
+                <div class="col-md-6">
+                    <div class="curso-panel">
+                        <div class="curso-panel-header">
+                            <div class="curso-panel-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-dark mb-0">Profesores</h6>
+                                <p class="text-muted small mb-0">Selecciona los profesores que dictan este curso.</p>
+                            </div>
+                        </div>
+                        <div class="curso-checklist">
                             {% for checkbox in form.profesores %}
                             <div class="form-check">
                                 {{ checkbox.tag }}
@@ -63,10 +104,19 @@
                         </div>
                         {% if form.profesores.errors %}<div class="text-danger small mt-1">{{ form.profesores.errors.0 }}</div>{% endif %}
                     </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold text-secondary small d-block">Alumnos</label>
-                        <div class="border rounded-3 p-3">
+                </div>
+                <div class="col-md-6">
+                    <div class="curso-panel">
+                        <div class="curso-panel-header">
+                            <div class="curso-panel-icon bg-primary bg-opacity-10 text-primary">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-dark mb-0">Alumnos</h6>
+                                <p class="text-muted small mb-0">Selecciona los alumnos que pertenecen a este curso.</p>
+                            </div>
+                        </div>
+                        <div class="curso-checklist">
                             {% for checkbox in form.alumnos %}
                             <div class="form-check">
                                 {{ checkbox.tag }}
@@ -78,17 +128,23 @@
                         </div>
                         {% if form.alumnos.errors %}<div class="text-danger small mt-1">{{ form.alumnos.errors.0 }}</div>{% endif %}
                     </div>
+                </div>
+            </div>
 
-                    <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold rounded-3 mb-2">
-                        <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
-                    </button>
-                    <a href="{% url 'myapp:cursos' %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <a href="{% url 'myapp:cursos' %}" class="btn btn-light w-100 fw-semibold text-secondary rounded-3 border">
                         Cancelar
                     </a>
-                </form>
-
+                </div>
+                <div class="col-md-6">
+                    <button type="submit" class="btn btn-warning w-100 fw-semibold rounded-3">
+                        <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
+                    </button>
+                </div>
             </div>
-        </div>
+        </form>
+
     </div>
 </div>
 {% endblock %}
