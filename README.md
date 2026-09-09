@@ -57,6 +57,13 @@ El desarrollo y control de versiones se realizó mediante **Visual Studio Code y
 - Asociación de entregables con estudiantes
 - Validación de datos mediante formularios
 - Gestión de cambios mediante migraciones de Django
+- Autenticación de usuarios.
+- Roles de Administrador y Profesor.
+- Gestión de asistencia y promedio por curso.
+- Gestión de alumnos y entregables diferenciada por curso.
+- Permisos de acceso según rol.
+- Acceso del Profesor únicamente a sus cursos.
+- Registro de entregas de estudiantes.
 
 ---
 
@@ -189,13 +196,82 @@ Sobre la estructura "Proyecto1/myApp" se continuó trabajando en las funcionalid
 
 Los cambios realizados pueden verificarse mediante los commits correspondientes del repositorio.
 
-## 6. Situación actual
+## 6. Completar funcionalidades y gestión de entregables — 18/08/2026
 
-Actualmente el desarrollo continúa sobre la estructura:
-```text
-Proyecto1/
-myApp/
-```
-La aclaración de las dos estructuras se deja documentada para mantener la trazabilidad del proyecto y explicar por qué durante una etapa intermedia coexistieron dos proyectos Django dentro del repositorio y del entorno local.
+Se continuó el desarrollo del sistema sobre la estructura Proyecto1/myApp, completando las funcionalidades principales de la aplicación.
 
-El historial de commits permanece disponible para verificar cronológicamente las distintas entregas, incorporaciones y modificaciones realizadas durante el desarrollo.
+Entre los cambios realizados se incorporaron:
+
+- Formularios para cursos, estudiantes, profesores y entregables.
+- Operaciones CRUD para los distintos registros.
+- Gestión de entregables asociados a estudiantes.
+- Fechas de publicación y vencimiento de los entregables.
+- Registro de la cantidad de estudiantes que entregaron.
+- Validaciones en los formularios.
+- Ajustes de configuración de Django, incluyendo idioma y zona horaria de Argentina.
+- Incorporación de `widget_tweaks` para mejorar el manejo de formularios.
+
+Estos cambios quedaron registrados en el commit **"Completa CRUD y gestión de entregables"**.
+
+## 7. Incorporación de autenticación y roles — 19/08/2026
+
+Se incorporó un sistema de autenticación mediante usuarios de Django y se establecieron dos roles dentro de la aplicación:
+
+- Administrador.
+- Profesor.
+
+Se implementaron restricciones de acceso según el rol del usuario y se vinculó cada profesor con su correspondiente cuenta de usuario.
+
+También se incorporó la gestión de cursos con profesores e inscripciones de estudiantes, permitiendo relacionar los cursos con los profesores correspondientes.
+
+Se agregaron además funcionalidades para que los profesores puedan trabajar con los cursos que tienen asignados y gestionar la información académica de sus estudiantes.
+
+Estos cambios quedaron registrados en el commit **"Agrego login, roles de administrador y profesor, y gestión de cursos con inscripciones y entregables por curso"**.
+
+## 8. Separación de funciones entre Administrador y Profesor — 19/08/2026
+
+Se realizaron ajustes en los permisos y funcionalidades disponibles para cada tipo de usuario.
+
+El Administrador quedó orientado a la gestión general del sistema, mientras que el Profesor pasó a trabajar únicamente con los cursos que tiene asignados.
+
+Se incorporó la gestión de asistencia y promedio por inscripción, permitiendo que estos datos sean independientes para cada estudiante dentro de cada curso.
+
+También se reforzó el control de acceso para impedir que un profesor pueda modificar información perteneciente a cursos que no tiene asignados.
+
+Estos cambios quedaron registrados en el commit **"Agrego correcciones de separación entre Administrador y Profesor, gestión académica por curso y entregables por profesor"**.
+
+## 9. Separación de alumnos y entregables por curso — 19/08/2026
+
+Se reorganizó la navegación del Profesor para separar la gestión de alumnos y la gestión de entregables.
+
+La información de los alumnos se mantiene en la vista del curso, mientras que los entregables cuentan con una página independiente.
+
+Se incorporó una nueva vista para consultar y administrar los entregables correspondientes a cada curso, manteniendo las restricciones de acceso según el profesor asignado.
+
+También se realizaron ajustes en la navegación para facilitar el acceso entre las diferentes secciones del curso.
+
+Estos cambios quedaron registrados en el commit **"Agrego separación de alumnos y entregables por curso"**.
+
+## 10. Pantalla de bienvenida y ajustes de interfaz — 03/09/2026
+
+Se incorporó una pantalla de bienvenida para el sistema y se realizaron nuevos ajustes visuales en la interfaz.
+
+La pantalla de bienvenida presenta el sistema antes del acceso a la aplicación y se realizaron modificaciones en la estructura general de las vistas para mejorar la presentación y distribución del contenido.
+
+Estos cambios quedaron registrados en el commit **"feat: agrega pantalla de bienvenida y ajustes de interfaz"**.
+
+## 11. Mejoras de diseño y responsividad — 08/09/2026
+
+Se realizaron nuevas mejoras de diseño y adaptación de las vistas para lograr una interfaz más compacta y responsive.
+
+Entre los cambios realizados se encuentran:
+
+- Ajustes de escala y tamaños de tipografía.
+- Reducción de espacios excesivos en las vistas.
+- Ajustes en tarjetas y formularios.
+- Mejoras en la distribución de los elementos.
+- Adaptación de la navegación.
+- Mejoras en la visualización de mensajes del sistema.
+- Ajustes generales de responsividad.
+
+Estos cambios quedaron registrados en el commit **"Mejora diseño y responsividad de las vistas"**.
