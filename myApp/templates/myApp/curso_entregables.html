@@ -27,6 +27,9 @@
         <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
             <h5 class="fw-bold text-dark mb-0">{{ item.entregable.nombre }}</h5>
             <div>
+                <a href="{% url 'myapp:entregableVer' item.entregable.id %}" class="btn btn-outline-primary btn-sm me-1">
+                    <i class="bi bi-eye"></i> Ver
+                </a>
                 <a href="{% url 'myapp:entregableEditar' item.entregable.id %}" class="btn btn-warning btn-sm me-1">
                     <i class="bi bi-pencil"></i> Editar
                 </a>
@@ -51,23 +54,9 @@
             <strong>{{ item.cantidad_entregados }} / {{ item.total_alumnos }}</strong> entregaron
             <span class="text-muted">({{ item.porcentaje }}%)</span>
         </p>
-        <div class="progress mb-3" style="height: 8px; border-radius: 4px;">
+        <div class="progress mb-0" style="height: 8px; border-radius: 4px;">
             <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.porcentaje }}%"></div>
         </div>
-
-        <ul class="list-unstyled mb-0 small">
-            {% for fila in item.detalle %}
-            <li class="mb-1">
-                {% if fila.entrego %}
-                    <i class="bi bi-check-circle-fill text-success me-1"></i>{{ fila.estudiante.nombre }} {{ fila.estudiante.apellido }}
-                {% else %}
-                    <i class="bi bi-circle text-muted me-1"></i>{{ fila.estudiante.nombre }} {{ fila.estudiante.apellido }}
-                {% endif %}
-            </li>
-            {% empty %}
-            <li class="text-muted">No hay alumnos inscriptos en este curso.</li>
-            {% endfor %}
-        </ul>
     </div>
 </div>
 {% empty %}

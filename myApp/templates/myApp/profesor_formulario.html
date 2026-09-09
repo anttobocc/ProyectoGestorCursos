@@ -59,29 +59,12 @@
                         {% endif %}
                     </div>
 
-                    <div class="mb-1">
+                    <div class="mb-2">
                         <label for="id_profesion" class="form-label fw-semibold text-secondary small mb-0">Profesión</label>
                         {{ form.profesion|add_class:"form-control" }}
                         {% if form.profesion.errors %}
                         <div class="text-danger small mt-1">{{ form.profesion.errors.0 }}</div>
                         {% endif %}
-                    </div>
-
-                    <div class="row g-2 mb-2">
-                        <div class="col-6">
-                            <label for="id_username" class="form-label fw-semibold text-secondary small mb-0">Usuario</label>
-                            {{ form.username|add_class:"form-control" }}
-                            {% if form.username.errors %}
-                            <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
-                            {% endif %}
-                        </div>
-                        <div class="col-6">
-                            <label for="id_password" class="form-label fw-semibold text-secondary small mb-0">Contraseña</label>
-                            {{ form.password|add_class:"form-control" }}
-                            {% if form.password.errors %}
-                            <div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>
-                            {% endif %}
-                        </div>
                     </div>
 
                     <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3 mb-2">

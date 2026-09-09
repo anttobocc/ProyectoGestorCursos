@@ -1,6 +1,5 @@
 from django import forms
-from django.contrib.auth.models import User
-from .models import Curso, Profesor, Estudiante, Entregable, Inscripcion
+from .models import Curso, Profesor, Estudiante, Entregable, Inscripcion, Nota
 
 class CursoForm(forms.ModelForm):
     alumnos = forms.ModelMultipleChoiceField(
@@ -22,58 +21,11 @@ class ProfesorFormulario(forms.Form):
     apellido = forms.CharField(max_length=100, label="Apellido")
     email = forms.EmailField(label="Correo Electrónico")
     profesion = forms.CharField(max_length=100, label="Profesión")
-    username = forms.CharField(max_length=150, label="Usuario", required=False)
-    password = forms.CharField(max_length=128, label="Contraseña", widget=forms.PasswordInput, required=False)
-
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data.get('username')
-        password = cleaned_data.get('password')
-        if username and User.objects.filter(username=username).exists():
-            self.add_error('username', 'Ese nombre de usuario ya está en uso.')
-        if password and not username:
-            self.add_error('username', 'Ingresá un usuario para crear el acceso.')
-        if username and not password:
-            self.add_error('password', 'Ingresá una contraseña para crear el acceso.')
-        return cleaned_data
 
 class ProfesorForm(forms.ModelForm):
-    username = forms.CharField(max_length=150, label="Usuario", required=False)
-    password = forms.CharField(
-        max_length=128, label="Contraseña", widget=forms.PasswordInput, required=False,
-        help_text="Dejar en blanco para no cambiarla."
-    )
-
     class Meta:
         model = Profesor
         fields = ['nombre', 'apellido', 'email', 'profesion']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and self.instance.user:
-            self.fields['username'].initial = self.instance.user.username
-
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if username:
-            qs = User.objects.filter(username=username)
-            usuario_actual = self.instance.user if (self.instance and self.instance.pk) else None
-            if usuario_actual:
-                qs = qs.exclude(pk=usuario_actual.pk)
-            if qs.exists():
-                raise forms.ValidationError('Ese nombre de usuario ya está en uso.')
-        return username
-
-    def clean(self):
-        cleaned_data = super().clean()
-        username = cleaned_data.get('username')
-        password = cleaned_data.get('password')
-        tiene_cuenta = bool(self.instance and self.instance.pk and self.instance.user)
-        if not tiene_cuenta and password and not username:
-            self.add_error('username', 'Ingresá un usuario para crear el acceso.')
-        if not tiene_cuenta and username and not password:
-            self.add_error('password', 'Ingresá una contraseña para crear el acceso.')
-        return cleaned_data
 
 class EstudianteFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
@@ -88,28 +40,36 @@ class EstudianteForm(forms.ModelForm):
 class InscripcionForm(forms.ModelForm):
     class Meta:
         model = Inscripcion
-        fields = ['asistencia', 'promedio']
+        fields = ['observaciones']
+        widgets = {
+            'observaciones': forms.Textarea(attrs={'rows': 2}),
+        }
         labels = {
-            'asistencia': 'Asistencia (%)',
-            'promedio': 'Promedio (0-10)',
+            'observaciones': 'Observaciones generales',
         }
 
-class EntregableFormulario(forms.Form):
-    nombre = forms.CharField(max_length=100, label="Nombre")
-    fecha_vencimiento = forms.DateTimeField(
-        label="Fecha de vencimiento",
-        widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-        required=False
-    )
+class NotaForm(forms.ModelForm):
+    class Meta:
+        model = Nota
+        fields = ['nombre', 'tipo', 'fecha', 'nota', 'observaciones']
+        widgets = {
+            'fecha': forms.DateInput(attrs={'type': 'date'}),
+            'nota': forms.NumberInput(attrs={'step': '0.1', 'min': '0', 'max': '10'}),
+        }
+        labels = {
+            'nota': 'Nota (0-10)',
+        }
 
 class EntregableForm(forms.ModelForm):
     class Meta:
         model = Entregable
-        fields = ['nombre', 'fecha_vencimiento', 'estudiantes']
+        fields = ['nombre', 'fecha_publicacion', 'fecha_vencimiento', 'publicado', 'consigna', 'archivo']
         widgets = {
+            'fecha_publicacion': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
             'fecha_vencimiento': forms.DateTimeInput(attrs={'type': 'datetime-local'}, format='%Y-%m-%dT%H:%M'),
-            'estudiantes': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
+            'publicado': forms.CheckboxInput(),
+            'consigna': forms.Textarea(attrs={'rows': 8}),
         }
         labels = {
-            'estudiantes': 'Alumnos que entregaron',
+            'publicado': 'Publicado (visible para los alumnos)',
         }

@@ -3,13 +3,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, Group
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Q, F
+from django.db.models import Q, F, Avg
 from django.utils import timezone
-from .models import Curso, Profesor, Estudiante, Entregable, Inscripcion
-from .forms import CursoForm, ProfesorFormulario, ProfesorForm, EstudianteFormulario, EstudianteForm, EntregableFormulario, EntregableForm, InscripcionForm
+from django.utils.dateparse import parse_date
+from .models import Curso, Profesor, Estudiante, Entregable, Entrega, Inscripcion, Nota, RegistroAsistencia
+from .forms import CursoForm, ProfesorFormulario, ProfesorForm, EstudianteFormulario, EstudianteForm, EntregableForm, InscripcionForm, NotaForm
 from .decorators import admin_required, profesor_required, es_administrador
 
 
@@ -18,7 +18,8 @@ def _entregables_info_de_curso(curso, inscripciones):
     resultado = []
     for entregable in Entregable.objects.filter(curso=curso).order_by('id'):
         entregados_ids = set(
-            entregable.estudiantes.filter(inscripciones__curso=curso).values_list('id', flat=True)
+            Entrega.objects.filter(entregable=entregable, estudiante__inscripciones__curso=curso)
+            .values_list('estudiante_id', flat=True)
         )
         detalle = [
             {'estudiante': inscripcion.estudiante, 'entrego': inscripcion.estudiante_id in entregados_ids}
@@ -34,6 +35,12 @@ def _entregables_info_de_curso(curso, inscripciones):
             'detalle': detalle,
         })
     return resultado
+
+
+def _recalcular_promedio(inscripcion):
+    promedio = inscripcion.notas.aggregate(promedio=Avg('nota'))['promedio']
+    inscripcion.promedio = round(promedio, 1) if promedio is not None else 0.0
+    inscripcion.save(update_fields=['promedio'])
 
 # 0. Vistas de autenticación
 
@@ -133,20 +140,12 @@ def profesorFormulario(request):
     if request.method == 'POST':
         form = ProfesorFormulario(request.POST)
         if form.is_valid():
-            profesor = Profesor(
+            Profesor(
                 nombre=form.cleaned_data['nombre'],
                 apellido=form.cleaned_data['apellido'],
                 email=form.cleaned_data['email'],
                 profesion=form.cleaned_data['profesion'],
-            )
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            if username and password:
-                grupo_profesor, _ = Group.objects.get_or_create(name='Profesor')
-                user = User.objects.create_user(username=username, password=password)
-                user.groups.add(grupo_profesor)
-                profesor.user = user
-            profesor.save()
+            ).save()
             messages.success(request, "Profesor agregado correctamente.")
             return redirect('myapp:profesores')
     else:
@@ -159,21 +158,7 @@ def profesor_editar(request, id):
     if request.method == 'POST':
         form = ProfesorForm(request.POST, instance=profesor)
         if form.is_valid():
-            profesor = form.save(commit=False)
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            if username:
-                if profesor.user:
-                    profesor.user.username = username
-                    if password:
-                        profesor.user.set_password(password)
-                    profesor.user.save()
-                else:
-                    grupo_profesor, _ = Group.objects.get_or_create(name='Profesor')
-                    user = User.objects.create_user(username=username, password=password)
-                    user.groups.add(grupo_profesor)
-                    profesor.user = user
-            profesor.save()
+            form.save()
             messages.success(request, "Profesor actualizado correctamente.")
             return redirect('myapp:profesores')
     else:
@@ -239,44 +224,88 @@ def estudiante_eliminar(request, id):
 def entregable_editar(request, id):
     entregable = get_object_or_404(Entregable, id=id, curso__profesores__user=request.user)
     curso = entregable.curso
-    alumnos_del_curso = Estudiante.objects.filter(inscripciones__curso=curso)
 
     if request.method == 'POST':
-        estudiantes_antes = set(entregable.estudiantes.all())
-        form = EntregableForm(request.POST, instance=entregable)
-        form.fields['estudiantes'].queryset = alumnos_del_curso
+        form = EntregableForm(request.POST, request.FILES, instance=entregable)
         if form.is_valid():
-            with transaction.atomic():
-                form.save()
-                estudiantes_despues = set(entregable.estudiantes.all())
-
-                nuevos = estudiantes_despues - estudiantes_antes
-                quitados = estudiantes_antes - estudiantes_despues
-
-                if nuevos:
-                    Inscripcion.objects.filter(
-                        curso=curso, estudiante__in=nuevos
-                    ).update(proyectos_hechos=F('proyectos_hechos') + 1)
-
-                if quitados:
-                    Inscripcion.objects.filter(
-                        curso=curso, estudiante__in=quitados
-                    ).update(proyectos_hechos=F('proyectos_hechos') - 1)
-                    Inscripcion.objects.filter(
-                        curso=curso, proyectos_hechos__lt=0
-                    ).update(proyectos_hechos=0)
-
-                entregable.cantidad_entregados = entregable.estudiantes.filter(
-                    inscripciones__curso=curso
-                ).count()
-                entregable.save(update_fields=['cantidad_entregados'])
-
+            form.save()
             messages.success(request, "Entregable actualizado correctamente.")
             return redirect('myapp:curso_entregables', id=curso.id)
     else:
         form = EntregableForm(instance=entregable)
-        form.fields['estudiantes'].queryset = alumnos_del_curso
     return render(request, 'myApp/entregable_editar.html', {'form': form, 'entregable': entregable, 'curso': curso})
+
+@login_required
+@profesor_required
+def entregable_ver(request, id):
+    entregable = get_object_or_404(Entregable, id=id, curso__profesores__user=request.user)
+    curso = entregable.curso
+    inscripciones = Inscripcion.objects.filter(curso=curso).select_related('estudiante').order_by('estudiante__nombre', 'estudiante__apellido')
+    entregas_por_estudiante = {
+        e.estudiante_id: e for e in Entrega.objects.filter(entregable=entregable)
+    }
+
+    filas = []
+    a_tiempo = 0
+    fuera_de_termino = 0
+    no_entrego = 0
+    for inscripcion in inscripciones:
+        entrega = entregas_por_estudiante.get(inscripcion.estudiante_id)
+        if entrega:
+            es_a_tiempo = not entregable.fecha_vencimiento or entrega.fecha_entrega <= entregable.fecha_vencimiento
+            if es_a_tiempo:
+                a_tiempo += 1
+            else:
+                fuera_de_termino += 1
+        else:
+            no_entrego += 1
+        filas.append({
+            'estudiante': inscripcion.estudiante,
+            'entrega': entrega,
+            'a_tiempo': entrega and es_a_tiempo,
+        })
+
+    return render(request, 'myApp/entregable_ver.html', {
+        'curso': curso,
+        'entregable': entregable,
+        'filas': filas,
+        'total_alumnos': len(filas),
+        'a_tiempo': a_tiempo,
+        'fuera_de_termino': fuera_de_termino,
+        'no_entrego': no_entrego,
+    })
+
+@login_required
+@profesor_required
+def entrega_calificar(request, id):
+    entrega = get_object_or_404(Entrega, id=id, entregable__curso__profesores__user=request.user)
+    entregable = entrega.entregable
+    curso = entregable.curso
+    if request.method == 'POST':
+        valor = request.POST.get('nota', '').replace(',', '.').strip()
+        try:
+            nota_valor = float(valor)
+        except ValueError:
+            nota_valor = None
+        if nota_valor is None or nota_valor < 1 or nota_valor > 10:
+            messages.error(request, "La nota debe ser un número entre 1 y 10.")
+        else:
+            inscripcion = get_object_or_404(Inscripcion, estudiante=entrega.estudiante, curso=curso)
+            entrega.nota = nota_valor
+            entrega.save(update_fields=['nota'])
+            Nota.objects.update_or_create(
+                entrega=entrega,
+                defaults={
+                    'inscripcion': inscripcion,
+                    'nombre': entregable.nombre,
+                    'tipo': Nota.TIPO_ENTREGABLE,
+                    'fecha': entrega.fecha_entrega.date() if entrega.fecha_entrega else None,
+                    'nota': nota_valor,
+                }
+            )
+            _recalcular_promedio(inscripcion)
+            messages.success(request, "Nota guardada y agregada a los datos académicos del alumno.")
+    return redirect('myapp:entregableVer', id=entregable.id)
 
 @login_required
 @profesor_required
@@ -286,7 +315,7 @@ def entregable_eliminar(request, id):
     if request.method == 'POST':
         with transaction.atomic():
             estudiantes_que_entregaron = list(
-                entregable.estudiantes.filter(inscripciones__curso=curso)
+                Estudiante.objects.filter(entregas__entregable=entregable, inscripciones__curso=curso)
             )
             if estudiantes_que_entregaron:
                 Inscripcion.objects.filter(
@@ -437,6 +466,49 @@ def curso_entregables(request, id):
 
 @login_required
 @profesor_required
+def tomar_asistencia(request, id):
+    curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
+    inscripciones = Inscripcion.objects.filter(curso=curso).select_related('estudiante').order_by('estudiante__nombre', 'estudiante__apellido')
+
+    if request.method == 'POST':
+        fecha = parse_date(request.POST.get('fecha', '')) or timezone.localdate()
+        for inscripcion in inscripciones:
+            presente = request.POST.get(f'presente_{inscripcion.id}') == 'on'
+            RegistroAsistencia.objects.update_or_create(
+                inscripcion=inscripcion, fecha=fecha, defaults={'presente': presente}
+            )
+        for inscripcion in inscripciones:
+            total = inscripcion.registros_asistencia.count()
+            presentes = inscripcion.registros_asistencia.filter(presente=True).count()
+            inscripcion.asistencia = round((presentes / total) * 100) if total else 0
+            inscripcion.save(update_fields=['asistencia'])
+        messages.success(request, "Asistencia guardada correctamente.")
+        return redirect(f"{request.path}?fecha={fecha.isoformat()}")
+
+    fecha = parse_date(request.GET.get('fecha', '')) or timezone.localdate()
+
+    filas = []
+    for inscripcion in inscripciones:
+        total = inscripcion.registros_asistencia.count()
+        presentes = inscripcion.registros_asistencia.filter(presente=True).count()
+        registro_dia = inscripcion.registros_asistencia.filter(fecha=fecha).first()
+        presente_hoy = registro_dia.presente if registro_dia else True
+        porcentaje = round((presentes / total) * 100) if total else 0
+        filas.append({
+            'inscripcion': inscripcion,
+            'presente': presente_hoy,
+            'total_clases': total,
+            'porcentaje': porcentaje,
+        })
+
+    return render(request, 'myApp/tomar_asistencia.html', {
+        'curso': curso,
+        'fecha': fecha,
+        'filas': filas,
+    })
+
+@login_required
+@profesor_required
 def estudiante_curso_eliminar(request, curso_id, estudiante_id):
     curso = get_object_or_404(Curso, id=curso_id, profesores__user=request.user)
     inscripcion = get_object_or_404(Inscripcion, curso=curso, estudiante_id=estudiante_id)
@@ -467,26 +539,76 @@ def inscripcion_editar(request, curso_id, estudiante_id):
         'form': form,
         'curso': curso,
         'inscripcion': inscripcion,
+        'notas': inscripcion.notas.order_by('id'),
+        'nota_form': NotaForm(),
     })
+
+@login_required
+@profesor_required
+def nota_crear(request, curso_id, estudiante_id):
+    curso = get_object_or_404(Curso, id=curso_id, profesores__user=request.user)
+    inscripcion = get_object_or_404(Inscripcion, curso=curso, estudiante_id=estudiante_id)
+    if request.method == 'POST':
+        form = NotaForm(request.POST)
+        if form.is_valid():
+            nota = form.save(commit=False)
+            nota.inscripcion = inscripcion
+            nota.save()
+            _recalcular_promedio(inscripcion)
+            messages.success(request, "Nota agregada correctamente.")
+        else:
+            messages.error(request, "Revisá los datos de la nota: no se pudo agregar.")
+    return redirect('myapp:inscripcionEditar', curso_id=curso.id, estudiante_id=inscripcion.estudiante_id)
+
+@login_required
+@profesor_required
+def nota_editar(request, id):
+    nota = get_object_or_404(Nota, id=id, inscripcion__curso__profesores__user=request.user)
+    inscripcion = nota.inscripcion
+    curso = inscripcion.curso
+    if request.method == 'POST':
+        form = NotaForm(request.POST, instance=nota)
+        if form.is_valid():
+            form.save()
+            _recalcular_promedio(inscripcion)
+            messages.success(request, "Nota actualizada correctamente.")
+            return redirect('myapp:inscripcionEditar', curso_id=curso.id, estudiante_id=inscripcion.estudiante_id)
+    else:
+        form = NotaForm(instance=nota)
+    return render(request, 'myApp/nota_editar.html', {
+        'form': form,
+        'nota': nota,
+        'curso': curso,
+        'inscripcion': inscripcion,
+    })
+
+@login_required
+@profesor_required
+def nota_eliminar(request, id):
+    nota = get_object_or_404(Nota, id=id, inscripcion__curso__profesores__user=request.user)
+    inscripcion = nota.inscripcion
+    curso = inscripcion.curso
+    if request.method == 'POST':
+        nota.delete()
+        _recalcular_promedio(inscripcion)
+        messages.success(request, "Nota eliminada correctamente.")
+    return redirect('myapp:inscripcionEditar', curso_id=curso.id, estudiante_id=inscripcion.estudiante_id)
 
 @login_required
 @profesor_required
 def entregable_crear_en_curso(request, curso_id):
     curso = get_object_or_404(Curso, id=curso_id, profesores__user=request.user)
     if request.method == 'POST':
-        form = EntregableFormulario(request.POST)
+        form = EntregableForm(request.POST, request.FILES)
         if form.is_valid():
             with transaction.atomic():
-                Entregable.objects.create(
-                    nombre=form.cleaned_data['nombre'],
-                    fecha_publicacion=timezone.now(),
-                    fecha_vencimiento=form.cleaned_data['fecha_vencimiento'],
-                    cantidad_entregados=0,
-                    curso=curso,
-                )
+                entregable = form.save(commit=False)
+                entregable.curso = curso
+                entregable.cantidad_entregados = 0
+                entregable.save()
                 Inscripcion.objects.filter(curso=curso).update(proyectos_totales=F('proyectos_totales') + 1)
             messages.success(request, "Entregable agregado correctamente.")
             return redirect('myapp:curso_entregables', id=curso.id)
     else:
-        form = EntregableFormulario()
+        form = EntregableForm()
     return render(request, 'myApp/entregable_crear_en_curso.html', {'form': form, 'curso': curso})

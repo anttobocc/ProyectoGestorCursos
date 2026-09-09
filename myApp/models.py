@@ -53,14 +53,12 @@ class Entregable(models.Model):
     nombre = models.CharField(max_length=100)
     fecha_publicacion = models.DateTimeField(null=True, blank=True)
     fecha_vencimiento = models.DateTimeField(null=True, blank=True)
+    publicado = models.BooleanField(default=True)
+    consigna = models.TextField(blank=True, default='')
+    archivo = models.FileField(upload_to='entregables/', blank=True, null=True)
     cantidad_entregados = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)]
-    )
-    estudiantes = models.ManyToManyField(
-        Estudiante,
-        related_name='entregables_completados',
-        blank=True
     )
     curso = models.ForeignKey(
         Curso,
@@ -72,6 +70,30 @@ class Entregable(models.Model):
 
     def __str__(self):
         return self.nombre
+
+class Entrega(models.Model):
+    entregable = models.ForeignKey(
+        Entregable,
+        on_delete=models.CASCADE,
+        related_name='entregas',
+    )
+    estudiante = models.ForeignKey(
+        Estudiante,
+        on_delete=models.CASCADE,
+        related_name='entregas',
+    )
+    fecha_entrega = models.DateTimeField()
+    archivo = models.FileField(upload_to='entregas/', blank=True, null=True)
+    nota = models.FloatField(
+        null=True, blank=True,
+        validators=[MinValueValidator(1.0), MaxValueValidator(10.0)]
+    )
+
+    class Meta:
+        unique_together = ('entregable', 'estudiante')
+
+    def __str__(self):
+        return f"{self.estudiante} - {self.entregable}"
 
 class Inscripcion(models.Model):
     estudiante = models.ForeignKey(
@@ -95,9 +117,56 @@ class Inscripcion(models.Model):
     )
     proyectos_hechos = models.IntegerField(default=0)
     proyectos_totales = models.IntegerField(default=0)
+    observaciones = models.TextField(blank=True, default='')
 
     class Meta:
         unique_together = ('estudiante', 'curso')
 
     def __str__(self):
         return f"{self.estudiante} - {self.curso}"
+
+class Nota(models.Model):
+    TIPO_ENTREGABLE = 'entregable'
+    TIPO_PARTICIPACION = 'participacion'
+    TIPO_EVALUACION = 'evaluacion'
+    TIPO_CHOICES = [
+        (TIPO_ENTREGABLE, 'Entregable'),
+        (TIPO_PARTICIPACION, 'Participación'),
+        (TIPO_EVALUACION, 'Evaluación'),
+    ]
+
+    inscripcion = models.ForeignKey(
+        Inscripcion,
+        on_delete=models.CASCADE,
+        related_name='notas',
+    )
+    entrega = models.OneToOneField(
+        Entrega,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='nota_academica',
+    )
+    nombre = models.CharField(max_length=100)
+    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES, default=TIPO_ENTREGABLE)
+    fecha = models.DateField(null=True, blank=True)
+    nota = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(10.0)])
+    observaciones = models.CharField(max_length=255, blank=True, default='')
+
+    def __str__(self):
+        return f"{self.nombre} - {self.inscripcion}"
+
+class RegistroAsistencia(models.Model):
+    inscripcion = models.ForeignKey(
+        Inscripcion,
+        on_delete=models.CASCADE,
+        related_name='registros_asistencia',
+    )
+    fecha = models.DateField()
+    presente = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = ('inscripcion', 'fecha')
+
+    def __str__(self):
+        return f"{self.inscripcion} - {self.fecha} - {'Presente' if self.presente else 'Ausente'}"

@@ -4,77 +4,124 @@
 {% block title %}Editar Entregable{% endblock %}
 
 {% block contenido %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
+<div class="mb-3">
+    <a href="{% url 'myapp:curso_entregables' entregable.curso.id %}" class="text-decoration-none text-secondary small fw-medium">
+        <i class="bi bi-arrow-left me-1"></i> Volver a {{ entregable.curso.nombre }}
+    </a>
+</div>
 
-        <div class="mb-3">
-            <a href="{% url 'myapp:curso_entregables' entregable.curso.id %}" class="text-decoration-none text-secondary small fw-medium">
-                <i class="bi bi-arrow-left me-1"></i> Volver a {{ entregable.curso.nombre }}
-            </a>
+<div class="card shadow border-0 rounded-4 mb-4">
+    <div class="card-body p-4 d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle me-3" style="width:56px;height:56px;font-size:1.5rem;">
+            <i class="bi bi-pencil-square"></i>
         </div>
+        <div>
+            <h3 class="fw-bold text-dark mb-0">Editar Entregable</h3>
+            <p class="text-muted small mb-0">{{ entregable.curso.nombre }}</p>
+        </div>
+    </div>
+</div>
 
-        <div class="card shadow border-0 rounded-4">
-            <div class="card-body p-4 p-md-5">
+<form method="POST" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
 
-                <div class="text-center mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width:60px;height:60px;font-size:1.7rem;">
-                        <i class="bi bi-pencil-square"></i>
-                    </div>
-                    <h3 class="fw-bold text-dark mb-1">Editar Entregable</h3>
-                    <p class="text-muted small">{{ entregable.nombre }}</p>
-                </div>
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+    {% endif %}
 
-                <form method="POST" novalidate>
-                    {% csrf_token %}
-
-                    {% if form.non_field_errors %}
-                    <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
-                    {% endif %}
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-file-earmark-text text-primary me-1"></i> Información general
+                    </h5>
 
                     <div class="mb-3">
-                        <label for="id_nombre" class="form-label fw-semibold text-secondary small">Nombre</label>
+                        <label for="id_nombre" class="form-label fw-semibold text-secondary small">Nombre del entregable</label>
                         {{ form.nombre|add_class:"form-control" }}
                         {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>{% endif %}
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold text-secondary small d-block">Publicado</label>
-                        <p class="form-control-plaintext mb-0">
-                            {% if entregable.fecha_publicacion %}{{ entregable.fecha_publicacion|date:"d/m/Y H:i" }}{% else %}<span class="text-muted">No definida</span>{% endif %}
-                        </p>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="id_fecha_vencimiento" class="form-label fw-semibold text-secondary small">Fecha de vencimiento</label>
-                        {{ form.fecha_vencimiento|add_class:"form-control" }}
-                        {% if form.fecha_vencimiento.errors %}<div class="text-danger small mt-1">{{ form.fecha_vencimiento.errors.0 }}</div>{% endif %}
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold text-secondary small d-block">Alumnos que entregaron</label>
-                        <div class="border rounded-3 p-3">
-                            {% for checkbox in form.estudiantes %}
-                            <div class="form-check">
-                                {{ checkbox.tag }}
-                                <label class="form-check-label small" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
-                            </div>
-                            {% empty %}
-                            <p class="text-muted small mb-0">No hay estudiantes registrados.</p>
-                            {% endfor %}
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label for="id_fecha_publicacion" class="form-label fw-semibold text-secondary small">Fecha de publicación</label>
+                            {{ form.fecha_publicacion|add_class:"form-control" }}
+                            {% if form.fecha_publicacion.errors %}<div class="text-danger small mt-1">{{ form.fecha_publicacion.errors.0 }}</div>{% endif %}
                         </div>
-                        {% if form.estudiantes.errors %}<div class="text-danger small mt-1">{{ form.estudiantes.errors.0 }}</div>{% endif %}
+                        <div class="col-6">
+                            <label for="id_fecha_vencimiento" class="form-label fw-semibold text-secondary small">Fecha de vencimiento</label>
+                            {{ form.fecha_vencimiento|add_class:"form-control" }}
+                            {% if form.fecha_vencimiento.errors %}<div class="text-danger small mt-1">{{ form.fecha_vencimiento.errors.0 }}</div>{% endif %}
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold rounded-3 mb-2">
-                        <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
-                    </button>
-                    <a href="{% url 'myapp:curso_entregables' entregable.curso.id %}" class="btn btn-light w-100 py-2 fw-semibold text-secondary rounded-3 border">
-                        Cancelar
-                    </a>
-                </form>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small d-block">Estado</label>
+                        <div class="form-check form-switch">
+                            {{ form.publicado|add_class:"form-check-input" }}
+                            <label class="form-check-label small" for="id_publicado">Publicado (visible para los alumnos)</label>
+                        </div>
+                    </div>
 
+                    <div class="alert alert-info small mb-0">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Cuando el entregable está publicado, los alumnos pueden ver la consigna, descargar los archivos y entregar su trabajo hasta la fecha de vencimiento.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-3">
+                        <i class="bi bi-file-earmark-richtext text-primary me-1"></i> Consigna y archivo
+                    </h5>
+
+                    <div class="mb-3">
+                        <label for="id_consigna" class="form-label fw-semibold text-secondary small">Consigna</label>
+                        {{ form.consigna|add_class:"form-control" }}
+                        {% if form.consigna.errors %}<div class="text-danger small mt-1">{{ form.consigna.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold text-secondary small d-block">
+                            <i class="bi bi-paperclip me-1"></i> Archivo descargable (opcional)
+                        </label>
+
+                        {% if entregable.archivo %}
+                        <div class="d-flex align-items-center justify-content-between border rounded-3 p-2 mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-file-earmark-pdf-fill text-danger fs-4 me-2"></i>
+                                <div>
+                                    <div class="small fw-semibold">{{ entregable.archivo.name|cut:"entregables/" }}</div>
+                                </div>
+                            </div>
+                            <a href="{{ entregable.archivo.url }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-download"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+
+                        <div class="border rounded-3 p-3 text-center">
+                            {{ form.archivo|add_class:"form-control" }}
+                        </div>
+                        {% if form.archivo.errors %}<div class="text-danger small mt-1">{{ form.archivo.errors.0 }}</div>{% endif %}
+                        <div class="form-text small">PDF, DOC, DOCX, ZIP</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+        <a href="{% url 'myapp:curso_entregables' entregable.curso.id %}" class="btn btn-light border fw-semibold rounded-3 px-4">
+            Cancelar
+        </a>
+        <button type="submit" class="btn btn-warning fw-semibold rounded-3 px-4">
+            <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
+        </button>
+    </div>
+</form>
 {% endblock %}
