@@ -75,6 +75,178 @@
             width: 100%;
             max-width: 360px;
         }
+
+        /* ==========================================
+           ANIMACIONES DEL LOGO - COHETE DRAMÁTICO + TEXTO LLAMATIVO
+           ========================================== */
+        
+        /* Contenedor del logo para posicionar el rastro de fuego */
+        .navbar-brand {
+            position: relative;
+            overflow: visible;
+        }
+
+        /* Animación de flotación continua para el cohete */
+        .navbar-brand i.bi-rocket-takeoff-fill {
+            display: inline-block !important;
+            animation: floatRocket 2.5s ease-in-out infinite !important;
+            transition: transform 0.3s ease !important;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Rastro de fuego detrás del cohete */
+        .navbar-brand i.bi-rocket-takeoff-fill::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 0;
+            background: linear-gradient(to bottom, #fbbf24, #f59e0b, #ef4444, transparent);
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        /* Cuando pasás el mouse sobre el logo, el cohete SALE VOLANDO con fuego */
+        .navbar-brand:hover i.bi-rocket-takeoff-fill {
+            animation: rocketFlyAway 1.5s cubic-bezier(0.55, 0, 1, 0.45) forwards !important;
+        }
+
+        .navbar-brand:hover i.bi-rocket-takeoff-fill::after {
+            height: 40px;
+            opacity: 1;
+            animation: fireTrail 0.3s ease-in-out infinite;
+        }
+
+        /* ==========================================
+           EFECTO DE BRILLO + OLAS PARA TODO EL TEXTO "EduControl"
+           ========================================== */
+        
+        /* Contenedor del texto */
+        .navbar-brand-text {
+            display: inline-block;
+            position: relative;
+        }
+
+        /* Cada letra individualmente para el efecto de olas */
+        .navbar-brand-text span {
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        /* Efecto de brillo que recorre todo el texto */
+        .navbar-brand-text::before {
+            content: 'EduControl';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shineSweep 3s linear infinite;
+            pointer-events: none;
+        }
+
+        /* Al pasar el mouse: las letras hacen olas y el brillo se acelera */
+        .navbar-brand:hover .navbar-brand-text span:nth-child(1) { animation: letterWave 0.6s ease forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(2) { animation: letterWave 0.6s ease 0.05s forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(3) { animation: letterWave 0.6s ease 0.1s forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(4) { animation: letterWave 0.6s ease 0.15s forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(5) { animation: letterWave 0.6s ease 0.2s forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(6) { animation: letterWave 0.6s ease 0.25s forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(7) { animation: letterWave 0.6s ease 0.3s forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(8) { animation: letterWave 0.6s ease 0.35s forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(9) { animation: letterWave 0.6s ease 0.4s forwards; }
+        .navbar-brand:hover .navbar-brand-text span:nth-child(10) { animation: letterWave 0.6s ease 0.45s forwards; }
+
+        .navbar-brand:hover .navbar-brand-text::before {
+            animation: shineSweep 1s linear infinite;
+        }
+
+        /* Keyframes - Animación de flotación del cohete */
+        @keyframes floatRocket {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-3px) rotate(2deg);
+            }
+            75% {
+                transform: translateY(3px) rotate(-2deg);
+            }
+        }
+
+        /* Keyframes - Animación de DESPEGUE DRAMÁTICO */
+        @keyframes rocketFlyAway {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            10% {
+                /* Temblor intenso */
+                transform: translateY(2px) rotate(-8deg) scale(0.9);
+            }
+            20% {
+                transform: translateY(-2px) rotate(8deg) scale(1.1);
+            }
+            30% {
+                transform: translateY(1px) rotate(-10deg) scale(0.95);
+            }
+            40% {
+                /* Se inclina hacia atrás */
+                transform: translateY(0) rotate(-20deg) scale(1.2);
+            }
+            60% {
+                /* Empieza a subir rápido */
+                transform: translateY(-30px) rotate(-30deg) scale(0.8);
+                opacity: 0.8;
+            }
+            100% {
+                /* SALE VOLANDO hacia arriba */
+                transform: translateY(-100px) rotate(-45deg) scale(0.2);
+                opacity: 0;
+            }
+        }
+
+        /* Keyframes - Rastro de fuego */
+        @keyframes fireTrail {
+            0%, 100% {
+                height: 40px;
+                opacity: 1;
+            }
+            50% {
+                height: 50px;
+                opacity: 0.8;
+            }
+        }
+
+        /* Keyframes - Brillo que recorre el texto */
+        @keyframes shineSweep {
+            0% {
+                background-position: -200% center;
+            }
+            100% {
+                background-position: 200% center;
+            }
+        }
+
+        /* Keyframes - Efecto de olas en las letras */
+        @keyframes letterWave {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -83,7 +255,10 @@
     <nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-2">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4 text-white" href="{% url 'myapp:index' %}">
-                <i class="bi bi-rocket-takeoff-fill text-info me-2"></i>Edu<span class="text-info">Control</span>
+                <i class="bi bi-rocket-takeoff-fill text-info me-2"></i>
+                <span class="navbar-brand-text">
+                    <span>E</span><span>d</span><span>u</span><span>C</span><span>o</span><span>n</span><span>t</span><span>r</span><span>o</span><span>l</span>
+                </span>
             </a>
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
