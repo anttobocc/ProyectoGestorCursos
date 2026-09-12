@@ -34,45 +34,112 @@
         max-height: 150px;
         overflow-y: auto;
     }
-    .compact-form-body { padding: 1rem 1.75rem; }
+    .compact-form-body { 
+        padding: 1.5rem;
+    }
+    
+    /* Ajustes para móvil */
+    @media (max-width: 767.98px) {
+        .compact-form-body {
+            padding: 1rem;
+        }
+        
+        /* Inputs más grandes en móvil */
+        .form-control {
+            padding: 0.65rem 0.75rem;
+            font-size: 1rem;
+        }
+        
+        /* Botones más grandes en móvil */
+        .btn-form-mobile {
+            padding: 0.75rem 1rem;
+            font-size: 1.05rem;
+            min-height: 48px;
+        }
+        
+        /* Labels más grandes en móvil */
+        .form-label {
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+        
+        /* Paneles de checkboxes más compactos en móvil */
+        .curso-panel {
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .curso-checklist {
+            max-height: 120px;
+        }
+        
+        /* Checkboxes más grandes en móvil */
+        .form-check {
+            padding: 0.4rem 0;
+        }
+        
+        .form-check-label {
+            font-size: 0.95rem;
+            padding-left: 0.5rem;
+        }
+    }
+    
+    /* Ajustes para desktop */
+    @media (min-width: 768px) {
+        .form-control {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.95rem;
+        }
+        
+        .btn-form-mobile {
+            padding: 0.6rem 1rem;
+            font-size: 1rem;
+        }
+    }
 </style>
 
-<div class="mb-2">
+<!-- Botón Volver -->
+<div class="mb-3 mb-md-2">
     <a href="{% url 'myapp:cursos' %}" class="text-decoration-none text-secondary small fw-medium">
         <i class="bi bi-arrow-left me-1"></i> Volver al listado
     </a>
 </div>
 
+<!-- Tarjeta del Formulario -->
 <div class="card shadow border-0 rounded-4">
     <div class="card-body compact-form-body">
 
-        <div class="text-center mb-2">
-            <div class="d-inline-flex align-items-center justify-content-center bg-info-subtle text-info rounded-circle mb-2" style="width:44px;height:44px;font-size:1.2rem;">
+        <!-- Encabezado -->
+        <div class="text-center mb-3 mb-md-2">
+            <div class="d-inline-flex align-items-center justify-content-center bg-info-subtle text-info rounded-circle mb-2" style="width:48px;height:48px;font-size:1.3rem;">
                 <i class="bi bi-journal-plus"></i>
             </div>
             <h3 class="fw-bold text-dark mb-1">Alta de Curso</h3>
             <p class="text-muted small mb-0">Completa los campos para abrir una nueva comisión</p>
         </div>
 
+        <!-- Formulario -->
         <form method="POST" action="" class="needs-validation" novalidate>
             {% csrf_token %}
 
+            <!-- Errores generales -->
             {% if form.errors %}
             <div class="alert alert-danger py-2 small" role="alert">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i> Por favor, corrige los errores señalados.
             </div>
             {% endif %}
 
-            <div class="row g-3 mb-2">
-                <div class="col-md-6">
-                    <label for="id_nombre" class="form-label fw-semibold text-secondary small">Nombre del Curso</label>
+            <!-- Nombre y Ciclo Lectivo: en móvil una columna, en desktop dos -->
+            <div class="row g-2 g-md-3 mb-3 mb-md-2">
+                <div class="col-12 col-md-6">
+                    <label for="id_nombre" class="form-label fw-semibold text-secondary small mb-1">Nombre del Curso</label>
                     {{ form.nombre|add_class:"form-control" }}
                     {% if form.nombre.errors %}
                     <div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>
                     {% endif %}
                 </div>
-                <div class="col-md-6">
-                    <label for="id_camada" class="form-label fw-semibold text-secondary small">Ciclo Lectivo</label>
+                <div class="col-12 col-md-6">
+                    <label for="id_camada" class="form-label fw-semibold text-secondary small mb-1">Ciclo Lectivo</label>
                     {{ form.camada|add_class:"form-control" }}
                     {% if form.camada.errors %}
                     <div class="text-danger small mt-1">{{ form.camada.errors.0 }}</div>
@@ -80,8 +147,9 @@
                 </div>
             </div>
 
-            <div class="row g-3 mb-2">
-                <div class="col-md-6">
+            <!-- Paneles de Profesores y Alumnos: en móvil apilados, en desktop lado a lado -->
+            <div class="row g-2 g-md-3 mb-3 mb-md-2">
+                <div class="col-12 col-md-6">
                     <div class="curso-panel">
                         <div class="curso-panel-header">
                             <div class="curso-panel-icon bg-primary bg-opacity-10 text-primary">
@@ -102,10 +170,12 @@
                             <p class="text-muted small mb-0">No hay profesores registrados.</p>
                             {% endfor %}
                         </div>
-                        {% if form.profesores.errors %}<div class="text-danger small mt-1">{{ form.profesores.errors.0 }}</div>{% endif %}
+                        {% if form.profesores.errors %}
+                        <div class="text-danger small mt-1">{{ form.profesores.errors.0 }}</div>
+                        {% endif %}
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <div class="curso-panel">
                         <div class="curso-panel-header">
                             <div class="curso-panel-icon bg-primary bg-opacity-10 text-primary">
@@ -126,19 +196,22 @@
                             <p class="text-muted small mb-0">No hay alumnos registrados.</p>
                             {% endfor %}
                         </div>
-                        {% if form.alumnos.errors %}<div class="text-danger small mt-1">{{ form.alumnos.errors.0 }}</div>{% endif %}
+                        {% if form.alumnos.errors %}
+                        <div class="text-danger small mt-1">{{ form.alumnos.errors.0 }}</div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
 
+            <!-- Botones de Acción: en móvil apilados, en desktop lado a lado -->
             <div class="row g-2">
-                <div class="col-md-6">
-                    <a href="{% url 'myapp:cursos' %}" class="btn btn-light w-100 fw-semibold text-secondary rounded-3 border">
+                <div class="col-12 col-md-6">
+                    <a href="{% url 'myapp:cursos' %}" class="btn btn-light w-100 fw-semibold text-secondary rounded-3 border btn-form-mobile">
                         Cancelar
                     </a>
                 </div>
-                <div class="col-md-6">
-                    <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3 shadow-sm">
+                <div class="col-12 col-md-6">
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3 shadow-sm btn-form-mobile">
                         <i class="bi bi-check-circle-fill me-2"></i>Guardar Curso
                     </button>
                 </div>

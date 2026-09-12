@@ -1,0 +1,61 @@
+/* ==========================================
+   ESTILOS RESPONSIVE PERSONALIZADOS
+   ========================================== */
+
+/* --- MÓVIL (< 768px) --- */
+@media (max-width: 767.98px) {
+    /* Fondo semitransparente para el menú desplegado en móvil */
+    .navbar-collapse {
+        background-color: rgba(15, 23, 42, 0.95);
+        border-radius: 0.5rem;
+        margin-top: 0.5rem;
+        padding: 1rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Áreas táctiles más grandes para dedos en móvil */
+    .nav-link, .btn {
+        padding-top: 0.6rem !important;
+        padding-bottom: 0.6rem !important;
+        min-height: 44px;
+    }
+
+    /* Títulos un poco más grandes en móvil para legibilidad */
+    h1 { font-size: 1.5rem !important; }
+    h2 { font-size: 1.3rem !important; }
+
+    /* Ajuste de tarjetas en móvil */
+    .card {
+        margin-bottom: 1rem;
+        border-radius: 0.75rem;
+    }
+
+    /* Toast messages más seguros en móvil */
+    .toast-messages {
+        top: 70px;
+        left: 10px;
+        right: 10px;
+        max-width: none;
+    }
+    
+    /* Forzar que los botones en grupo se apilen verticalmente en móvil */
+    .btn-group-mobile-responsive {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .btn-group-mobile-responsive .btn {
+        width: 100%;
+        border-radius: 0.5rem !important;
+    }
+}
+
+/* --- TABLET Y ESCRITORIO (≥ 768px) --- */
+@media (min-width: 768px) {
+    .toast-messages {
+        top: 80px;
+        right: 20px;
+        left: auto;
+        max-width: 360px;
+    }
+}

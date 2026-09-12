@@ -5,60 +5,118 @@
 
 {% block contenido %}
 <style>
-    .compact-form-body { padding: 1rem 1.5rem; }
+    .compact-form-body { 
+        padding: 1.5rem;
+    }
+    
+    /* Ajustes para móvil */
+    @media (max-width: 767.98px) {
+        .compact-form-body {
+            padding: 1rem;
+        }
+        
+        /* Inputs más grandes en móvil para facilitar escritura */
+        .form-control {
+            padding: 0.65rem 0.75rem;
+            font-size: 1rem;
+        }
+        
+        /* Botones más grandes en móvil para mejor área de toque */
+        .btn-form-mobile {
+            padding: 0.75rem 1rem;
+            font-size: 1.05rem;
+            min-height: 48px;
+        }
+        
+        /* Labels un poco más grandes en móvil */
+        .form-label {
+            font-size: 0.9rem;
+            margin-bottom: 0.4rem;
+        }
+    }
+    
+    /* Ajustes para desktop */
+    @media (min-width: 768px) {
+        .form-control {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.95rem;
+        }
+        
+        .btn-form-mobile {
+            padding: 0.6rem 1rem;
+            font-size: 1rem;
+        }
+    }
 </style>
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
 
-        <div class="mb-2">
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+
+        <!-- Botón Volver -->
+        <div class="mb-3 mb-md-2">
             <a href="{% url 'myapp:estudiantes' %}" class="text-decoration-none text-secondary small fw-medium">
                 <i class="bi bi-arrow-left me-1"></i> Volver al listado
             </a>
         </div>
 
+        <!-- Tarjeta del Formulario -->
         <div class="card shadow border-0 rounded-4">
             <div class="card-body compact-form-body">
 
-                <div class="text-center mb-2">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-1" style="width:38px;height:38px;font-size:1.05rem;">
+                <!-- Encabezado del Formulario -->
+                <div class="text-center mb-3 mb-md-2">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-circle mb-2" style="width:48px;height:48px;font-size:1.3rem;">
                         <i class="bi bi-person-plus"></i>
                     </div>
                     <h3 class="fw-bold text-dark mb-1">Agregar Estudiante</h3>
                     <p class="text-muted small mb-0">Completá los campos para registrar un nuevo alumno</p>
                 </div>
 
+                <!-- Formulario -->
                 <form method="POST" novalidate>
                     {% csrf_token %}
 
+                    <!-- Errores generales del formulario -->
                     {% if form.non_field_errors %}
                     <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
                     {% endif %}
 
-                    <div class="row g-2 mb-1">
-                        <div class="col-6">
-                            <label for="id_nombre" class="form-label fw-semibold text-secondary small mb-0">Nombre</label>
+                    <!-- Nombre y Apellido: en móvil una columna, en desktop dos -->
+                    <div class="row g-2 g-md-3 mb-2 mb-md-1">
+                        <div class="col-12 col-md-6">
+                            <label for="id_nombre" class="form-label fw-semibold text-secondary small mb-1">Nombre</label>
                             {{ form.nombre|add_class:"form-control" }}
-                            {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>{% endif %}
+                            {% if form.nombre.errors %}
+                            <div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>
+                            {% endif %}
                         </div>
-                        <div class="col-6">
-                            <label for="id_apellido" class="form-label fw-semibold text-secondary small mb-0">Apellido</label>
+                        <div class="col-12 col-md-6">
+                            <label for="id_apellido" class="form-label fw-semibold text-secondary small mb-1">Apellido</label>
                             {{ form.apellido|add_class:"form-control" }}
-                            {% if form.apellido.errors %}<div class="text-danger small mt-1">{{ form.apellido.errors.0 }}</div>{% endif %}
+                            {% if form.apellido.errors %}
+                            <div class="text-danger small mt-1">{{ form.apellido.errors.0 }}</div>
+                            {% endif %}
                         </div>
                     </div>
 
-                    <div class="mb-2">
-                        <label for="id_email" class="form-label fw-semibold text-secondary small mb-0">Correo Electrónico</label>
+                    <!-- Email -->
+                    <div class="mb-3 mb-md-2">
+                        <label for="id_email" class="form-label fw-semibold text-secondary small mb-1">Correo Electrónico</label>
                         {{ form.email|add_class:"form-control" }}
-                        {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
+                        {% if form.email.errors %}
+                        <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
+                        {% endif %}
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3 mb-2">
-                        <i class="bi bi-check-circle-fill me-2"></i>Guardar Estudiante
-                    </button>
-                    <a href="{% url 'myapp:estudiantes' %}" class="btn btn-light w-100 fw-semibold text-secondary rounded-3 border">
-                        Cancelar
-                    </a>
+                    <!-- Botones de Acción -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary fw-semibold rounded-3 btn-form-mobile">
+                            <i class="bi bi-check-circle-fill me-2"></i>Guardar Estudiante
+                        </button>
+                        <a href="{% url 'myapp:estudiantes' %}" class="btn btn-light fw-semibold text-secondary rounded-3 border btn-form-mobile">
+                            Cancelar
+                        </a>
+                    </div>
                 </form>
 
             </div>

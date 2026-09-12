@@ -3,17 +3,17 @@
 {% block contenido %}
 
 <!-- Encabezado del dashboard -->
-<div class="mb-5">
-    <h1 class="fw-bold text-dark mb-1">Panel de Gestión</h1>
-    <p class="text-muted">Bienvenido al sistema Gestor de Cursos. Desde aquí podés administrar cursos, estudiantes y profesores.</p>
+<div class="mb-4 mb-md-5">
+    <h1 class="fw-bold text-dark mb-1 text-center text-md-start">Panel de Gestión</h1>
+    <p class="text-muted text-center text-md-start">Bienvenido al sistema Gestor de Cursos. Desde aquí podés administrar cursos, estudiantes y profesores.</p>
 </div>
 
 <!-- Tarjetas de estadísticas -->
-<div class="row g-4 mb-5 justify-content-center">
-    <div class="col-sm-6 col-lg-3">
+<div class="row g-3 g-md-4 mb-4 mb-md-5 justify-content-center">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex align-items-center gap-3 p-4">
-                <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3" style="width:56px;height:56px;font-size:1.6rem;">
+            <div class="card-body d-flex align-items-center gap-3 p-3 p-md-4">
+                <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3 flex-shrink-0" style="width:56px;height:56px;font-size:1.6rem;">
                     <i class="bi bi-journal-bookmark-fill"></i>
                 </div>
                 <div>
@@ -23,10 +23,10 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-lg-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex align-items-center gap-3 p-4">
-                <div class="d-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-3" style="width:56px;height:56px;font-size:1.6rem;">
+            <div class="card-body d-flex align-items-center gap-3 p-3 p-md-4">
+                <div class="d-flex align-items-center justify-content-center bg-success bg-opacity-10 text-success rounded-3 flex-shrink-0" style="width:56px;height:56px;font-size:1.6rem;">
                     <i class="bi bi-people-fill"></i>
                 </div>
                 <div>
@@ -36,10 +36,10 @@
             </div>
         </div>
     </div>
-    <div class="col-sm-6 col-lg-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="card border-0 shadow-sm h-100">
-            <div class="card-body d-flex align-items-center gap-3 p-4">
-                <div class="d-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-3" style="width:56px;height:56px;font-size:1.6rem;">
+            <div class="card-body d-flex align-items-center gap-3 p-3 p-md-4">
+                <div class="d-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-3 flex-shrink-0" style="width:56px;height:56px;font-size:1.6rem;">
                     <i class="bi bi-person-workspace"></i>
                 </div>
                 <div>
@@ -53,19 +53,19 @@
 
 <!-- Accesos rápidos -->
 <h5 class="fw-semibold text-dark mb-3 text-center">Accesos rápidos</h5>
-<div class="row g-3 justify-content-center">
-    <div class="col-sm-6 col-lg-3">
-        <a href="{% url 'myapp:cursos' %}" class="btn btn-primary w-100 py-2 fw-medium">
+<div class="row g-2 g-md-3 justify-content-center">
+    <div class="col-12 col-sm-6 col-lg-3">
+        <a href="{% url 'myapp:cursos' %}" class="btn btn-primary w-100 py-2 py-md-3 fw-medium">
             <i class="bi bi-journal-bookmark me-2"></i>Cursos
         </a>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <a href="{% url 'myapp:estudiantes' %}" class="btn btn-outline-success w-100 py-2 fw-medium">
+    <div class="col-12 col-sm-6 col-lg-3">
+        <a href="{% url 'myapp:estudiantes' %}" class="btn btn-outline-success w-100 py-2 py-md-3 fw-medium">
             <i class="bi bi-people me-2"></i>Estudiantes
         </a>
     </div>
-    <div class="col-sm-6 col-lg-3">
-        <a href="{% url 'myapp:profesores' %}" class="btn btn-outline-warning w-100 py-2 fw-medium">
+    <div class="col-12 col-sm-6 col-lg-3">
+        <a href="{% url 'myapp:profesores' %}" class="btn btn-outline-warning w-100 py-2 py-md-3 fw-medium">
             <i class="bi bi-person-workspace me-2"></i>Profesores
         </a>
     </div>

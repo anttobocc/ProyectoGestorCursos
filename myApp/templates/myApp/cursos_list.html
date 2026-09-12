@@ -1,6 +1,5 @@
 {% extends 'myApp/base.html' %}
 
-
 {% block contenido %}
 <style>
     .custom-card {
@@ -23,25 +22,27 @@
         align-items: center;
         justify-content: center;
         font-size: 1.3rem;
+        flex-shrink: 0;
     }
 </style>
 
 <!-- Encabezado de la Sección -->
-<div class="row align-items-center mb-5 g-3">
-    <div class="col-md-8 text-center text-md-start">
+<div class="row align-items-center mb-4 mb-md-5 g-3">
+    <div class="col-12 col-md-8 text-center text-md-start">
         <h1 class="fw-bold text-dark mb-1">Panel de Cursos</h1>
         <p class="text-muted mb-0">Explora, busca y registra nuevas comisiones educativas.</p>
     </div>
-    <div class="col-md-4 text-center text-md-end">
-        <!-- Botón Secundario / Acción Estilizado -->
+    {% if es_admin %}
+    <div class="col-12 col-md-4 text-center text-md-end">
         <a href="{% url 'myapp:cursoFormulario' %}" class="btn btn-secondary shadow-sm px-4 py-2 fw-semibold rounded-3">
             <i class="bi bi-plus-lg me-2"></i>Agregar Curso
         </a>
     </div>
+    {% endif %}
 </div>
 
 <!-- Contenedor de la Grilla de Cursos -->
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 g-md-4">
     {% for curso in cursos %}
     <div class="col">
         <div class="card h-100 shadow-sm custom-card p-3">
@@ -55,7 +56,7 @@
                     </span>
                 </div>
                 
-                <h4 class="card-title fw-bold text-slate-800 mb-3 text-primary">{{ curso.nombre }}</h4>
+                <h4 class="card-title fw-bold text-primary mb-3">{{ curso.nombre }}</h4>
 
                 <div class="mt-auto border-top pt-3 text-muted small">
                     <div class="d-flex align-items-center mb-2">
@@ -74,22 +75,26 @@
                     </div>
                 </div>
             </div>
-            <div class="card-footer bg-transparent border-top text-center">
-                <a href="{% url 'myapp:cursoDetalleAdmin' curso.id %}" class="btn btn-outline-primary btn-sm me-2">
-                    <i class="bi bi-eye"></i> Ver
-                </a>
-                <a href="{% url 'myapp:cursoEditar' curso.id %}" class="btn btn-warning btn-sm me-2">
-                    <i class="bi bi-pencil"></i> Editar
-                </a>
-                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCurso{{ curso.id }}">
-                    <i class="bi bi-trash"></i> Eliminar
-                </button>
+            
+            {% if es_admin %}
+            <div class="card-footer bg-transparent border-top p-3">
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a href="{% url 'myapp:cursoDetalleAdmin' curso.id %}" class="btn btn-outline-primary flex-fill">
+                        <i class="bi bi-eye me-1"></i> Ver
+                    </a>
+                    <a href="{% url 'myapp:cursoEditar' curso.id %}" class="btn btn-warning flex-fill">
+                        <i class="bi bi-pencil me-1"></i> Editar
+                    </a>
+                    <button type="button" class="btn btn-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteCurso{{ curso.id }}">
+                        <i class="bi bi-trash me-1"></i> Eliminar
+                    </button>
+                </div>
             </div>
+            {% endif %}
         </div>
     </div>
     {% empty %}
-    <!-- En caso de que la lista venga vacía -->
-    <div class="col-12 w-100">
+    <div class="col-12">
         <div class="text-center p-5 bg-white rounded-4 border shadow-sm">
             <i class="bi bi-folder-x text-muted" style="font-size: 3.5rem;"></i>
             <h4 class="fw-bold text-dark mt-3">No hay cursos registrados</h4>
@@ -100,12 +105,13 @@
 </div>
 
 <!-- Enlace Adicional a Buscar -->
-<div class="text-center mt-5">
+<div class="text-center mt-4 mt-md-5">
     <a href="{% url 'myapp:buscar_curso' %}" class="btn btn-link text-decoration-none text-secondary fw-medium">
         <i class="bi bi-search me-2 text-info"></i>¿Necesitas filtrar? Ir al buscador de cursos
     </a>
 </div>
 
+{% if es_admin %}
 {% for curso in cursos %}
 <div class="modal fade" id="deleteCurso{{ curso.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -118,9 +124,9 @@
                 <p class="text-muted small mb-4">Esta acción no se puede deshacer. Se eliminará el curso <strong>{{ curso.nombre }}</strong> y todas sus inscripciones y entregables asociados.</p>
                 <form method="POST" action="{% url 'myapp:cursoEliminar' curso.id %}">
                     {% csrf_token %}
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-light border w-50" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger w-50">
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <button type="button" class="btn btn-light border w-100 w-sm-50" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger w-100 w-sm-50">
                             <i class="bi bi-trash me-1"></i>Eliminar
                         </button>
                     </div>
@@ -130,4 +136,6 @@
     </div>
 </div>
 {% endfor %}
+{% endif %}
+
 {% endblock %}

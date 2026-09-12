@@ -1,7 +1,5 @@
 {% extends 'myApp/base.html' %}
 
-
-
 {% block contenido %}
 <style>
     .teacher-card {
@@ -24,19 +22,23 @@
         align-items: center;
         justify-content: center;
         font-size: 1.4rem;
+        flex-shrink: 0;
     }
 </style>
 
+<!-- Encabezado -->
 <div class="row align-items-center mb-4 g-3">
-    <div class="col-md-8 text-center text-md-start">
+    <div class="col-12 col-md-8 text-center text-md-start">
         <h1 class="fw-bold text-dark mb-1">Cuerpo Docente</h1>
         <p class="text-muted mb-0">Profesores titulares a cargo de las comisiones activas.</p>
     </div>
-    <div class="col-md-4 text-center text-md-end">
+    {% if es_admin %}
+    <div class="col-12 col-md-4 text-center text-md-end">
         <a href="{% url 'myapp:profesorFormulario' %}" class="btn btn-secondary shadow-sm px-4 py-2 fw-semibold rounded-3">
             <i class="bi bi-plus-lg me-2"></i>Agregar Profesor
         </a>
     </div>
+    {% endif %}
 </div>
 
 <!-- Buscador -->
@@ -44,69 +46,80 @@
     <div class="input-group">
         <input type="text" name="q" class="form-control" placeholder="Buscar por nombre, apellido o profesión"
                value="{{ query|default_if_none:'' }}">
-        <button type="submit" class="btn btn-primary">
-            <i class="bi bi-search"></i> Buscar
+        <button type="submit" class="btn btn-primary text-nowrap">
+            <i class="bi bi-search me-1"></i> <span class="d-none d-sm-inline">Buscar</span>
         </button>
     </div>
 </form>
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+<!-- Grilla de Tarjetas -->
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 g-md-4">
     {% for profesor in profesores %}
     <div class="col">
-       <div class="card h-100 shadow-sm teacher-card p-3">
-            <div class="card-body d-flex align-items-center p-2" data-bs-toggle="collapse" data-bs-target="#collapseProfesor{{ forloop.counter }}" role="button" aria-expanded="false">
-                <div class="avatar-teacher me-3 flex-shrink-0">
+        <div class="card h-100 shadow-sm teacher-card">
+            
+            <!-- Cabecera de la tarjeta (click para expandir) -->
+            <div class="card-body d-flex align-items-center p-3" data-bs-toggle="collapse" data-bs-target="#collapseProfesor{{ forloop.counter }}" role="button" aria-expanded="false" style="cursor: pointer;">
+                <div class="avatar-teacher me-3">
                     <i class="bi bi-person-workspace"></i>
                 </div>
                 <div class="overflow-hidden">
                     <h5 class="fw-bold text-dark mb-1 text-truncate">{{ profesor.nombre }} {{ profesor.apellido }}</h5>
                     <p class="text-muted small mb-0">
-                        <i class="bi bi-bookmark-star text-purple me-1"></i>Docente Oficial
+                        <i class="bi bi-bookmark-star text-primary me-1"></i>Docente Oficial
                     </p>
                 </div>
-           </div>
+                <i class="bi bi-chevron-down ms-auto text-muted"></i>
+            </div>
         
-        
-        <div class="collapse" id="collapseProfesor{{ forloop.counter }}">
-            <div class="card card-body border-0 shadow-sm p-3 mb-2" style="background-color: #f8fafc; border-radius: 14px;">
-                <span class="text-uppercase fw-bold text-secondary tracking-wider mb-2" style="font-size: 0.75rem;">Información del Docente</span>
-                <div class="mb-1">
-                    <p class="text-muted small mb-1"><strong>Email:</strong> {{ profesor.email|default:"sin_email@educontrol.com" }}</p>
-                    <p class="text-muted small mb-1"><strong>Profesión:</strong> {{ profesor.profesion }}</p>
-                    <p class="text-muted small mb-1"><strong>Usuario:</strong> {{ profesor.user.username|default:"—" }}</p>
-                    <p class="text-muted small mb-0">
-                        <strong>Estado:</strong>
-                        {% if profesor.user %}
-                            <span class="badge bg-success-subtle text-success">Cuenta vinculada</span>
-                        {% else %}
-                            <span class="badge bg-secondary-subtle text-secondary">Sin cuenta</span>
-                        {% endif %}
-                    </p>
+            <!-- Contenido colapsable -->
+            <div class="collapse" id="collapseProfesor{{ forloop.counter }}">
+                <div class="card-body border-top p-3" style="background-color: #f8fafc;">
+                    <span class="text-uppercase fw-bold text-secondary mb-2 d-block" style="font-size: 0.75rem;">Información del Docente</span>
+                    <div class="small">
+                        <p class="text-muted mb-2"><i class="bi bi-envelope me-2"></i><strong>Email:</strong> {{ profesor.email|default:"sin_email@educontrol.com" }}</p>
+                        <p class="text-muted mb-2"><i class="bi bi-briefcase me-2"></i><strong>Profesión:</strong> {{ profesor.profesion }}</p>
+                        <p class="text-muted mb-2"><i class="bi bi-person me-2"></i><strong>Usuario:</strong> {{ profesor.user.username|default:"—" }}</p>
+                        <p class="mb-0">
+                            <i class="bi bi-info-circle me-2"></i><strong>Estado:</strong>
+                            {% if profesor.user %}
+                                <span class="badge bg-success-subtle text-success ms-1">Cuenta vinculada</span>
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-secondary ms-1">Sin cuenta</span>
+                            {% endif %}
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card-footer bg-transparent border-top text-center">
-            <a href="{% url 'myapp:profesorEditar' profesor.id %}" class="btn btn-warning btn-sm me-2">
-                <i class="bi bi-pencil"></i> Editar
-            </a>
-            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteProfesor{{ profesor.id }}">
-                <i class="bi bi-trash"></i> Eliminar
-            </button>
+            <!-- Footer con botones de acción (solo visible para admins) -->
+            {% if es_admin %}
+            <div class="card-footer bg-transparent border-top p-3">
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a href="{% url 'myapp:profesorEditar' profesor.id %}" class="btn btn-warning flex-fill">
+                        <i class="bi bi-pencil me-1"></i> Editar
+                    </a>
+                    <button type="button" class="btn btn-danger flex-fill" data-bs-toggle="modal" data-bs-target="#deleteProfesor{{ profesor.id }}">
+                        <i class="bi bi-trash me-1"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+            {% endif %}
         </div>
-
-    </div>
-</div> 
+    </div> 
     {% empty %}
-    <div class="col-12 w-100">
+    <div class="col-12">
         <div class="text-center p-5 bg-white rounded-4 border shadow-sm">
             <i class="bi bi-person-x text-muted" style="font-size: 3.5rem;"></i>
             <h4 class="fw-bold text-dark mt-3">No hay profesores cargados</h4>
+            <p class="text-muted">Comenzá agregando uno nuevo.</p>
         </div>
     </div>
     {% endfor %}
 </div>
 
+<!-- Modales de Eliminación (solo para admins) -->
+{% if es_admin %}
 {% for profesor in profesores %}
 <div class="modal fade" id="deleteProfesor{{ profesor.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -119,9 +132,9 @@
                 <p class="text-muted small mb-4">Esta acción no se puede deshacer. Se eliminará a <strong>{{ profesor.nombre }} {{ profesor.apellido }}</strong> del sistema.</p>
                 <form method="POST" action="{% url 'myapp:profesorEliminar' profesor.id %}">
                     {% csrf_token %}
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-light border w-50" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger w-50">
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <button type="button" class="btn btn-light border w-100 w-sm-50" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger w-100 w-sm-50">
                             <i class="bi bi-trash me-1"></i>Eliminar
                         </button>
                     </div>
@@ -131,4 +144,6 @@
     </div>
 </div>
 {% endfor %}
+{% endif %}
+
 {% endblock %}

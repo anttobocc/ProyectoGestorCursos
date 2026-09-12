@@ -42,75 +42,74 @@
         border-radius: 8px;
     }
 
-    /* En pantallas chicas, la fila sigue siendo una fila de tabla, pero todo se compacta
-       para que Estudiante / Estado / Acciones entren sin desbordar ni apilarse. */
+    /* Responsive para móviles pequeños */
     @media (max-width: 575.98px) {
         .btn-agregar-estudiante {
             width: 100%;
         }
         .estudiantes-table thead th {
-            font-size: 0.58rem;
-            padding: 0.5rem 0.35rem;
-        }
-        .estudiantes-table thead th:last-child,
-        .estudiantes-table tbody td.td-acciones {
-            padding-right: 0.35rem;
+            font-size: 0.65rem;
+            padding: 0.5rem 0.4rem;
         }
         .estudiantes-table tbody td {
-            padding: 0.4rem 0.35rem;
+            padding: 0.5rem 0.4rem;
         }
         .avatar-circle {
-            width: 26px;
-            height: 26px;
-            font-size: 0.7rem;
+            width: 30px;
+            height: 30px;
+            font-size: 0.85rem;
         }
         .estudiantes-table .estudiante-nombre {
-            font-size: 0.74rem;
+            font-size: 0.8rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 24vw;
+            max-width: 120px;
             display: inline-block;
         }
         .estudiantes-table .badge {
-            padding: 0.25rem 0.4rem !important;
-            font-size: 0.58rem;
-            white-space: nowrap;
+            padding: 0.3rem 0.5rem !important;
+            font-size: 0.7rem;
         }
         .estudiantes-table .acciones-wrap {
             display: flex;
             flex-wrap: nowrap;
             justify-content: center;
-            gap: 0.2rem;
+            gap: 0.3rem;
         }
         .estudiantes-table .acciones-wrap .btn {
             margin: 0 !important;
-            padding: 0.2rem 0.32rem;
-            font-size: 0.58rem;
+            padding: 0.3rem 0.4rem;
+            font-size: 0.7rem;
+            min-width: 32px;
         }
     }
 </style>
 
+<!-- Encabezado -->
 <div class="row align-items-center mb-4 g-3">
-    <div class="col-md-8 text-center text-md-start">
+    <div class="col-12 col-md-8 text-center text-md-start">
         <h1 class="fw-bold text-dark mb-1">Control de Estudiantes</h1>
         <p class="text-muted mb-0">Listado oficial de alumnos matriculados en el sistema.</p>
     </div>
-    <div class="col-md-4 text-center text-md-end">
+    {% if es_admin %}
+    <div class="col-12 col-md-4 text-center text-md-end">
         <a href="{% url 'myapp:estudianteFormulario' %}" class="btn btn-primary shadow-sm px-4 py-2 fw-semibold rounded-3 btn-agregar-estudiante">
             <i class="bi bi-plus-lg me-2"></i>Agregar Estudiante
         </a>
     </div>
+    {% endif %}
 </div>
 
+<!-- Buscador y Filtros -->
 <form method="get" class="row g-2 mb-3">
-    <div class="col-md-8">
+    <div class="col-12 col-md-8">
         <div class="input-group">
             <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
             <input type="text" name="q" class="form-control border-start-0 ps-0" placeholder="Buscar estudiante por nombre..." value="{{ query|default_if_none:'' }}">
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-12 col-md-4">
         <div class="input-group">
             <span class="input-group-text bg-white border-end-0"><i class="bi bi-funnel text-muted"></i></span>
             <select class="form-select border-start-0 ps-0" disabled>
@@ -120,6 +119,7 @@
     </div>
 </form>
 
+<!-- Tabla de Estudiantes -->
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
     <div class="table-responsive">
         <table class="table mb-0 estudiantes-table align-middle">
@@ -127,7 +127,9 @@
                 <tr>
                     <th scope="col" class="text-center">Estudiante</th>
                     <th scope="col" class="text-center">Estado</th>
+                    {% if es_admin %}
                     <th scope="col" class="text-center">Acciones</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -146,23 +148,25 @@
                             <i class="bi bi-shield-check me-1"></i>Regular
                         </span>
                     </td>
+                    {% if es_admin %}
                     <td class="text-center td-acciones">
                         <div class="acciones-wrap">
-                            <a href="{% url 'myapp:detalle_estudiante' estudiante.id %}" class="btn btn-outline-primary btn-sm me-1">
-                                <i class="bi bi-eye"></i> Ver
+                            <a href="{% url 'myapp:detalle_estudiante' estudiante.id %}" class="btn btn-outline-primary btn-sm" title="Ver detalles">
+                                <i class="bi bi-eye"></i>
                             </a>
-                            <a href="{% url 'myapp:estudianteEditar' estudiante.id %}" class="btn btn-warning btn-sm me-1">
-                                <i class="bi bi-pencil"></i> Editar
+                            <a href="{% url 'myapp:estudianteEditar' estudiante.id %}" class="btn btn-warning btn-sm" title="Editar">
+                                <i class="bi bi-pencil"></i>
                             </a>
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteEstudiante{{ estudiante.id }}">
-                                <i class="bi bi-trash"></i> Eliminar
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteEstudiante{{ estudiante.id }}" title="Eliminar">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </div>
                     </td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3" class="text-center text-muted py-5">
+                    <td colspan="{% if es_admin %}3{% else %}2{% endif %}" class="text-center text-muted py-5">
                         <i class="bi bi-people text-muted d-block mb-2" style="font-size: 2.5rem;"></i>
                         No hay estudiantes cargados
                     </td>
@@ -173,8 +177,9 @@
     </div>
 </div>
 
+<!-- Paginación -->
 {% if estudiantes.paginator.count %}
-<div class="d-flex align-items-center justify-content-center gap-3 mt-3">
+<div class="d-flex align-items-center justify-content-center gap-3 mt-3 flex-wrap">
     <span class="text-muted small">Mostrando {{ estudiantes.paginator.count }} estudiante{{ estudiantes.paginator.count|pluralize }}</span>
     {% if estudiantes.paginator.num_pages > 1 %}
     <div class="d-flex align-items-center gap-2">
@@ -200,6 +205,8 @@
 </div>
 {% endif %}
 
+<!-- Modales de Eliminación (solo para admins) -->
+{% if es_admin %}
 {% for estudiante in estudiantes %}
 <div class="modal fade" id="deleteEstudiante{{ estudiante.id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -212,9 +219,9 @@
                 <p class="text-muted small mb-4">Esta acción no se puede deshacer. Se eliminará a <strong>{{ estudiante.nombre }} {{ estudiante.apellido }}</strong> del sistema.</p>
                 <form method="POST" action="{% url 'myapp:estudianteEliminar' estudiante.id %}">
                     {% csrf_token %}
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-light border w-50" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger w-50">
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <button type="button" class="btn btn-light border w-100 w-sm-50" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger w-100 w-sm-50">
                             <i class="bi bi-trash me-1"></i>Eliminar
                         </button>
                     </div>
@@ -224,4 +231,6 @@
     </div>
 </div>
 {% endfor %}
+{% endif %}
+
 {% endblock %}
