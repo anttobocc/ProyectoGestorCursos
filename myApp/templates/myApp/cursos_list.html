@@ -44,7 +44,7 @@
 <!-- Contenedor de la Grilla de Cursos -->
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 g-md-4">
     {% for curso in cursos %}
-    <div class="col">
+    <div class="col animate__animated animate__fadeInUp" style="animation-delay: {{ forloop.counter0 }}00ms;">
         <div class="card h-100 shadow-sm custom-card p-3">
             <div class="card-body d-flex flex-column p-2">
                 <div class="d-flex align-items-center justify-content-between mb-3">
