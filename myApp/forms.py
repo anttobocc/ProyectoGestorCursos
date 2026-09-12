@@ -21,6 +21,19 @@ class ProfesorFormulario(forms.Form):
     apellido = forms.CharField(max_length=100, label="Apellido")
     email = forms.EmailField(label="Correo Electrónico")
     profesion = forms.CharField(max_length=100, label="Profesión")
+    
+    # NUEVOS CAMPOS PARA CREAR EL USUARIO
+    username = forms.CharField(
+        max_length=150, 
+        label="Nombre de usuario", 
+        help_text="Requerido. 150 caracteres o menos. Solo letras, dígitos y @/./+/-/_",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
+        label="Contraseña", 
+        help_text="Su contraseña debe contener al menos 8 caracteres."
+    )
 
 class ProfesorForm(forms.ModelForm):
     class Meta:

@@ -2,6 +2,7 @@ from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
@@ -135,19 +136,44 @@ def profesores(request):
         profesores = Profesor.objects.all()
     return render(request, 'myApp/profesores.html', {'profesores': profesores, 'query': query})
 
+
 @admin_required
 def profesorFormulario(request):
     if request.method == 'POST':
         form = ProfesorFormulario(request.POST)
         if form.is_valid():
-            Profesor(
-                nombre=form.cleaned_data['nombre'],
-                apellido=form.cleaned_data['apellido'],
-                email=form.cleaned_data['email'],
-                profesion=form.cleaned_data['profesion'],
-            ).save()
-            messages.success(request, "Profesor agregado correctamente.")
-            return redirect('myapp:profesores')
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+
+            # Verificar que el username no exista ya
+            if User.objects.filter(username=username).exists():
+                messages.error(request, f"El nombre de usuario '{username}' ya está en uso. Elegí otro.")
+                return render(request, 'myApp/profesor_formulario.html', {'form': form})
+
+            try:
+                with transaction.atomic():
+                    # Crear el usuario de Django
+                    user = User.objects.create_user(
+                        username=username, 
+                        password=password, 
+                        email=email
+                    )
+
+                    # Crear el Profesor y vincularlo al usuario
+                    Profesor.objects.create(
+                        nombre=form.cleaned_data['nombre'],
+                        apellido=form.cleaned_data['apellido'],
+                        email=email,
+                        profesion=form.cleaned_data['profesion'],
+                        user=user
+                    )
+
+                messages.success(request, f"¡Profesor creado exitosamente! Usuario: {username} - Contraseña: {password}")
+                return redirect('myapp:profesores')
+            except Exception as e:
+                messages.error(request, f"Error al crear el profesor: {str(e)}")
+                return render(request, 'myApp/profesor_formulario.html', {'form': form})
     else:
         form = ProfesorFormulario()
     return render(request, 'myApp/profesor_formulario.html', {'form': form})

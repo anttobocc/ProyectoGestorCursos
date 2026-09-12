@@ -109,18 +109,32 @@
                     </div>
 
                     <!-- Profesión -->
-                    <div class="mb-3 mb-md-2">
+                    <div class="mb-2">
                         <label for="id_profesion" class="form-label fw-semibold text-secondary small mb-1">Profesión</label>
                         {{ form.profesion|add_class:"form-control" }}
-                        {% if form.profesion.errors %}
-                        <div class="text-danger small mt-1">{{ form.profesion.errors.0 }}</div>
-                        {% endif %}
+                        {% if form.profesion.errors %}<div class="text-danger small mt-1">{{ form.profesion.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <!-- NUEVOS CAMPOS DE USUARIO Y CONTRASEÑA -->
+                    <div class="row g-2 mb-2">
+                        <div class="col-12 col-md-6">
+                            <label for="id_username" class="form-label fw-semibold text-secondary small mb-1">Nombre de usuario</label>
+                            {{ form.username|add_class:"form-control" }}
+                            {% if form.username.errors %}<div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>{% endif %}
+                            {% if form.username.help_text %}<div class="form-text text-muted small">{{ form.username.help_text }}</div>{% endif %}
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="id_password" class="form-label fw-semibold text-secondary small mb-1">Contraseña</label>
+                            {{ form.password|add_class:"form-control" }}
+                            {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>{% endif %}
+                            {% if form.password.help_text %}<div class="form-text text-muted small">{{ form.password.help_text }}</div>{% endif %}
+                        </div>
                     </div>
 
                     <!-- Botones de Acción -->
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary fw-semibold rounded-3 btn-form-mobile">
-                            <i class="bi bi-check-circle-fill me-2"></i>Guardar Profesor
+                            <i class="bi bi-check-circle-fill me-2"></i>Guardar
                         </button>
                         <a href="{% url 'myapp:profesores' %}" class="btn btn-light fw-semibold text-secondary rounded-3 border btn-form-mobile">
                             Cancelar
