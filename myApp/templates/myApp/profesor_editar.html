@@ -34,6 +34,11 @@
                     <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
                     {% endif %}
 
+                    <!-- SECCIÓN: DATOS DEL PROFESOR -->
+                    <h6 class="fw-bold text-dark mb-2 mt-2">
+                        <i class="bi bi-person-badge me-1"></i> Datos del Profesor
+                    </h6>
+
                     <div class="row g-2 mb-1">
                         <div class="col-6">
                             <label for="id_nombre" class="form-label fw-semibold text-secondary small mb-0">Nombre</label>
@@ -64,6 +69,46 @@
                         {{ form.profesion|add_class:"form-control" }}
                         {% if form.profesion.errors %}
                         <div class="text-danger small mt-1">{{ form.profesion.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- SECCIÓN: DATOS DE ACCESO -->
+                    <h6 class="fw-bold text-dark mb-2">
+                        <i class="bi bi-shield-lock me-1"></i> Datos de Acceso
+                    </h6>
+
+                    <div class="mb-1">
+                        <label for="id_username" class="form-label fw-semibold text-secondary small mb-0">Nombre de usuario</label>
+                        {{ form.username|add_class:"form-control" }}
+                        {% if form.username.errors %}
+                        <div class="text-danger small mt-1">{{ form.username.errors.0 }}</div>
+                        {% endif %}
+                        {% if form.username.help_text %}
+                        <div class="form-text text-muted small">{{ form.username.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-1">
+                        <label for="id_user_email" class="form-label fw-semibold text-secondary small mb-0">Email del usuario</label>
+                        {{ form.user_email|add_class:"form-control" }}
+                        {% if form.user_email.errors %}
+                        <div class="text-danger small mt-1">{{ form.user_email.errors.0 }}</div>
+                        {% endif %}
+                        {% if form.user_email.help_text %}
+                        <div class="form-text text-muted small">{{ form.user_email.help_text }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="id_new_password" class="form-label fw-semibold text-secondary small mb-0">Nueva contraseña</label>
+                        {{ form.new_password|add_class:"form-control" }}
+                        {% if form.new_password.errors %}
+                        <div class="text-danger small mt-1">{{ form.new_password.errors.0 }}</div>
+                        {% endif %}
+                        {% if form.new_password.help_text %}
+                        <div class="form-text text-muted small">{{ form.new_password.help_text }}</div>
                         {% endif %}
                     </div>
 

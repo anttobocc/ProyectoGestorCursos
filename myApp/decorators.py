@@ -9,7 +9,14 @@ def es_administrador(user):
 
 
 def es_profesor(user):
-    return user.is_authenticated and user.groups.filter(name='Profesor').exists()
+    """Verifica si el usuario tiene perfil de Profesor vinculado."""
+    if not user.is_authenticated:
+        return False
+    # Verificar si tiene el perfil de Profesor vinculado
+    if hasattr(user, 'profesor'):
+        return True
+    # También verificar si está en el grupo "Profesor" (por compatibilidad)
+    return user.groups.filter(name='Profesor').exists()
 
 
 def admin_required(view_func):

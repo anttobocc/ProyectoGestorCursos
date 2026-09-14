@@ -7,6 +7,15 @@ class Estudiante(models.Model):
     apellido = models.CharField(max_length=100)
     email = models.EmailField()
     
+    # NUEVO: Vinculación con el usuario de Django
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name='estudiante',
+    )
+    
     asistencia = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
@@ -170,3 +179,27 @@ class RegistroAsistencia(models.Model):
 
     def __str__(self):
         return f"{self.inscripcion} - {self.fecha} - {'Presente' if self.presente else 'Ausente'}"
+
+# NUEVO MODELO: Reseñas / Opiniones de los alumnos
+class Resena(models.Model):
+    estudiante = models.ForeignKey(
+        Estudiante, 
+        on_delete=models.CASCADE, 
+        related_name='resenas'
+    )
+    curso = models.ForeignKey(
+        Curso, 
+        on_delete=models.CASCADE, 
+        related_name='resenas'
+    )
+    calificacion = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)]
+    )
+    comentario = models.TextField(blank=True, null=True)
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('estudiante', 'curso')  # Un alumno solo puede opinar una vez por curso
+
+    def __str__(self):
+        return f"Reseña de {self.estudiante} en {self.curso} ({self.calificacion}⭐)"

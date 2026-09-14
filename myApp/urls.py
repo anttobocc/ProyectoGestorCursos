@@ -2,12 +2,13 @@ from django.urls import path
 from .views import (
     login_view, logout_view,
     index, buscar_curso,
-    lista_cursos, cursoFormulario, curso_editar, curso_eliminar, admin_curso_detail, admin_estudiante_curso_eliminar,
+    lista_cursos, cursoFormulario, curso_editar, curso_eliminar, admin_curso_detail, admin_estudiante_curso_eliminar, admin_curso_resenas,
     lista_estudiantes, detalle_estudiante, estudianteFormulario, estudiante_editar, estudiante_eliminar,
     profesores, profesorFormulario, profesor_editar, profesor_eliminar,
     entregable_editar, entregable_eliminar, entregable_ver, entrega_calificar,
     mis_cursos, curso_detail, curso_entregables, estudiante_curso_eliminar, entregable_crear_en_curso, inscripcion_editar,
     tomar_asistencia, nota_crear, nota_editar, nota_eliminar,
+    mis_cursos_estudiante, resena_crear, curso_resenas,
 )
 
 app_name = "myapp"
@@ -23,6 +24,7 @@ urlpatterns = [
     path('curso/editar/<int:id>/', curso_editar, name='cursoEditar'),
     path('curso/eliminar/<int:id>/', curso_eliminar, name='cursoEliminar'),
     path('curso/<int:id>/', admin_curso_detail, name='cursoDetalleAdmin'),
+    path('curso/<int:id>/resenas-admin/', admin_curso_resenas, name='admin_curso_resenas'),
     path('curso/<int:curso_id>/alumno/<int:estudiante_id>/baja/', admin_estudiante_curso_eliminar, name='adminEstudianteCursoEliminar'),
     # Estudiantes
     path('estudiantes/', lista_estudiantes, name='estudiantes'),
@@ -45,10 +47,14 @@ urlpatterns = [
     path('mis-cursos/<int:id>/', curso_detail, name='curso_detail'),
     path('mis-cursos/<int:id>/entregables/', curso_entregables, name='curso_entregables'),
     path('mis-cursos/<int:id>/asistencia/', tomar_asistencia, name='tomar_asistencia'),
+    path('mis-cursos/<int:id>/resenas/', curso_resenas, name='curso_resenas'),
     path('mis-cursos/<int:curso_id>/alumno/<int:estudiante_id>/baja/', estudiante_curso_eliminar, name='estudianteCursoEliminar'),
     path('mis-cursos/<int:curso_id>/entregables/crear/', entregable_crear_en_curso, name='entregableCrearEnCurso'),
     path('mis-cursos/<int:curso_id>/alumno/<int:estudiante_id>/editar/', inscripcion_editar, name='inscripcionEditar'),
     path('mis-cursos/<int:curso_id>/alumno/<int:estudiante_id>/nota/agregar/', nota_crear, name='notaCrear'),
     path('nota/editar/<int:id>/', nota_editar, name='notaEditar'),
     path('nota/eliminar/<int:id>/', nota_eliminar, name='notaEliminar'),
+    # Estudiante
+    path('mis-cursos-estudiante/', mis_cursos_estudiante, name='mis_cursos_estudiante'),
+    path('curso/<int:curso_id>/resena/', resena_crear, name='resena_crear'),
 ]

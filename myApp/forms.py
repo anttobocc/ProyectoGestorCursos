@@ -1,5 +1,5 @@
 from django import forms
-from .models import Curso, Profesor, Estudiante, Entregable, Inscripcion, Nota
+from .models import Curso, Profesor, Estudiante, Entregable, Inscripcion, Nota, Resena
 
 class CursoForm(forms.ModelForm):
     alumnos = forms.ModelMultipleChoiceField(
@@ -22,7 +22,7 @@ class ProfesorFormulario(forms.Form):
     email = forms.EmailField(label="Correo Electrónico")
     profesion = forms.CharField(max_length=100, label="Profesión")
     
-    # NUEVOS CAMPOS PARA CREAR EL USUARIO
+    # CAMPOS PARA CREAR EL USUARIO DEL PROFESOR
     username = forms.CharField(
         max_length=150, 
         label="Nombre de usuario", 
@@ -36,14 +36,54 @@ class ProfesorFormulario(forms.Form):
     )
 
 class ProfesorForm(forms.ModelForm):
+    # Campos del usuario de Django
+    username = forms.CharField(
+        max_length=150,
+        label="Nombre de usuario",
+        help_text="Requerido. 150 caracteres o menos. Solo letras, dígitos y @/./+/-/_",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    user_email = forms.EmailField(
+        label="Email del usuario",
+        help_text="Correo electrónico vinculado al usuario del sistema",
+        required=False,
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
+    )
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label="Nueva contraseña (opcional)",
+        help_text="Dejá vacío para mantener la contraseña actual. Mínimo 8 caracteres.",
+        required=False
+    )
+
     class Meta:
         model = Profesor
         fields = ['nombre', 'apellido', 'email', 'profesion']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Si estamos editando un profesor existente, cargar datos del usuario
+        if self.instance and self.instance.pk and hasattr(self.instance, 'user'):
+            self.fields['username'].initial = self.instance.user.username
+            self.fields['user_email'].initial = self.instance.user.email
 
 class EstudianteFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
     apellido = forms.CharField(max_length=100, label="Apellido")
     email = forms.EmailField(label="Correo Electrónico")
+    
+    # NUEVOS CAMPOS PARA CREAR EL USUARIO DEL ESTUDIANTE
+    username = forms.CharField(
+        max_length=150, 
+        label="Nombre de usuario", 
+        help_text="Requerido. 150 caracteres o menos. Solo letras, dígitos y @/./+/-/_",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
+        label="Contraseña", 
+        help_text="Su contraseña debe contener al menos 8 caracteres."
+    )
 
 class EstudianteForm(forms.ModelForm):
     class Meta:
@@ -85,4 +125,25 @@ class EntregableForm(forms.ModelForm):
         }
         labels = {
             'publicado': 'Publicado (visible para los alumnos)',
+        }
+
+# NUEVO: Formulario para que el alumno deje su reseña
+class ResenaForm(forms.ModelForm):
+    class Meta:
+        model = Resena
+        fields = ['calificacion', 'comentario']
+        widgets = {
+            'calificacion': forms.Select(
+                choices=[(i, f"{i} {'Estrella' if i == 1 else 'Estrellas'}") for i in range(1, 6)], 
+                attrs={'class': 'form-select'}
+            ),
+            'comentario': forms.Textarea(attrs={
+                'rows': 3, 
+                'class': 'form-control', 
+                'placeholder': 'Contanos tu experiencia con este curso... (opcional)'
+            }),
+        }
+        labels = {
+            'calificacion': 'Calificación',
+            'comentario': 'Tu opinión',
         }

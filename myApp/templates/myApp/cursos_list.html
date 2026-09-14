@@ -51,9 +51,18 @@
                     <div class="card-icon-avatar">
                         <i class="bi bi-code-square"></i>
                     </div>
-                    <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2 fw-semibold">
-                        Activo
-                    </span>
+                    <div class="d-flex gap-2">
+                        {% with total_resenas=curso.resena_set.count %}
+                        {% if total_resenas > 0 %}
+                        <span class="badge rounded-pill bg-warning-subtle text-warning px-3 py-2 fw-semibold">
+                            <i class="bi bi-star-fill me-1"></i>{{ total_resenas }}
+                        </span>
+                        {% endif %}
+                        {% endwith %}
+                        <span class="badge rounded-pill bg-success-subtle text-success px-3 py-2 fw-semibold">
+                            Activo
+                        </span>
+                    </div>
                 </div>
                 
                 <h4 class="card-title fw-bold text-primary mb-3">{{ curso.nombre }}</h4>
@@ -81,6 +90,9 @@
                 <div class="d-flex flex-column flex-sm-row gap-2">
                     <a href="{% url 'myapp:cursoDetalleAdmin' curso.id %}" class="btn btn-outline-primary flex-fill">
                         <i class="bi bi-eye me-1"></i> Ver
+                    </a>
+                    <a href="{% url 'myapp:admin_curso_resenas' curso.id %}" class="btn btn-outline-warning flex-fill">
+                        <i class="bi bi-star-fill me-1"></i> Opiniones
                     </a>
                     <a href="{% url 'myapp:cursoEditar' curso.id %}" class="btn btn-warning flex-fill">
                         <i class="bi bi-pencil me-1"></i> Editar

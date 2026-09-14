@@ -1,0 +1,56 @@
+{% extends 'myApp/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Opinar sobre {{ curso.nombre }}{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+        <div class="mb-3 mb-md-2">
+            <a href="{% url 'myapp:mis_cursos_estudiante' %}" class="text-decoration-none text-secondary small fw-medium">
+                <i class="bi bi-arrow-left me-1"></i> Volver a mis cursos
+            </a>
+        </div>
+
+        <div class="card shadow border-0 rounded-4 animate__animated animate__fadeInUp">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-2" style="width:56px;height:56px;font-size:1.5rem;">
+                        <i class="bi bi-star-fill"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Opinar sobre el curso</h3>
+                    <p class="text-muted small mb-0">{{ curso.nombre }} - Ciclo {{ curso.camada }}</p>
+                </div>
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label for="id_calificacion" class="form-label fw-semibold text-secondary small mb-1">Calificación</label>
+                        {{ form.calificacion|add_class:"form-select" }}
+                        {% if form.calificacion.errors %}<div class="text-danger small mt-1">{{ form.calificacion.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="id_comentario" class="form-label fw-semibold text-secondary small mb-1">Tu opinión (opcional)</label>
+                        {{ form.comentario|add_class:"form-control" }}
+                        {% if form.comentario.errors %}<div class="text-danger small mt-1">{{ form.comentario.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary fw-semibold rounded-3 btn-form-mobile">
+                            <i class="bi bi-send me-2"></i>Publicar Opinión
+                        </button>
+                        <a href="{% url 'myapp:mis_cursos_estudiante' %}" class="btn btn-light fw-semibold text-secondary rounded-3 border btn-form-mobile">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

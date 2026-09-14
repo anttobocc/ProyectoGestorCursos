@@ -1,0 +1,136 @@
+﻿{% extends 'myApp/base.html' %}
+{% load custom_filters %}
+
+{% block title %}Admin - Opiniones de {{ curso.nombre }}{% endblock %}
+
+{% block contenido %}
+<div class="row align-items-center mb-4 g-3">
+    <div class="col-12 col-md-8 text-center text-md-start">
+        <h1 class="fw-bold text-dark mb-1">
+            <i class="bi bi-shield-lock-fill text-primary me-2"></i>Opiniones del curso (Admin)
+        </h1>
+        <p class="text-muted mb-0">{{ curso.nombre }} - Ciclo {{ curso.camada }}</p>
+    </div>
+    <div class="col-12 col-md-4 text-center text-md-end">
+        <a href="{% url 'myapp:cursoDetalleAdmin' curso.id %}" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Volver al curso
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 mb-4 animate__animated animate__fadeIn">
+    <div class="card-body p-4">
+        <div class="row align-items-center">
+            <div class="col-md-4 text-center border-end">
+                <div class="display-4 fw-bold text-warning mb-1">{{ promedio }}</div>
+                <div class="text-warning mb-2" style="font-size: 1.5rem;">
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= promedio %}
+                            <i class="bi bi-star-fill"></i>
+                        {% elif forloop.counter <= promedio|add:"0.5" %}
+                            <i class="bi bi-star-half"></i>
+                        {% else %}
+                            <i class="bi bi-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <p class="text-muted small mb-0">
+                    {{ total_resenas }} {{ total_resenas|pluralize:"opinión,opiniones" }}
+                </p>
+            </div>
+            <div class="col-md-8 mt-3 mt-md-0">
+                <div class="px-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="text-muted small me-2" style="width: 15px;">5</span>
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        <div class="progress flex-grow-1" style="height: 8px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-warning" style="width: {% widthratio distribucion.5 total_resenas 100 %}%"></div>
+                        </div>
+                        <span class="text-muted small ms-2" style="width: 30px; text-align: right;">{{ distribucion.5 }}</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="text-muted small me-2" style="width: 15px;">4</span>
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        <div class="progress flex-grow-1" style="height: 8px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-warning" style="width: {% widthratio distribucion.4 total_resenas 100 %}%"></div>
+                        </div>
+                        <span class="text-muted small ms-2" style="width: 30px; text-align: right;">{{ distribucion.4 }}</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="text-muted small me-2" style="width: 15px;">3</span>
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        <div class="progress flex-grow-1" style="height: 8px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-warning" style="width: {% widthratio distribucion.3 total_resenas 100 %}%"></div>
+                        </div>
+                        <span class="text-muted small ms-2" style="width: 30px; text-align: right;">{{ distribucion.3 }}</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="text-muted small me-2" style="width: 15px;">2</span>
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        <div class="progress flex-grow-1" style="height: 8px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-warning" style="width: {% widthratio distribucion.2 total_resenas 100 %}%"></div>
+                        </div>
+                        <span class="text-muted small ms-2" style="width: 30px; text-align: right;">{{ distribucion.2 }}</span>
+                    </div>
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="text-muted small me-2" style="width: 15px;">1</span>
+                        <i class="bi bi-star-fill text-warning me-2"></i>
+                        <div class="progress flex-grow-1" style="height: 8px; background-color: #e9ecef;">
+                            <div class="progress-bar bg-warning" style="width: {% widthratio distribucion.1 total_resenas 100 %}%"></div>
+                        </div>
+                        <span class="text-muted small ms-2" style="width: 30px; text-align: right;">{{ distribucion.1 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if resenas %}
+<h4 class="fw-bold text-dark mb-3">
+    <i class="bi bi-chat-square-text me-2"></i>Comentarios de los alumnos
+</h4>
+<div class="row g-3">
+    {% for resena in resenas %}
+    <div class="col-12 animate__animated animate__fadeInUp" style="animation-delay: {{ forloop.counter0 }}00ms;">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-start mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle me-3" style="width:48px;height:48px;font-size:1.2rem; flex-shrink: 0;">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h5 class="fw-bold text-dark mb-1">{{ resena.estudiante.nombre }} {{ resena.estudiante.apellido }}</h5>
+                        <div class="text-warning mb-1">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= resena.calificacion %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                    <i class="bi bi-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            {{ resena.fecha|date:"d/m/Y H:i" }}
+                        </small>
+                    </div>
+                </div>
+                {% if resena.comentario %}
+                <p class="text-dark mb-0" style="white-space: pre-wrap;">{{ resena.comentario }}</p>
+                {% else %}
+                <p class="text-muted fst-italic mb-0">Sin comentario</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="text-center p-5 bg-white rounded-4 border shadow-sm animate__animated animate__fadeIn">
+    <i class="bi bi-chat-square-text text-muted" style="font-size: 3.5rem;"></i>
+    <h4 class="fw-bold text-dark mt-3">Aún no hay opiniones</h4>
+    <p class="text-muted">Los alumnos aún no han dejado reseñas sobre este curso.</p>
+</div>
+{% endif %}
+{% endblock %}

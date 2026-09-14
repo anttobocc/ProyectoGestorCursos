@@ -40,4 +40,43 @@
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3 g-md-4">
     {% for curso in cursos %}
     <div class="col">
-        <div class="card h-1
+        <div class="card h-100 shadow-sm custom-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="card-icon-avatar me-3">
+                        <i class="bi bi-journal-bookmark"></i>
+                    </div>
+                    <div>
+                        <h4 class="card-title fw-bold text-primary mb-1">{{ curso.nombre }}</h4>
+                        <p class="text-muted small mb-0">Ciclo {{ curso.camada }}</p>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 mt-3">
+                    <a href="{% url 'myapp:curso_detail' curso.id %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-people me-1"></i> Ver Alumnos
+                    </a>
+                    <a href="{% url 'myapp:curso_entregables' curso.id %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-folder-check me-1"></i> Entregables
+                    </a>
+                    <a href="{% url 'myapp:tomar_asistencia' curso.id %}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-calendar2-check me-1"></i> Asistencia
+                    </a>
+                    <a href="{% url 'myapp:curso_resenas' curso.id %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-star-fill me-1"></i> Ver Opiniones
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="text-center p-5 bg-white rounded-4 border shadow-sm">
+            <i class="bi bi-journal-x text-muted" style="font-size: 3.5rem;"></i>
+            <h4 class="fw-bold text-dark mt-3">No tenés cursos asignados</h4>
+            <p class="text-muted">El administrador aún no te ha asignado ninguna comisión.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
