@@ -39,7 +39,10 @@
                     </div>
                 </div>
             </div>
-            <div class="card-footer bg-transparent border-top p-3">
+            <div class="card-footer bg-transparent border-top p-3 d-grid gap-2">
+                <a href="{% url 'myapp:curso_detail_estudiante' inscripcion.curso.id %}" class="btn btn-outline-primary w-100 py-2 fw-medium">
+                    <i class="bi bi-eye me-2"></i>Ver curso
+                </a>
                 <a href="{% url 'myapp:resena_crear' inscripcion.curso.id %}" class="btn btn-primary w-100 py-2 fw-medium">
                     <i class="bi bi-star me-2"></i>Dejar una opinión
                 </a>

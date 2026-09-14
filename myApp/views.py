@@ -68,15 +68,13 @@ def logout_view(request):
     return redirect('myapp:login')
 
 
-# NUEVO: Autorregistro del estudiante (documento = usuario)
+# Autorregistro del estudiante (documento = usuario)
 def registro_estudiante(request):
     if request.user.is_authenticated:
         return redirect(settings.LOGIN_REDIRECT_URL)
 
     if request.method == 'POST':
         form = RegistroEstudianteForm(request.POST)
-       
-        
         if form.is_valid():
             documento = form.cleaned_data['documento']
             password = form.cleaned_data['password']
@@ -845,6 +843,44 @@ def mis_cursos_estudiante(request):
         messages.warning(request, "No tienes un perfil de estudiante vinculado. Contacta al administrador.")
     
     return render(request, 'myApp/mis_cursos_estudiante.html', {'inscripciones': inscripciones})
+
+
+@login_required
+def curso_detail_estudiante(request, id):
+    """Vista de solo lectura para que el estudiante vea el detalle de un curso propio."""
+    try:
+        estudiante = request.user.estudiante
+    except Estudiante.DoesNotExist:
+        messages.error(request, "No tenés un perfil de estudiante vinculado.")
+        return redirect('myapp:mis_cursos_estudiante')
+
+    curso = get_object_or_404(Curso, id=id)
+    inscripcion = get_object_or_404(Inscripcion, curso=curso, estudiante=estudiante)
+
+    notas = inscripcion.notas.order_by('id')
+
+    entregables = Entregable.objects.filter(curso=curso, publicado=True).order_by('fecha_vencimiento')
+    entregas_por_entregable = {
+        e.entregable_id: e for e in Entrega.objects.filter(estudiante=estudiante, entregable__curso=curso)
+    }
+    entregables_info = []
+    for entregable in entregables:
+        entrega = entregas_por_entregable.get(entregable.id)
+        entregables_info.append({
+            'entregable': entregable,
+            'entrega': entrega,
+        })
+
+    ya_reseno = Resena.objects.filter(estudiante=estudiante, curso=curso).exists()
+
+    return render(request, 'myApp/curso_detail_estudiante.html', {
+        'curso': curso,
+        'inscripcion': inscripcion,
+        'notas': notas,
+        'entregables_info': entregables_info,
+        'ya_reseno': ya_reseno,
+    })
+
 
 @login_required
 def resena_crear(request, curso_id):
