@@ -53,6 +53,12 @@
                         {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
                     </div>
 
+                    <div class="mb-2">
+                        <label for="id_documento" class="form-label fw-semibold text-secondary small mb-0">Documento</label>
+                        {{ form.documento|add_class:"form-control" }}
+                        {% if form.documento.errors %}<div class="text-danger small mt-1">{{ form.documento.errors.0 }}</div>{% endif %}
+                    </div>
+
                     <button type="submit" class="btn btn-warning w-100 fw-semibold rounded-3 mb-2">
                         <i class="bi bi-check-circle-fill me-2"></i>Guardar Cambios
                     </button>

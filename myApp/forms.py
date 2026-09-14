@@ -88,7 +88,7 @@ class EstudianteFormulario(forms.Form):
 class EstudianteForm(forms.ModelForm):
     class Meta:
         model = Estudiante
-        fields = ['nombre', 'apellido', 'email']
+        fields = ['nombre', 'apellido', 'email', 'documento']  # AGREGADO: documento
 
 class InscripcionForm(forms.ModelForm):
     class Meta:
@@ -127,7 +127,7 @@ class EntregableForm(forms.ModelForm):
             'publicado': 'Publicado (visible para los alumnos)',
         }
 
-# NUEVO: Formulario para que el alumno deje su reseña
+# Formulario para que el alumno deje su reseña
 class ResenaForm(forms.ModelForm):
     class Meta:
         model = Resena
@@ -147,3 +147,43 @@ class ResenaForm(forms.ModelForm):
             'calificacion': 'Calificación',
             'comentario': 'Tu opinión',
         }
+
+# NUEVO: Formulario para el autorregistro del estudiante
+class RegistroEstudianteForm(forms.Form):
+    nombre = forms.CharField(max_length=100, label="Nombre")
+    apellido = forms.CharField(max_length=100, label="Apellido")
+    email = forms.EmailField(label="Correo Electrónico")
+    documento = forms.CharField(
+        max_length=20,
+        label="Documento",
+        help_text="DNI sin puntos. Vas a usarlo para iniciar sesión."
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label="Contraseña",
+        help_text="Debe contener al menos 8 caracteres."
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label="Confirmar contraseña"
+    )
+
+    def clean_documento(self):
+        documento = self.cleaned_data['documento'].strip()
+        if Estudiante.objects.filter(documento=documento).exists():
+            raise forms.ValidationError("Ya existe una cuenta registrada con ese documento.")
+        return documento
+
+    def clean_password(self):
+        password = self.cleaned_data['password']
+        if len(password) < 8:
+            raise forms.ValidationError("La contraseña debe tener al menos 8 caracteres.")
+        return password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password2 = cleaned_data.get('password2')
+        if password and password2 and password != password2:
+            self.add_error('password2', "Las contraseñas no coinciden.")
+        return cleaned_data

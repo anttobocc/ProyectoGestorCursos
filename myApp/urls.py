@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    login_view, logout_view,
+    login_view, logout_view, registro_estudiante,
     index, buscar_curso,
     lista_cursos, cursoFormulario, curso_editar, curso_eliminar, admin_curso_detail, admin_estudiante_curso_eliminar, admin_curso_resenas,
     lista_estudiantes, detalle_estudiante, estudianteFormulario, estudiante_editar, estudiante_eliminar,
@@ -16,6 +16,7 @@ app_name = "myapp"
 urlpatterns = [
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
+    path('register/', registro_estudiante, name='register'),
     path('', index, name='index'),
     # Cursos
     path('cursos/', lista_cursos, name='cursos'),

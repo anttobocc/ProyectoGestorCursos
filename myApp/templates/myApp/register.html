@@ -1,0 +1,87 @@
+{% extends 'myApp/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Crear cuenta{% endblock %}
+
+{% block contenido %}
+<style>
+    .register-wrap { max-width: 460px; }
+    @media (max-width: 575.98px) {
+        .register-wrap { max-width: 100%; }
+    }
+</style>
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 160px);">
+    <div class="col-12 register-wrap mx-auto">
+
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4">
+
+                <div class="text-center mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-2" style="width:46px;height:46px;font-size:1.05rem;">
+                        <i class="bi bi-person-plus-fill"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Crear cuenta de estudiante</h3>
+                    <p class="text-muted small mb-0">Registrate con tu documento para acceder a EduControl</p>
+                </div>
+
+                <form method="POST" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold text-secondary small mb-1">Nombre</label>
+                            {{ form.nombre|add_class:"form-control" }}
+                            {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold text-secondary small mb-1">Apellido</label>
+                            {{ form.apellido|add_class:"form-control" }}
+                            {% if form.apellido.errors %}<div class="text-danger small mt-1">{{ form.apellido.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold text-secondary small mb-1">Correo Electrónico</label>
+                        {{ form.email|add_class:"form-control" }}
+                        {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold text-secondary small mb-1">Número de Documento</label>
+                        {{ form.documento|add_class:"form-control" }}
+                        <div class="form-text small">{{ form.documento.help_text }}</div>
+                        {% if form.documento.errors %}<div class="text-danger small mt-1">{{ form.documento.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold text-secondary small mb-1">Contraseña</label>
+                            {{ form.password|add_class:"form-control" }}
+                            {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors.0 }}</div>{% endif %}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold text-secondary small mb-1">Confirmar contraseña</label>
+                            {{ form.password2|add_class:"form-control" }}
+                            {% if form.password2.errors %}<div class="text-danger small mt-1">{{ form.password2.errors.0 }}</div>{% endif %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3 mb-3">
+                        <i class="bi bi-check-circle-fill me-2"></i>Crear cuenta
+                    </button>
+
+                    <p class="text-center text-muted small mb-0">
+                        ¿Ya tenés cuenta? <a href="{% url 'myapp:login' %}" class="fw-semibold text-decoration-none">Iniciar sesión</a>
+                    </p>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -10,7 +10,7 @@ from django.db.models import Q, F, Avg
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from .models import Curso, Profesor, Estudiante, Entregable, Entrega, Inscripcion, Nota, RegistroAsistencia, Resena
-from .forms import CursoForm, ProfesorFormulario, ProfesorForm, EstudianteFormulario, EstudianteForm, EntregableForm, InscripcionForm, NotaForm, ResenaForm
+from .forms import CursoForm, ProfesorFormulario, ProfesorForm, EstudianteFormulario, EstudianteForm, EntregableForm, InscripcionForm, NotaForm, ResenaForm, RegistroEstudianteForm
 from .decorators import admin_required, profesor_required, es_administrador
 
 
@@ -66,6 +66,50 @@ def login_view(request):
 def logout_view(request):
     auth_logout(request)
     return redirect('myapp:login')
+
+
+# NUEVO: Autorregistro del estudiante (documento = usuario)
+def registro_estudiante(request):
+    if request.user.is_authenticated:
+        return redirect(settings.LOGIN_REDIRECT_URL)
+
+    if request.method == 'POST':
+        form = RegistroEstudianteForm(request.POST)
+       
+        
+        if form.is_valid():
+            documento = form.cleaned_data['documento']
+            password = form.cleaned_data['password']
+            email = form.cleaned_data['email']
+
+            try:
+                with transaction.atomic():
+                    user = User.objects.create_user(
+                        username=documento,
+                        password=password,
+                        email=email
+                    )
+                    Estudiante.objects.create(
+                        nombre=form.cleaned_data['nombre'],
+                        apellido=form.cleaned_data['apellido'],
+                        email=email,
+                        documento=documento,
+                        asistencia=0,
+                        promedio=0.0,
+                        proyectos_hechos=0,
+                        proyectos_totales=0,
+                        user=user,
+                    )
+                messages.success(request, "¡Cuenta creada con éxito! Ya podés iniciar sesión con tu documento y tu contraseña.")
+                return redirect('myapp:login')
+            except Exception as e:
+                messages.error(request, f"Error al crear la cuenta: {str(e)}")
+                return render(request, 'myApp/register.html', {'form': form})
+    else:
+        form = RegistroEstudianteForm()
+
+    return render(request, 'myApp/register.html', {'form': form})
+
 
 # 1. Vista de inicio (MODIFICADA PARA MANEJAR LOS 3 ROLES)
 

@@ -6,8 +6,9 @@ class Estudiante(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     email = models.EmailField()
-    
-    # NUEVO: Vinculación con el usuario de Django
+    documento = models.CharField(max_length=20, blank=True, null=True, verbose_name="Documento")  # TEMPORAL: sin unique todavía
+
+    # Vinculación con el usuario de Django
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -180,7 +181,7 @@ class RegistroAsistencia(models.Model):
     def __str__(self):
         return f"{self.inscripcion} - {self.fecha} - {'Presente' if self.presente else 'Ausente'}"
 
-# NUEVO MODELO: Reseñas / Opiniones de los alumnos
+# Reseñas / Opiniones de los alumnos
 class Resena(models.Model):
     estudiante = models.ForeignKey(
         Estudiante, 
