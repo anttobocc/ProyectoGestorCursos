@@ -46,7 +46,7 @@
         {% if inscripcion.observaciones %}
         <div class="alert alert-light border mt-3 mb-0 small">
             <i class="bi bi-file-earmark-text me-1"></i>
-            <strong>Observaciones del profesor:</strong> {{ inscripcion.observaciones }}
+            <strong>Observaciones del docente:</strong> {{ inscripcion.observaciones }}
         </div>
         {% endif %}
 
@@ -56,9 +56,9 @@
                 <i class="bi bi-check-circle me-2"></i>Ya dejaste tu opinión sobre este curso
             </span>
             {% else %}
-            <a href="{% url 'myapp:resena_crear' curso.id %}" class="btn btn-warning fw-semibold">
+            <button type="button" class="btn btn-warning fw-semibold" data-bs-toggle="modal" data-bs-target="#resenaModal{{ curso.id }}">
                 <i class="bi bi-star-fill me-2"></i>Dejar mi opinión
-            </a>
+            </button>
             {% endif %}
         </div>
     </div>
@@ -139,4 +139,8 @@
         </table>
     </div>
 </div>
+
+{% if not ya_reseno %}
+{% include 'myApp/_resena_modal.html' with curso=curso %}
+{% endif %}
 {% endblock %}

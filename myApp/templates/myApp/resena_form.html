@@ -4,53 +4,166 @@
 {% block title %}Opinar sobre {{ curso.nombre }}{% endblock %}
 
 {% block contenido %}
+<style>
+    .resena-icon-wrap {
+        position: relative;
+        width: 84px;
+        height: 84px;
+        margin: 0 auto;
+    }
+    .resena-icon-circle {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background: #fef3c7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        color: #f59e0b;
+    }
+    .resena-sparkle {
+        position: absolute;
+        color: #f59e0b;
+        font-size: 1.1rem;
+    }
+    .resena-sparkle.s1 { top: 8px; left: -14px; transform: rotate(-20deg); }
+    .resena-sparkle.s2 { top: 8px; right: -14px; transform: rotate(20deg); }
+
+    .resena-info-box {
+        background-color: #eff6ff;
+        border-radius: 14px;
+        padding: 1rem 1.1rem;
+    }
+
+    .star-picker { display: flex; gap: 0.4rem; justify-content: center; }
+    .star-picker button {
+        background: none;
+        border: none;
+        padding: 0;
+        font-size: 2rem;
+        line-height: 1;
+        color: #d1d5db;
+        cursor: pointer;
+        transition: color 0.15s ease, transform 0.15s ease;
+    }
+    .star-picker button:hover {
+        transform: scale(1.08);
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-        <div class="mb-3 mb-md-2">
-            <a href="{% url 'myapp:mis_cursos_estudiante' %}" class="text-decoration-none text-secondary small fw-medium">
-                <i class="bi bi-arrow-left me-1"></i> Volver a mis cursos
-            </a>
-        </div>
 
-        <div class="card shadow border-0 rounded-4 animate__animated animate__fadeInUp">
+        <div class="card shadow border-0 rounded-4 animate__animated animate__fadeInUp position-relative">
+            <a href="{% url 'myapp:mis_cursos_estudiante' %}" class="text-secondary position-absolute" style="top:1rem; right:1.1rem; font-size:1.4rem; line-height:1;" aria-label="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </a>
             <div class="card-body p-4">
-                <div class="text-center mb-4">
-                    <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-2" style="width:56px;height:56px;font-size:1.5rem;">
-                        <i class="bi bi-star-fill"></i>
+                <div class="text-center mb-3">
+                    <div class="resena-icon-wrap mb-3">
+                        <i class="bi bi-star-fill resena-sparkle s1" style="font-size:0.8rem;"></i>
+                        <div class="resena-icon-circle"><i class="bi bi-star-fill"></i></div>
+                        <i class="bi bi-star-fill resena-sparkle s2" style="font-size:0.8rem;"></i>
                     </div>
                     <h3 class="fw-bold text-dark mb-1">Opinar sobre el curso</h3>
-                    <p class="text-muted small mb-0">{{ curso.nombre }} - Ciclo {{ curso.camada }}</p>
+                    <p class="text-muted small mb-0">{{ curso.nombre }} &bull; Ciclo {{ curso.camada }}</p>
                 </div>
 
-                <form method="POST" novalidate>
+                <div class="resena-info-box d-flex gap-2 mb-4">
+                    <i class="bi bi-chat-square-text-fill text-primary mt-1"></i>
+                    <div>
+                        <p class="fw-semibold text-dark small mb-0">Tu opinión ayuda a otros estudiantes y a mejorar el curso.</p>
+                        <p class="text-muted small mb-0">El profesor solo ve el promedio general; el detalle es visible para el administrador.</p>
+                    </div>
+                </div>
+
+                <form method="POST" novalidate id="resenaForm">
                     {% csrf_token %}
                     {% if form.non_field_errors %}
                     <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
                     {% endif %}
 
-                    <div class="mb-3">
-                        <label for="id_calificacion" class="form-label fw-semibold text-secondary small mb-1">Calificación</label>
-                        {{ form.calificacion|add_class:"form-select" }}
+                    <div class="mb-4 text-center">
+                        <label class="form-label fw-bold text-dark d-block mb-2">Calificación</label>
+                        <div class="star-picker" id="starPicker">
+                            {% for i in "12345" %}
+                            <button type="button" class="star-btn" data-value="{{ forloop.counter }}"><i class="bi bi-star-fill"></i></button>
+                            {% endfor %}
+                        </div>
+                        <span class="badge rounded-pill bg-light text-dark border px-3 py-1 mt-2" id="calificacionLabel">1 Estrella</span>
+                        <div style="display:none;">{{ form.calificacion }}</div>
                         {% if form.calificacion.errors %}<div class="text-danger small mt-1">{{ form.calificacion.errors.0 }}</div>{% endif %}
                     </div>
 
-                    <div class="mb-4">
-                        <label for="id_comentario" class="form-label fw-semibold text-secondary small mb-1">Tu opinión (opcional)</label>
-                        {{ form.comentario|add_class:"form-control" }}
+                    <div class="mb-2">
+                        <label for="id_comentario" class="form-label fw-semibold text-dark small mb-1">Tu opinión (opcional)</label>
+                        {{ form.comentario|add_class:"form-control"|attr:"maxlength:500" }}
                         {% if form.comentario.errors %}<div class="text-danger small mt-1">{{ form.comentario.errors.0 }}</div>{% endif %}
+                        <div class="text-muted small text-end mt-1" id="comentarioContador">0/500</div>
                     </div>
 
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary fw-semibold rounded-3 btn-form-mobile">
-                            <i class="bi bi-send me-2"></i>Publicar Opinión
-                        </button>
-                        <a href="{% url 'myapp:mis_cursos_estudiante' %}" class="btn btn-light fw-semibold text-secondary rounded-3 border btn-form-mobile">
-                            Cancelar
-                        </a>
+                    <hr class="my-3">
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <a href="{% url 'myapp:mis_cursos_estudiante' %}" class="btn btn-light w-100 fw-semibold text-secondary rounded-3 border">
+                                Cancelar
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3">
+                                <i class="bi bi-send me-2"></i>Publicar Opinión
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var picker = document.getElementById('starPicker');
+    var select = document.getElementById('id_calificacion');
+    var label = document.getElementById('calificacionLabel');
+    var botones = picker.querySelectorAll('.star-btn');
+
+    function pintar(valor) {
+        botones.forEach(function (btn) {
+            var v = parseInt(btn.dataset.value, 10);
+            btn.classList.toggle('selected', v <= valor);
+            btn.style.color = v <= valor ? '#f5a623' : '#d1d5db';
+        });
+        label.textContent = valor + (valor === 1 ? ' Estrella' : ' Estrellas');
+    }
+
+    botones.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var valor = parseInt(btn.dataset.value, 10);
+            select.value = valor;
+            pintar(valor);
+        });
+        btn.addEventListener('mouseenter', function () {
+            pintar(parseInt(btn.dataset.value, 10));
+        });
+    });
+    picker.addEventListener('mouseleave', function () {
+        pintar(parseInt(select.value || '1', 10));
+    });
+
+    pintar(parseInt(select.value || '1', 10));
+
+    var comentario = document.getElementById('id_comentario');
+    var contador = document.getElementById('comentarioContador');
+    if (comentario && contador) {
+        function actualizarContador() {
+            contador.textContent = comentario.value.length + '/500';
+        }
+        comentario.addEventListener('input', actualizarContador);
+        actualizarContador();
+    }
+});
+</script>
 {% endblock %}

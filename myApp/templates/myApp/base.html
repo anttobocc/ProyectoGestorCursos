@@ -250,6 +250,26 @@
                 transform: translateY(-8px);
             }
         }
+
+        /* ==========================================
+           MODAL DE OPINAR SOBRE UN CURSO (reseñas)
+           ========================================== */
+        .resena-icon-wrap { position: relative; width: 84px; height: 84px; margin: 0 auto; }
+        .resena-icon-circle {
+            width: 84px; height: 84px; border-radius: 50%;
+            background: #fef3c7; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; color: #f59e0b;
+        }
+        .resena-sparkle { position: absolute; color: #f59e0b; font-size: 1.1rem; }
+        .resena-sparkle.s1 { top: 8px; left: -14px; transform: rotate(-20deg); }
+        .resena-sparkle.s2 { top: 8px; right: -14px; transform: rotate(20deg); }
+        .resena-info-box { background-color: #eff6ff; border-radius: 14px; padding: 1rem 1.1rem; }
+        .star-picker { display: flex; gap: 0.4rem; justify-content: center; }
+        .star-picker button {
+            background: none; border: none; padding: 0; font-size: 2rem; line-height: 1;
+            color: #d1d5db; cursor: pointer; transition: color 0.15s ease, transform 0.15s ease;
+        }
+        .star-picker button:hover { transform: scale(1.08); }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -288,7 +308,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'profesores' %}active{% endif %}" href="{% url 'myapp:profesores' %}">
-                                <i class="bi bi-person-workspace me-1"></i> Profesores
+                                <i class="bi bi-person-workspace me-1"></i> Docentes
                             </a>
                         </li>
                         {% elif es_profesor %}
@@ -375,6 +395,50 @@
                     }
                 });
             }, 4000);
+        });
+    </script>
+
+    <!-- Script para los modales de "Opinar sobre el curso" (selector de estrellas y contador) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function pintarPicker(picker, valor) {
+                picker.querySelectorAll('.star-btn').forEach(function (btn) {
+                    var v = parseInt(btn.dataset.value, 10);
+                    btn.style.color = v <= valor ? '#f5a623' : '#d1d5db';
+                });
+                var modalBody = picker.closest('.modal-body') || document;
+                var label = modalBody.querySelector('.calificacion-label');
+                if (label) label.textContent = valor + (valor === 1 ? ' Estrella' : ' Estrellas');
+            }
+
+            document.querySelectorAll('.star-picker').forEach(function (picker) {
+                var contenedor = picker.closest('.modal-body') || document;
+                var select = contenedor.querySelector('.calificacion-select');
+                if (!select) return;
+                picker.querySelectorAll('.star-btn').forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var valor = parseInt(btn.dataset.value, 10);
+                        select.value = valor;
+                        pintarPicker(picker, valor);
+                    });
+                    btn.addEventListener('mouseenter', function () {
+                        pintarPicker(picker, parseInt(btn.dataset.value, 10));
+                    });
+                });
+                picker.addEventListener('mouseleave', function () {
+                    pintarPicker(picker, parseInt(select.value || '1', 10));
+                });
+                pintarPicker(picker, parseInt(select.value || '1', 10));
+            });
+
+            document.querySelectorAll('.comentario-input').forEach(function (textarea) {
+                var contenedor = textarea.closest('.modal-body') || document;
+                var contador = contenedor.querySelector('.comentario-contador');
+                if (!contador) return;
+                function actualizar() { contador.textContent = textarea.value.length + '/500'; }
+                textarea.addEventListener('input', actualizar);
+                actualizar();
+            });
         });
     </script>
 </body>

@@ -33,7 +33,6 @@ class Profesor(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     email = models.EmailField()
-    profesion = models.CharField(max_length=100)
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -44,11 +43,12 @@ class Profesor(models.Model):
     )
 
     def __str__(self):
-        return f"{self.nombre} {self.apellido} - {self.profesion}"
+        return f"{self.nombre} {self.apellido}"
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=100)
     camada = models.IntegerField()
+    imagen = models.ImageField(upload_to='cursos/portadas/', blank=True, null=True, verbose_name="Imagen de portada")
 
     profesores = models.ManyToManyField(
         Profesor,

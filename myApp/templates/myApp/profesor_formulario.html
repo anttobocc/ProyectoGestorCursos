@@ -1,7 +1,7 @@
 {% extends 'myApp/base.html' %}
 {% load widget_tweaks %}
 
-{% block title %}Agregar Profesor{% endblock %}
+{% block title %}Agregar Docente{% endblock %}
 
 {% block contenido %}
 <style>
@@ -68,7 +68,7 @@
                     <div class="d-inline-flex align-items-center justify-content-center bg-secondary bg-opacity-10 text-secondary rounded-circle mb-2" style="width:48px;height:48px;font-size:1.3rem;">
                         <i class="bi bi-person-plus"></i>
                     </div>
-                    <h3 class="fw-bold text-dark mb-1">Agregar Profesor</h3>
+                    <h3 class="fw-bold text-dark mb-1">Agregar Docente</h3>
                     <p class="text-muted small mb-0">Completá los campos para registrar un nuevo docente</p>
                 </div>
 
@@ -106,13 +106,6 @@
                         {% if form.email.errors %}
                         <div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>
                         {% endif %}
-                    </div>
-
-                    <!-- Profesión -->
-                    <div class="mb-2">
-                        <label for="id_profesion" class="form-label fw-semibold text-secondary small mb-1">Profesión</label>
-                        {{ form.profesion|add_class:"form-control" }}
-                        {% if form.profesion.errors %}<div class="text-danger small mt-1">{{ form.profesion.errors.0 }}</div>{% endif %}
                     </div>
 
                     <!-- NUEVOS CAMPOS DE USUARIO Y CONTRASEÑA -->

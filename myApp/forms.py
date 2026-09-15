@@ -16,22 +16,26 @@ class CursoForm(forms.ModelForm):
             'profesores': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         }
 
+class CursoImagenForm(forms.ModelForm):
+    class Meta:
+        model = Curso
+        fields = ['imagen']
+
 class ProfesorFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
     apellido = forms.CharField(max_length=100, label="Apellido")
     email = forms.EmailField(label="Correo Electrónico")
-    profesion = forms.CharField(max_length=100, label="Profesión")
-    
-    # CAMPOS PARA CREAR EL USUARIO DEL PROFESOR
+
+    # CAMPOS PARA CREAR EL USUARIO DEL DOCENTE
     username = forms.CharField(
-        max_length=150, 
-        label="Nombre de usuario", 
+        max_length=150,
+        label="Nombre de usuario",
         help_text="Requerido. 150 caracteres o menos. Solo letras, dígitos y @/./+/-/_",
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
-        label="Contraseña", 
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label="Contraseña",
         help_text="Su contraseña debe contener al menos 8 caracteres."
     )
 
@@ -40,32 +44,28 @@ class ProfesorForm(forms.ModelForm):
     username = forms.CharField(
         max_length=150,
         label="Nombre de usuario",
-        help_text="Requerido. 150 caracteres o menos. Solo letras, dígitos y @/./+/-/_",
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    user_email = forms.EmailField(
-        label="Email del usuario",
-        help_text="Correo electrónico vinculado al usuario del sistema",
+        help_text="150 caracteres o menos. Solo letras, dígitos y @/./+/-/_. Dejalo vacío si el docente todavía no tiene cuenta.",
         required=False,
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control'})
     )
     new_password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        label="Nueva contraseña (opcional)",
-        help_text="Dejá vacío para mantener la contraseña actual. Mínimo 8 caracteres.",
+        label="Contraseña",
+        help_text="Dejá vacío para mantener la contraseña actual. Si el docente no tiene cuenta, es obligatoria para crear una (mínimo 8 caracteres).",
         required=False
     )
 
     class Meta:
         model = Profesor
-        fields = ['nombre', 'apellido', 'email', 'profesion']
+        fields = ['nombre', 'apellido', 'email']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Si estamos editando un profesor existente, cargar datos del usuario
-        if self.instance and self.instance.pk and hasattr(self.instance, 'user'):
+        # Si estamos editando un docente existente que ya tiene cuenta, cargar su usuario
+        if self.instance and self.instance.pk and self.instance.user:
             self.fields['username'].initial = self.instance.user.username
-            self.fields['user_email'].initial = self.instance.user.email
+        else:
+            self.fields['username'].required = False
 
 class EstudianteFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
@@ -86,6 +86,15 @@ class EstudianteFormulario(forms.Form):
     )
 
 class EstudianteForm(forms.ModelForm):
+    # Campo del usuario de Django (para vincular/editar la cuenta de acceso del alumno).
+    # El nombre de usuario para iniciar sesión es siempre el documento del alumno.
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+        label="Contraseña",
+        help_text="Dejá vacío para mantener la contraseña actual. Si el alumno no tiene cuenta, es obligatoria para crear una (mínimo 8 caracteres).",
+        required=False
+    )
+
     class Meta:
         model = Estudiante
         fields = ['nombre', 'apellido', 'email', 'documento']  # AGREGADO: documento

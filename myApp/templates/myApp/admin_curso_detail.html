@@ -3,91 +3,243 @@
 {% block title %}{{ curso.nombre }}{% endblock %}
 
 {% block contenido %}
+<style>
+    .avatar-circle-sm {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .avatar-color-0 { background-color: #e0f2fe; color: #0369a1; }
+    .avatar-color-1 { background-color: #f3e8ff; color: #6b21a8; }
+    .avatar-color-2 { background-color: #d1fae5; color: #047857; }
+    .avatar-color-3 { background-color: #fee2e2; color: #b91c1c; }
+    .avatar-color-4 { background-color: #fef3c7; color: #b45309; }
+    .avatar-color-5 { background-color: #ccfbf1; color: #0f766e; }
+
+    .stat-bar {
+        height: 5px;
+        border-radius: 999px;
+        background-color: #eef1f5;
+        overflow: hidden;
+        min-width: 80px;
+    }
+    .stat-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+    }
+    .stat-bar-fill.asistencia-alta { background-color: #16a34a; }
+    .stat-bar-fill.asistencia-media { background-color: #f59e0b; }
+    .stat-bar-fill.asistencia-baja { background-color: #dc2626; }
+    .stat-bar-fill.promedio { background-color: #7c3aed; }
+    .stat-bar-fill.proyectos { background-color: #f59e0b; }
+
+    .curso-alumnos-table th {
+        white-space: nowrap;
+    }
+</style>
+
 <div class="mb-3">
     <a href="{% url 'myapp:cursos' %}" class="text-decoration-none text-secondary small fw-medium">
         <i class="bi bi-arrow-left me-1"></i> Volver al listado de cursos
     </a>
 </div>
 
-<div class="card shadow border-0 rounded-4 mx-auto" style="max-width:600px;">
+<!-- Encabezado del curso -->
+<div class="card shadow-sm border-0 rounded-4 mb-3">
     <div class="card-body p-4">
-
-        <div class="d-flex align-items-center mb-4">
-            <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle me-3" style="width:56px;height:56px;font-size:1.5rem;">
-                <i class="bi bi-journal-bookmark"></i>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3" style="width:52px;height:52px;font-size:1.4rem;flex-shrink:0;">
+                    <i class="bi bi-journal-bookmark"></i>
+                </div>
+                <div>
+                    <h4 class="fw-bold text-dark mb-1">{{ curso.nombre }}</h4>
+                    <p class="text-muted small mb-2">Ciclo Lectivo {{ curso.camada }}</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <span class="badge rounded-pill bg-light text-dark border px-3 py-2 fw-semibold">
+                            <i class="bi bi-people me-1"></i>{{ inscripciones.count }} alumno{{ inscripciones.count|pluralize }}
+                        </span>
+                        <span class="badge rounded-pill bg-light text-dark border px-3 py-2 fw-semibold">
+                            <i class="bi bi-person-workspace me-1"></i>{{ curso.profesores.count }} docente{{ curso.profesores.count|pluralize }}
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div>
-                <h2 class="fw-bold text-dark mb-0">{{ curso.nombre }}</h2>
-                <p class="text-muted small mb-0">Ciclo Lectivo {{ curso.camada }}</p>
+            <div class="d-flex flex-wrap align-items-center gap-4">
+                <div class="border-start ps-3">
+                    <p class="text-muted small fw-semibold mb-1"><i class="bi bi-person-workspace me-1"></i>Docentes</p>
+                    <p class="mb-0 small">
+                        {% for profesor in curso.profesores.all %}
+                            {{ profesor.nombre }} {{ profesor.apellido }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}
+                            <span class="text-muted">Sin docentes asignados</span>
+                        {% endfor %}
+                    </p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'myapp:cursoEditar' curso.id %}" class="btn btn-warning btn-sm fw-semibold text-nowrap">
+                        <i class="bi bi-pencil me-1"></i>Editar curso
+                    </a>
+                    <a href="{% url 'myapp:admin_curso_resenas' curso.id %}" class="btn btn-outline-warning btn-sm fw-semibold text-nowrap">
+                        <i class="bi bi-star-fill me-1"></i>Ver Todas las Opiniones
+                    </a>
+                </div>
             </div>
         </div>
-
-        <hr>
-
-        <p class="text-muted small fw-semibold mb-1">Profesores</p>
-        <p class="mb-0">
-            {% for profesor in curso.profesores.all %}
-                {{ profesor.nombre }} {{ profesor.apellido }}{% if not forloop.last %}, {% endif %}
-            {% empty %}
-                <span class="text-muted">Sin profesores asignados</span>
-            {% endfor %}
-        </p>
-
-        <div class="d-flex gap-2 mt-3">
-            <a href="{% url 'myapp:cursoEditar' curso.id %}" class="btn btn-warning btn-sm">
-                <i class="bi bi-pencil me-1"></i>Editar
-            </a>
-            <a href="{% url 'myapp:admin_curso_resenas' curso.id %}" class="btn btn-outline-warning btn-sm">
-                <i class="bi bi-star-fill me-1"></i>Ver Todas las Opiniones
-            </a>
-        </div>
-
     </div>
 </div>
 
-<div class="mt-4">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <h4 class="fw-bold text-dark mb-0">Alumnos del curso</h4>
-        <a href="{% url 'myapp:cursoEditar' curso.id %}" class="btn btn-secondary shadow-sm px-3 py-2 fw-semibold rounded-3">
-            <i class="bi bi-plus-lg me-2"></i>Agregar Alumno
-        </a>
-    </div>
+<!-- Alumnos del curso -->
+<div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-3" style="width:38px;height:38px;font-size:1.05rem;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">Alumnos del curso</h5>
+                    <p class="text-muted small mb-0">Listado de estudiantes inscriptos en este curso.</p>
+                </div>
+            </div>
+            <div class="d-flex flex-nowrap align-items-center gap-2">
+                <div class="input-group flex-shrink-0" style="width:220px;">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                    <input type="text" id="buscarAlumnoInput" class="form-control border-start-0 ps-0" placeholder="Buscar alumno...">
+                </div>
+                <a href="{% url 'myapp:cursoEditar' curso.id %}" class="btn btn-primary fw-semibold text-nowrap flex-shrink-0">
+                    <i class="bi bi-plus-lg me-1"></i>Agregar Alumno
+                </a>
+            </div>
+        </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle shadow-sm">
-            <thead class="table-dark">
-                <tr>
-                    <th scope="col">Alumno</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Asistencia</th>
-                    <th scope="col">Promedio</th>
-                    <th scope="col">Proyectos</th>
-                    <th scope="col" class="text-center">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for inscripcion in inscripciones %}
-                <tr>
-                    <td><strong>{{ inscripcion.estudiante.nombre }} {{ inscripcion.estudiante.apellido }}</strong></td>
-                    <td>{{ inscripcion.estudiante.email }}</td>
-                    <td>{{ inscripcion.asistencia }}%</td>
-                    <td>{{ inscripcion.promedio }}</td>
-                    <td>{{ inscripcion.proyectos_hechos }}/{{ inscripcion.proyectos_totales }}</td>
-                    <td class="text-center">
-                        <a href="{% url 'myapp:adminEstudianteCursoEliminar' curso.id inscripcion.estudiante.id %}" class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-person-dash"></i> Dar de baja
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="6" class="text-center text-muted py-4">
-                        No hay alumnos inscriptos en este curso.
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle curso-alumnos-table" id="tablaAlumnosCurso">
+                <thead>
+                    <tr class="text-muted small text-uppercase">
+                        <th scope="col">#</th>
+                        <th scope="col">Alumno</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Asistencia</th>
+                        <th scope="col">Promedio</th>
+                        <th scope="col">Proyectos</th>
+                        <th scope="col" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for inscripcion in inscripciones %}
+                    <tr class="fila-alumno" data-nombre="{{ inscripcion.estudiante.nombre|lower }} {{ inscripcion.estudiante.apellido|lower }}">
+                        <td class="text-muted small">{{ forloop.counter }}</td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle-sm {% cycle 'avatar-color-0' 'avatar-color-1' 'avatar-color-2' 'avatar-color-3' 'avatar-color-4' 'avatar-color-5' %}">
+                                    {{ inscripcion.estudiante.nombre|slice:":1" }}{{ inscripcion.estudiante.apellido|slice:":1" }}
+                                </div>
+                                <strong>{{ inscripcion.estudiante.nombre }} {{ inscripcion.estudiante.apellido }}</strong>
+                            </div>
+                        </td>
+                        <td class="text-muted small">{{ inscripcion.estudiante.email }}</td>
+                        <td>
+                            <div class="fw-semibold small mb-1">{{ inscripcion.asistencia }}%</div>
+                            <div class="stat-bar"><div class="stat-bar-fill {% if inscripcion.asistencia >= 70 %}asistencia-alta{% elif inscripcion.asistencia >= 50 %}asistencia-media{% else %}asistencia-baja{% endif %}" style="width: {{ inscripcion.asistencia }}%;"></div></div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold small mb-1">{{ inscripcion.promedio|floatformat:1 }}</div>
+                            <div class="stat-bar"><div class="stat-bar-fill promedio" style="width: {% widthratio inscripcion.promedio 10 100 %}%;"></div></div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold small mb-1">{{ inscripcion.proyectos_hechos }}/{{ inscripcion.proyectos_totales }}</div>
+                            <div class="stat-bar">
+                                {% if inscripcion.proyectos_totales %}
+                                <div class="stat-bar-fill proyectos" style="width: {% widthratio inscripcion.proyectos_hechos inscripcion.proyectos_totales 100 %}%;"></div>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'myapp:detalle_estudiante' inscripcion.estudiante.id %}" class="btn btn-outline-primary btn-sm me-1">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#bajaAlumno{{ inscripcion.estudiante.id }}">
+                                <i class="bi bi-person-dash"></i> Dar de baja
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-4">
+                            No hay alumnos inscriptos en este curso.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <p class="text-muted small mb-0" id="contadorAlumnos">Mostrando {{ inscripciones.count }} de {{ inscripciones.count }} alumno{{ inscripciones.count|pluralize }}</p>
     </div>
 </div>
+
+<!-- Modales de "Dar de baja" -->
+{% for inscripcion in inscripciones %}
+<div class="modal fade" id="bajaAlumno{{ inscripcion.estudiante.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-body text-center p-4">
+                <div class="d-inline-flex align-items-center justify-content-center bg-warning bg-opacity-10 text-warning rounded-circle mb-3" style="width:64px;height:64px;font-size:1.9rem;">
+                    <i class="bi bi-person-dash"></i>
+                </div>
+                <h5 class="fw-bold mb-2">¿Dar de baja a este alumno del curso?</h5>
+                <p class="text-muted small mb-1">Estás por dar de baja a:</p>
+                <p class="fw-semibold text-dark fs-5 mb-1">{{ inscripcion.estudiante.nombre }} {{ inscripcion.estudiante.apellido }}</p>
+                <p class="text-muted small mb-3">de {{ curso.nombre }}</p>
+                <p class="text-muted small mb-4">
+                    El alumno no será eliminado del sistema, solamente dejará de estar inscripto en este curso.
+                </p>
+                <form method="POST" action="{% url 'myapp:adminEstudianteCursoEliminar' curso.id inscripcion.estudiante.id %}">
+                    {% csrf_token %}
+                    <div class="d-flex flex-column gap-2">
+                        <button type="submit" class="btn btn-warning w-100 py-2 fw-semibold rounded-3">
+                            <i class="bi bi-person-dash me-2"></i>Sí, dar de baja del curso
+                        </button>
+                        <button type="button" class="btn btn-light border w-100 py-2 fw-semibold text-secondary rounded-3" data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var input = document.getElementById('buscarAlumnoInput');
+    var filas = document.querySelectorAll('#tablaAlumnosCurso .fila-alumno');
+    var contador = document.getElementById('contadorAlumnos');
+    var total = filas.length;
+
+    if (!input) return;
+
+    function normalizar(texto) {
+        return texto.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    }
+
+    input.addEventListener('input', function () {
+        var q = normalizar(input.value.trim());
+        var visibles = 0;
+        filas.forEach(function (fila) {
+            var coincide = normalizar(fila.dataset.nombre).indexOf(q) !== -1;
+            fila.hidden = !coincide;
+            if (coincide) visibles++;
+        });
+        contador.textContent = 'Mostrando ' + visibles + ' de ' + total + ' alumno' + (total === 1 ? '' : 's');
+    });
+});
+</script>
 {% endblock %}

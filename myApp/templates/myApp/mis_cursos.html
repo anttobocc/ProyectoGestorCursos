@@ -9,10 +9,62 @@
         border-radius: 16px;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         background: #ffffff;
+        overflow: hidden;
     }
     .custom-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+    .curso-portada {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: linear-gradient(135deg, #0369a1, #38bdf8);
+        overflow: hidden;
+    }
+    .curso-portada img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .curso-portada .curso-portada-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255,255,255,0.85);
+        font-size: 2.5rem;
+    }
+    .curso-portada-editar {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0,0,0,0.55);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.05rem;
+        opacity: 0;
+        transition: opacity 0.2s ease, background-color 0.2s ease;
+    }
+    .curso-portada:hover .curso-portada-editar {
+        opacity: 1;
+    }
+    .curso-portada-editar:hover {
+        background: rgba(0,0,0,0.8);
+        color: #fff;
+    }
+    @media (hover: none) {
+        .curso-portada-editar {
+            opacity: 1;
+        }
     }
     .card-icon-avatar {
         width: 48px;
@@ -41,6 +93,18 @@
     {% for curso in cursos %}
     <div class="col">
         <div class="card h-100 shadow-sm custom-card">
+            <div class="curso-portada">
+                {% if curso.imagen %}
+                    <img src="{{ curso.imagen.url }}" alt="Portada de {{ curso.nombre }}">
+                {% else %}
+                    <div class="curso-portada-placeholder">
+                        <i class="bi bi-code-slash"></i>
+                    </div>
+                {% endif %}
+                <button type="button" class="curso-portada-editar" data-bs-toggle="modal" data-bs-target="#editarImagenCurso{{ curso.id }}" title="Editar portada">
+                    <i class="bi bi-pencil-fill"></i>
+                </button>
+            </div>
             <div class="card-body p-4">
                 <div class="d-flex align-items-center mb-3">
                     <div class="card-icon-avatar me-3">
@@ -51,19 +115,10 @@
                         <p class="text-muted small mb-0">Ciclo {{ curso.camada }}</p>
                     </div>
                 </div>
-                
+
                 <div class="d-grid gap-2 mt-3">
                     <a href="{% url 'myapp:curso_detail' curso.id %}" class="btn btn-primary btn-sm">
-                        <i class="bi bi-people me-1"></i> Ver Alumnos
-                    </a>
-                    <a href="{% url 'myapp:curso_entregables' curso.id %}" class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-folder-check me-1"></i> Entregables
-                    </a>
-                    <a href="{% url 'myapp:tomar_asistencia' curso.id %}" class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-calendar2-check me-1"></i> Asistencia
-                    </a>
-                    <a href="{% url 'myapp:curso_resenas' curso.id %}" class="btn btn-warning btn-sm">
-                        <i class="bi bi-star-fill me-1"></i> Ver Opiniones
+                        <i class="bi bi-eye me-1"></i> Ver Curso
                     </a>
                 </div>
             </div>
@@ -79,4 +134,36 @@
     </div>
     {% endfor %}
 </div>
+
+<!-- Modales para editar la imagen de portada de cada curso -->
+{% for curso in cursos %}
+<div class="modal fade" id="editarImagenCurso{{ curso.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <form method="POST" action="{% url 'myapp:curso_imagen_editar' curso.id %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-image me-2 text-primary"></i>Portada de {{ curso.nombre }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    {% if curso.imagen %}
+                    <div class="curso-portada rounded-3 mb-3" style="aspect-ratio: 16/9;">
+                        <img src="{{ curso.imagen.url }}" alt="Portada actual de {{ curso.nombre }}">
+                    </div>
+                    {% endif %}
+                    <label class="form-label fw-semibold text-secondary small">Elegí una nueva imagen</label>
+                    <input type="file" name="imagen" accept="image/*" class="form-control" required>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle-fill me-1"></i>Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

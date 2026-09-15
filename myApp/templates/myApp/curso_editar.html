@@ -88,8 +88,8 @@
                                 <i class="bi bi-people-fill"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold text-dark mb-0">Profesores</h6>
-                                <p class="text-muted small mb-0">Selecciona los profesores que dictan este curso.</p>
+                                <h6 class="fw-bold text-dark mb-0">Docentes</h6>
+                                <p class="text-muted small mb-0">Selecciona los docentes que dictan este curso.</p>
                             </div>
                         </div>
                         <div class="curso-checklist">
@@ -99,7 +99,7 @@
                                 <label class="form-check-label small" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
                             </div>
                             {% empty %}
-                            <p class="text-muted small mb-0">No hay profesores registrados.</p>
+                            <p class="text-muted small mb-0">No hay docentes registrados.</p>
                             {% endfor %}
                         </div>
                         {% if form.profesores.errors %}<div class="text-danger small mt-1">{{ form.profesores.errors.0 }}</div>{% endif %}

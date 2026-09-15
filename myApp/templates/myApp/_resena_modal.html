@@ -1,0 +1,68 @@
+<!-- Modal para dejar una opinión del curso {{ curso.id }} -->
+<div class="modal fade" id="resenaModal{{ curso.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow resena-modal-content">
+            <div class="modal-body p-4 position-relative">
+                <button type="button" class="btn-close position-absolute" style="top:1.1rem; right:1.1rem;" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+
+                <div class="text-center mb-3">
+                    <div class="resena-icon-wrap mb-3">
+                        <i class="bi bi-star-fill resena-sparkle s1" style="font-size:0.8rem;"></i>
+                        <div class="resena-icon-circle"><i class="bi bi-star-fill"></i></div>
+                        <i class="bi bi-star-fill resena-sparkle s2" style="font-size:0.8rem;"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">Opinar sobre el curso</h3>
+                    <p class="text-muted small mb-0">{{ curso.nombre }} &bull; Ciclo {{ curso.camada }}</p>
+                </div>
+
+                <div class="resena-info-box d-flex gap-2 mb-4">
+                    <i class="bi bi-chat-square-text-fill text-primary mt-1"></i>
+                    <div>
+                        <p class="fw-semibold text-dark small mb-0">Tu opinión ayuda a otros estudiantes y a mejorar el curso.</p>
+                        <p class="text-muted small mb-0">El profesor solo ve el promedio general; el detalle es visible para el administrador.</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'myapp:resena_crear' curso.id %}" novalidate>
+                    {% csrf_token %}
+
+                    <div class="mb-4 text-center">
+                        <label class="form-label fw-bold text-dark d-block mb-2">Calificación</label>
+                        <div class="star-picker" data-picker-for="{{ curso.id }}">
+                            {% for i in "12345" %}
+                            <button type="button" class="star-btn" data-value="{{ forloop.counter }}"><i class="bi bi-star-fill"></i></button>
+                            {% endfor %}
+                        </div>
+                        <span class="badge rounded-pill bg-light text-dark border px-3 py-1 mt-2 calificacion-label">1 Estrella</span>
+                        <select name="calificacion" class="calificacion-select" style="display:none;">
+                            {% for i in "12345" %}
+                            <option value="{{ forloop.counter }}" {% if forloop.counter == 1 %}selected{% endif %}>{{ forloop.counter }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold text-dark small mb-1">Tu opinión (opcional)</label>
+                        <textarea name="comentario" class="form-control comentario-input" maxlength="500" rows="3" placeholder="Contanos tu experiencia con este curso... (opcional)"></textarea>
+                        <div class="text-muted small text-end mt-1 comentario-contador">0/500</div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-light w-100 fw-semibold text-secondary rounded-3 border" data-bs-dismiss="modal">
+                                Cancelar
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3">
+                                <i class="bi bi-send me-2"></i>Publicar Opinión
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

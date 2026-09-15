@@ -1,6 +1,6 @@
 {% extends 'myApp/base.html' %}
 
-{% block title %}Eliminar Profesor{% endblock %}
+{% block title %}Eliminar Docente{% endblock %}
 
 {% block contenido %}
 <div class="row justify-content-center">
@@ -13,13 +13,12 @@
                     <i class="bi bi-person-x"></i>
                 </div>
 
-                <h3 class="fw-bold text-dark mb-2">¿Eliminar este profesor?</h3>
+                <h3 class="fw-bold text-dark mb-2">¿Eliminar este docente?</h3>
                 <p class="text-muted mb-1">Estás por eliminar al siguiente docente:</p>
-                <p class="fw-semibold text-dark fs-5 mb-1">{{ profesor.apellido }} {{ profesor.nombre }}</p>
-                <p class="text-muted small mb-4">{{ profesor.profesion }}</p>
+                <p class="fw-semibold text-dark fs-5 mb-4">{{ profesor.apellido }} {{ profesor.nombre }}</p>
 
                 <p class="text-muted small mb-1">
-                    Se quitará a este profesor de los cursos donde esté asignado, pero los cursos no se eliminarán.
+                    Se quitará a este docente de los cursos donde esté asignado, pero los cursos no se eliminarán.
                 </p>
                 {% if profesor.user %}
                 <p class="text-muted small mb-4">
