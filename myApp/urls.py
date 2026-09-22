@@ -6,9 +6,9 @@ from .views import (
     lista_estudiantes, detalle_estudiante, estudianteFormulario, estudiante_editar, estudiante_eliminar,
     profesores, profesorFormulario, profesor_editar, profesor_eliminar,
     entregable_editar, entregable_eliminar, entregable_ver, entrega_calificar,
-    mis_cursos, curso_detail, curso_entregables, curso_imagen_editar, estudiante_curso_eliminar, entregable_crear_en_curso, inscripcion_editar,
+    mis_cursos, curso_detail, curso_entregables, estudiante_curso_eliminar, entregable_crear_en_curso, inscripcion_editar,
     tomar_asistencia, nota_crear, nota_editar, nota_eliminar,
-    mis_cursos_estudiante, curso_detail_estudiante, resena_crear,
+    mis_cursos_estudiante, curso_detail_estudiante, entrega_subir, resena_crear, curso_resenas,
 )
 
 app_name = "myapp"
@@ -47,8 +47,8 @@ urlpatterns = [
     path('mis-cursos/', mis_cursos, name='mis_cursos'),
     path('mis-cursos/<int:id>/', curso_detail, name='curso_detail'),
     path('mis-cursos/<int:id>/entregables/', curso_entregables, name='curso_entregables'),
-    path('mis-cursos/<int:id>/imagen/', curso_imagen_editar, name='curso_imagen_editar'),
     path('mis-cursos/<int:id>/asistencia/', tomar_asistencia, name='tomar_asistencia'),
+    path('mis-cursos/<int:id>/resenas/', curso_resenas, name='curso_resenas'),
     path('mis-cursos/<int:curso_id>/alumno/<int:estudiante_id>/baja/', estudiante_curso_eliminar, name='estudianteCursoEliminar'),
     path('mis-cursos/<int:curso_id>/entregables/crear/', entregable_crear_en_curso, name='entregableCrearEnCurso'),
     path('mis-cursos/<int:curso_id>/alumno/<int:estudiante_id>/editar/', inscripcion_editar, name='inscripcionEditar'),
@@ -58,5 +58,6 @@ urlpatterns = [
     # Estudiante
     path('mis-cursos-estudiante/', mis_cursos_estudiante, name='mis_cursos_estudiante'),
     path('mis-cursos-estudiante/<int:id>/', curso_detail_estudiante, name='curso_detail_estudiante'),
+    path('entregable/<int:entregable_id>/entregar/', entrega_subir, name='entrega_subir'),
     path('curso/<int:curso_id>/resena/', resena_crear, name='resena_crear'),
 ]

@@ -1,5 +1,6 @@
 from django import forms
-from .models import Curso, Profesor, Estudiante, Entregable, Inscripcion, Nota, Resena
+from django.contrib.auth.models import User
+from .models import Curso, Profesor, Estudiante, Entregable, Entrega, Inscripcion, Nota, Resena
 
 class CursoForm(forms.ModelForm):
     alumnos = forms.ModelMultipleChoiceField(
@@ -16,63 +17,57 @@ class CursoForm(forms.ModelForm):
             'profesores': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         }
 
-class CursoImagenForm(forms.ModelForm):
-    class Meta:
-        model = Curso
-        fields = ['imagen']
-
 class ProfesorFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
     apellido = forms.CharField(max_length=100, label="Apellido")
     email = forms.EmailField(label="Correo Electrónico")
+    profesion = forms.CharField(max_length=100, label="Profesión")
+    username = forms.CharField(
+        max_length=150, 
+        label="Nombre de usuario", 
+        help_text="Requerido. 150 caracteres o menos. Solo letras, dígitos y @/./+/-/_",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}), 
+        label="Contraseña", 
+        help_text="Su contraseña debe contener al menos 8 caracteres."
+    )
 
-    # CAMPOS PARA CREAR EL USUARIO DEL DOCENTE
+class ProfesorForm(forms.ModelForm):
     username = forms.CharField(
         max_length=150,
         label="Nombre de usuario",
         help_text="Requerido. 150 caracteres o menos. Solo letras, dígitos y @/./+/-/_",
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        label="Contraseña",
-        help_text="Su contraseña debe contener al menos 8 caracteres."
-    )
-
-class ProfesorForm(forms.ModelForm):
-    # Campos del usuario de Django
-    username = forms.CharField(
-        max_length=150,
-        label="Nombre de usuario",
-        help_text="150 caracteres o menos. Solo letras, dígitos y @/./+/-/_. Dejalo vacío si el docente todavía no tiene cuenta.",
+    user_email = forms.EmailField(
+        label="Email del usuario",
+        help_text="Correo electrónico vinculado al usuario del sistema",
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
     new_password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        label="Contraseña",
-        help_text="Dejá vacío para mantener la contraseña actual. Si el docente no tiene cuenta, es obligatoria para crear una (mínimo 8 caracteres).",
+        label="Nueva contraseña (opcional)",
+        help_text="Dejá vacío para mantener la contraseña actual. Mínimo 8 caracteres.",
         required=False
     )
 
     class Meta:
         model = Profesor
-        fields = ['nombre', 'apellido', 'email']
+        fields = ['nombre', 'apellido', 'email', 'profesion']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Si estamos editando un docente existente que ya tiene cuenta, cargar su usuario
-        if self.instance and self.instance.pk and self.instance.user:
+        if self.instance and self.instance.pk and hasattr(self.instance, 'user'):
             self.fields['username'].initial = self.instance.user.username
-        else:
-            self.fields['username'].required = False
+            self.fields['user_email'].initial = self.instance.user.email
 
 class EstudianteFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
     apellido = forms.CharField(max_length=100, label="Apellido")
     email = forms.EmailField(label="Correo Electrónico")
-    
-    # NUEVOS CAMPOS PARA CREAR EL USUARIO DEL ESTUDIANTE
     username = forms.CharField(
         max_length=150, 
         label="Nombre de usuario", 
@@ -86,18 +81,9 @@ class EstudianteFormulario(forms.Form):
     )
 
 class EstudianteForm(forms.ModelForm):
-    # Campo del usuario de Django (para vincular/editar la cuenta de acceso del alumno).
-    # El nombre de usuario para iniciar sesión es siempre el documento del alumno.
-    new_password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        label="Contraseña",
-        help_text="Dejá vacío para mantener la contraseña actual. Si el alumno no tiene cuenta, es obligatoria para crear una (mínimo 8 caracteres).",
-        required=False
-    )
-
     class Meta:
         model = Estudiante
-        fields = ['nombre', 'apellido', 'email', 'documento']  # AGREGADO: documento
+        fields = ['nombre', 'apellido', 'email', 'documento']
 
 class InscripcionForm(forms.ModelForm):
     class Meta:
@@ -136,7 +122,18 @@ class EntregableForm(forms.ModelForm):
             'publicado': 'Publicado (visible para los alumnos)',
         }
 
-# Formulario para que el alumno deje su reseña
+# NUEVO: Formulario para que el alumno suba su entrega (archivo)
+class EntregaForm(forms.ModelForm):
+    class Meta:
+        model = Entrega
+        fields = ['archivo']
+        widgets = {
+            'archivo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'archivo': 'Archivo de tu entrega',
+        }
+
 class ResenaForm(forms.ModelForm):
     class Meta:
         model = Resena
@@ -157,7 +154,6 @@ class ResenaForm(forms.ModelForm):
             'comentario': 'Tu opinión',
         }
 
-# NUEVO: Formulario para el autorregistro del estudiante
 class RegistroEstudianteForm(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
     apellido = forms.CharField(max_length=100, label="Apellido")

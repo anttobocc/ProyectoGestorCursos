@@ -1,0 +1,83 @@
+{% extends 'myApp/base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}Entregar {{ entregable.nombre }}{% endblock %}
+
+{% block contenido %}
+<div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+
+        <div class="mb-2">
+            <a href="{% url 'myapp:curso_detail_estudiante' curso.id %}" class="text-decoration-none text-secondary small fw-medium">
+                <i class="bi bi-arrow-left me-1"></i> Volver a {{ curso.nombre }}
+            </a>
+        </div>
+
+        <div class="card shadow border-0 rounded-4">
+            <div class="card-body p-4">
+
+                <div class="text-center mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle mb-2" style="width:48px;height:48px;font-size:1.2rem;">
+                        <i class="bi bi-upload"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark mb-1">{{ entregable.nombre }}</h3>
+                    <p class="text-muted small mb-0">
+                        {% if entregable.fecha_vencimiento %}
+                            Vence el {{ entregable.fecha_vencimiento|date:"d/m/Y H:i" }}
+                        {% else %}
+                            Sin fecha de vencimiento
+                        {% endif %}
+                    </p>
+                </div>
+
+                {% if entregable.consigna %}
+                <div class="alert alert-light border small mb-3" style="white-space: pre-wrap;">
+                    <strong><i class="bi bi-file-earmark-text me-1"></i>Consigna:</strong><br>
+                    {{ entregable.consigna }}
+                </div>
+                {% endif %}
+
+                {% if entregable.archivo %}
+                <div class="mb-3 small">
+                    <a href="{{ entregable.archivo.url }}" target="_blank" class="text-decoration-none">
+                        <i class="bi bi-paperclip me-1"></i>Descargar archivo base del entregable
+                    </a>
+                </div>
+                {% endif %}
+
+                {% if entrega %}
+                <div class="alert alert-info border-0 small mb-3">
+                    <i class="bi bi-info-circle-fill me-1"></i>
+                    Ya tenés una entrega subida el {{ entrega.fecha_entrega|date:"d/m/Y H:i" }}.
+                    {% if entrega.archivo %}
+                        <a href="{{ entrega.archivo.url }}" target="_blank" class="fw-semibold">Ver archivo actual</a>.
+                    {% endif %}
+                    Si subís uno nuevo, va a reemplazar al anterior.
+                </div>
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                    <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small mb-1">{{ form.archivo.label }}</label>
+                        {{ form.archivo|add_class:"form-control" }}
+                        {% if form.archivo.errors %}<div class="text-danger small mt-1">{{ form.archivo.errors.0 }}</div>{% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-semibold rounded-3">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        {% if entrega %}Reemplazar entrega{% else %}Confirmar entrega{% endif %}
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

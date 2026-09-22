@@ -46,7 +46,7 @@
         {% if inscripcion.observaciones %}
         <div class="alert alert-light border mt-3 mb-0 small">
             <i class="bi bi-file-earmark-text me-1"></i>
-            <strong>Observaciones del docente:</strong> {{ inscripcion.observaciones }}
+            <strong>Observaciones del profesor:</strong> {{ inscripcion.observaciones }}
         </div>
         {% endif %}
 
@@ -56,9 +56,9 @@
                 <i class="bi bi-check-circle me-2"></i>Ya dejaste tu opinión sobre este curso
             </span>
             {% else %}
-            <button type="button" class="btn btn-warning fw-semibold" data-bs-toggle="modal" data-bs-target="#resenaModal{{ curso.id }}">
+            <a href="{% url 'myapp:resena_crear' curso.id %}" class="btn btn-warning fw-semibold">
                 <i class="bi bi-star-fill me-2"></i>Dejar mi opinión
-            </button>
+            </a>
             {% endif %}
         </div>
     </div>
@@ -110,6 +110,7 @@
                     <th scope="col">Vencimiento</th>
                     <th scope="col">Estado</th>
                     <th scope="col">Nota</th>
+                    <th scope="col" class="text-center">Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -129,18 +130,23 @@
                         {% endif %}
                     </td>
                     <td>{% if info.entrega and info.entrega.nota %}{{ info.entrega.nota|floatformat:1 }}{% else %}—{% endif %}</td>
+                    <td class="text-center">
+                        <a href="{% url 'myapp:entrega_subir' info.entregable.id %}" class="btn btn-sm {% if info.entrega %}btn-outline-primary{% else %}btn-primary{% endif %}">
+                            {% if info.entrega %}
+                                <i class="bi bi-arrow-repeat me-1"></i>Reemplazar
+                            {% else %}
+                                <i class="bi bi-upload me-1"></i>Entregar
+                            {% endif %}
+                        </a>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center text-muted py-4">No hay entregables publicados todavía.</td>
+                    <td colspan="5" class="text-center text-muted py-4">No hay entregables publicados todavía.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
-
-{% if not ya_reseno %}
-{% include 'myApp/_resena_modal.html' with curso=curso %}
-{% endif %}
 {% endblock %}

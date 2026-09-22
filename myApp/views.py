@@ -10,7 +10,7 @@ from django.db.models import Q, F, Avg
 from django.utils import timezone
 from django.utils.dateparse import parse_date
 from .models import Curso, Profesor, Estudiante, Entregable, Entrega, Inscripcion, Nota, RegistroAsistencia, Resena
-from .forms import CursoForm, CursoImagenForm, ProfesorFormulario, ProfesorForm, EstudianteFormulario, EstudianteForm, EntregableForm, InscripcionForm, NotaForm, ResenaForm, RegistroEstudianteForm
+from .forms import CursoForm, ProfesorFormulario, ProfesorForm, EstudianteFormulario, EstudianteForm, EntregableForm, InscripcionForm, NotaForm, EntregaForm, ResenaForm, RegistroEstudianteForm
 from .decorators import admin_required, profesor_required, es_administrador
 
 
@@ -176,7 +176,7 @@ def lista_estudiantes(request):
 @admin_required
 def detalle_estudiante(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
-    inscripciones = estudiante.inscripciones.select_related('curso').prefetch_related('curso__profesores').all()
+    inscripciones = estudiante.inscripciones.select_related('curso').all()
     return render(request, 'myApp/estudiante_detail.html', {'estudiante': estudiante, 'inscripciones': inscripciones})
 
 @admin_required
@@ -185,7 +185,8 @@ def profesores(request):
     if query:
         profesores = Profesor.objects.filter(
             Q(nombre__icontains=query) |
-            Q(apellido__icontains=query)
+            Q(apellido__icontains=query) |
+            Q(profesion__icontains=query)
         )
     else:
         profesores = Profesor.objects.all()
@@ -215,18 +216,19 @@ def profesorFormulario(request):
                         email=email
                     )
 
-                    # Crear el Docente y vincularlo al usuario
+                    # Crear el Profesor y vincularlo al usuario
                     Profesor.objects.create(
                         nombre=form.cleaned_data['nombre'],
                         apellido=form.cleaned_data['apellido'],
                         email=email,
+                        profesion=form.cleaned_data['profesion'],
                         user=user
                     )
 
-                messages.success(request, f"¡Docente creado exitosamente! Usuario: {username} - Contraseña: {password}")
+                messages.success(request, f"¡Profesor creado exitosamente! Usuario: {username} - Contraseña: {password}")
                 return redirect('myapp:profesores')
             except Exception as e:
-                messages.error(request, f"Error al crear el docente: {str(e)}")
+                messages.error(request, f"Error al crear el profesor: {str(e)}")
                 return render(request, 'myApp/profesor_formulario.html', {'form': form})
     else:
         form = ProfesorFormulario()
@@ -238,56 +240,48 @@ def profesor_editar(request, id):
     if request.method == 'POST':
         form = ProfesorForm(request.POST, instance=profesor)
         if form.is_valid():
-            username = form.cleaned_data.get('username', '').strip()
+            username = form.cleaned_data['username']
+            user_email = form.cleaned_data.get('user_email', '')
             new_password = form.cleaned_data.get('new_password', '')
-            tiene_cuenta = bool(profesor.user)
 
             # Verificar que el username no esté en uso por otro usuario
-            if username:
-                if User.objects.filter(username=username).exclude(pk=profesor.user.pk if tiene_cuenta else None).exists():
-                    messages.error(request, f"El nombre de usuario '{username}' ya está en uso. Elegí otro.")
-                    return render(request, 'myApp/profesor_editar.html', {'form': form, 'profesor': profesor})
-            elif not tiene_cuenta:
-                # Sin usuario y sin cuenta previa: solo se guardan los datos del docente
-                form.save()
-                messages.success(request, "Docente actualizado correctamente.")
-                return redirect('myapp:profesores')
-
-            if not tiene_cuenta and len(new_password) < 8:
-                messages.error(request, "Para crear la cuenta del docente, asigná una contraseña de al menos 8 caracteres.")
-                return render(request, 'myApp/profesor_editar.html', {'form': form, 'profesor': profesor})
-
-            if new_password and len(new_password) < 8:
-                messages.error(request, "La contraseña debe tener al menos 8 caracteres.")
+            if User.objects.filter(username=username).exclude(pk=profesor.user.pk if hasattr(profesor, 'user') else None).exists():
+                messages.error(request, f"El nombre de usuario '{username}' ya está en uso. Elegí otro.")
                 return render(request, 'myApp/profesor_editar.html', {'form': form, 'profesor': profesor})
 
             try:
                 with transaction.atomic():
-                    # Guardar datos del docente
+                    # Guardar datos del profesor
                     profesor = form.save()
 
-                    if tiene_cuenta:
-                        # Actualizar datos del usuario de Django existente
+                    # Actualizar datos del usuario de Django
+                    if hasattr(profesor, 'user'):
                         user = profesor.user
                         user.username = username
-                        user.email = profesor.email
+                        user.email = user_email
+
+                        # Si se ingresó una nueva contraseña, actualizarla
                         if new_password:
+                            if len(new_password) < 8:
+                                messages.error(request, "La contraseña debe tener al menos 8 caracteres.")
+                                return render(request, 'myApp/profesor_editar.html', {'form': form, 'profesor': profesor})
                             user.set_password(new_password)
+
                         user.save()
                     else:
-                        # Si no tiene usuario vinculado, crear uno nuevo sin borrar al docente
+                        # Si no tiene usuario vinculado, crear uno nuevo
                         user = User.objects.create_user(
                             username=username,
-                            password=new_password,
-                            email=profesor.email,
+                            password=new_password if new_password else 'temporal123',
+                            email=user_email
                         )
                         profesor.user = user
-                        profesor.save(update_fields=['user'])
+                        profesor.save()
 
-                messages.success(request, "Docente actualizado correctamente." if tiene_cuenta else "Docente actualizado y cuenta de acceso creada correctamente.")
+                messages.success(request, "Profesor actualizado correctamente.")
                 return redirect('myapp:profesores')
             except Exception as e:
-                messages.error(request, f"Error al actualizar el docente: {str(e)}")
+                messages.error(request, f"Error al actualizar el profesor: {str(e)}")
                 return render(request, 'myApp/profesor_editar.html', {'form': form, 'profesor': profesor})
     else:
         form = ProfesorForm(instance=profesor)
@@ -298,7 +292,7 @@ def profesor_eliminar(request, id):
     profesor = get_object_or_404(Profesor, id=id)
     if request.method == 'POST':
         profesor.delete()
-        messages.success(request, "Docente eliminado correctamente.")
+        messages.success(request, "Profesor eliminado correctamente.")
         return redirect('myapp:profesores')
     return render(request, 'myApp/profesor_confirm_delete.html', {'profesor': profesor})
 
@@ -352,56 +346,9 @@ def estudiante_editar(request, id):
     if request.method == 'POST':
         form = EstudianteForm(request.POST, instance=estudiante)
         if form.is_valid():
-            documento = form.cleaned_data.get('documento', '')
-            documento = documento.strip() if documento else ''
-            new_password = form.cleaned_data.get('new_password', '')
-            tiene_cuenta = bool(getattr(estudiante, 'user', None))
-
-            # El documento es el nombre de usuario para iniciar sesión
-            if documento:
-                if User.objects.filter(username=documento).exclude(pk=estudiante.user.pk if tiene_cuenta else None).exists():
-                    messages.error(request, f"El documento '{documento}' ya está en uso como nombre de usuario por otra cuenta.")
-                    return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
-            elif not tiene_cuenta:
-                # Sin documento y sin cuenta previa: no se puede crear una cuenta, solo se guardan los datos del alumno
-                form.save()
-                messages.success(request, "Estudiante actualizado correctamente.")
-                return redirect('myapp:estudiantes')
-
-            if not tiene_cuenta and len(new_password) < 8:
-                messages.error(request, "Para crear la cuenta del alumno, asigná una contraseña de al menos 8 caracteres.")
-                return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
-
-            if new_password and len(new_password) < 8:
-                messages.error(request, "La contraseña debe tener al menos 8 caracteres.")
-                return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
-
-            try:
-                with transaction.atomic():
-                    estudiante = form.save()
-
-                    if tiene_cuenta:
-                        user = estudiante.user
-                        if documento:
-                            user.username = documento
-                        user.email = estudiante.email
-                        if new_password:
-                            user.set_password(new_password)
-                        user.save()
-                    else:
-                        user = User.objects.create_user(
-                            username=documento,
-                            password=new_password,
-                            email=estudiante.email,
-                        )
-                        estudiante.user = user
-                        estudiante.save(update_fields=['user'])
-
-                messages.success(request, "Estudiante actualizado correctamente." if tiene_cuenta else "Estudiante actualizado y cuenta de acceso creada correctamente.")
-                return redirect('myapp:estudiantes')
-            except Exception as e:
-                messages.error(request, f"Error al actualizar el estudiante: {str(e)}")
-                return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
+            form.save()
+            messages.success(request, "Estudiante actualizado correctamente.")
+            return redirect('myapp:estudiantes')
     else:
         form = EstudianteForm(instance=estudiante)
     return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
@@ -675,32 +622,13 @@ def mis_cursos(request):
 
 @login_required
 @profesor_required
-def curso_imagen_editar(request, id):
-    curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
-    if request.method == 'POST':
-        form = CursoImagenForm(request.POST, request.FILES, instance=curso)
-        if form.is_valid():
-            form.save()
-            messages.success(request, "Imagen de portada actualizada correctamente.")
-        else:
-            messages.error(request, "No se pudo actualizar la imagen. Verificá que sea un archivo de imagen válido.")
-    return redirect('myapp:mis_cursos')
-
-@login_required
-@profesor_required
 def curso_detail(request, id):
     curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
     inscripciones = Inscripcion.objects.filter(curso=curso).select_related('estudiante')
 
-    resenas = Resena.objects.filter(curso=curso)
-    total_resenas = resenas.count()
-    promedio_resenas = round(sum(r.calificacion for r in resenas) / total_resenas, 1) if total_resenas else 0
-
     return render(request, 'myApp/curso_detail.html', {
         'curso': curso,
         'inscripciones': inscripciones,
-        'total_resenas': total_resenas,
-        'promedio_resenas': promedio_resenas,
     })
 
 @login_required
@@ -728,31 +656,27 @@ def tomar_asistencia(request, id):
             RegistroAsistencia.objects.update_or_create(
                 inscripcion=inscripcion, fecha=fecha, defaults={'presente': presente}
             )
-        total_clases_curso = RegistroAsistencia.objects.filter(inscripcion__curso=curso).values('fecha').distinct().count()
         for inscripcion in inscripciones:
+            total = inscripcion.registros_asistencia.count()
             presentes = inscripcion.registros_asistencia.filter(presente=True).count()
-            inscripcion.asistencia = round((presentes / total_clases_curso) * 100) if total_clases_curso else 0
+            inscripcion.asistencia = round((presentes / total) * 100) if total else 0
             inscripcion.save(update_fields=['asistencia'])
         messages.success(request, "Asistencia guardada correctamente.")
         return redirect(f"{request.path}?fecha={fecha.isoformat()}")
 
     fecha = parse_date(request.GET.get('fecha', '')) or timezone.localdate()
 
-    # El total de clases es único por curso: la cantidad de fechas distintas
-    # en las que se tomó asistencia, no la cantidad de registros de cada alumno
-    # (un alumno inscripto después puede tener menos registros propios).
-    total_clases_curso = RegistroAsistencia.objects.filter(inscripcion__curso=curso).values('fecha').distinct().count()
-
     filas = []
     for inscripcion in inscripciones:
+        total = inscripcion.registros_asistencia.count()
         presentes = inscripcion.registros_asistencia.filter(presente=True).count()
         registro_dia = inscripcion.registros_asistencia.filter(fecha=fecha).first()
         presente_hoy = registro_dia.presente if registro_dia else True
-        porcentaje = round((presentes / total_clases_curso) * 100) if total_clases_curso else 0
+        porcentaje = round((presentes / total) * 100) if total else 0
         filas.append({
             'inscripcion': inscripcion,
             'presente': presente_hoy,
-            'total_clases': total_clases_curso,
+            'total_clases': total,
             'porcentaje': porcentaje,
         })
 
@@ -870,6 +794,41 @@ def entregable_crear_en_curso(request, curso_id):
 
 
 # ==========================================
+# VISTA DE RESEÑAS PARA EL PROFESOR (SOLO PROMEDIO)
+# ==========================================
+
+@login_required
+@profesor_required
+def curso_resenas(request, id):
+    """Vista para que el profesor vea SOLO el promedio de reseñas de su curso."""
+    curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
+    resenas = Resena.objects.filter(curso=curso)
+    
+    # Calcular estadísticas
+    total_resenas = resenas.count()
+    
+    if total_resenas > 0:
+        promedio = sum(r.calificacion for r in resenas) / total_resenas
+        distribucion = {
+            5: resenas.filter(calificacion=5).count(),
+            4: resenas.filter(calificacion=4).count(),
+            3: resenas.filter(calificacion=3).count(),
+            2: resenas.filter(calificacion=2).count(),
+            1: resenas.filter(calificacion=1).count(),
+        }
+    else:
+        promedio = 0
+        distribucion = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0}
+    
+    return render(request, 'myApp/curso_resenas.html', {
+        'curso': curso,
+        'total_resenas': total_resenas,
+        'promedio': round(promedio, 1),
+        'distribucion': distribucion,
+    })
+
+
+# ==========================================
 # VISTAS PARA EL ESTUDIANTE
 # ==========================================
 
@@ -920,6 +879,47 @@ def curso_detail_estudiante(request, id):
         'notas': notas,
         'entregables_info': entregables_info,
         'ya_reseno': ya_reseno,
+    })
+
+
+# NUEVO: subir/reemplazar la entrega (archivo) de un entregable puntual
+@login_required
+def entrega_subir(request, entregable_id):
+    try:
+        estudiante = request.user.estudiante
+    except Estudiante.DoesNotExist:
+        messages.error(request, "No tenés un perfil de estudiante vinculado.")
+        return redirect('myapp:mis_cursos_estudiante')
+
+    entregable = get_object_or_404(Entregable, id=entregable_id, publicado=True)
+    curso = entregable.curso
+    inscripcion = get_object_or_404(Inscripcion, curso=curso, estudiante=estudiante)
+
+    entrega = Entrega.objects.filter(entregable=entregable, estudiante=estudiante).first()
+
+    if request.method == 'POST':
+        form = EntregaForm(request.POST, request.FILES, instance=entrega)
+        if form.is_valid():
+            es_nueva = entrega is None
+            nueva_entrega = form.save(commit=False)
+            nueva_entrega.entregable = entregable
+            nueva_entrega.estudiante = estudiante
+            nueva_entrega.fecha_entrega = timezone.now()
+            nueva_entrega.save()
+
+            if es_nueva:
+                Inscripcion.objects.filter(pk=inscripcion.pk).update(proyectos_hechos=F('proyectos_hechos') + 1)
+
+            messages.success(request, "¡Entrega subida correctamente!")
+            return redirect('myapp:curso_detail_estudiante', id=curso.id)
+    else:
+        form = EntregaForm(instance=entrega)
+
+    return render(request, 'myApp/entrega_subir.html', {
+        'form': form,
+        'entregable': entregable,
+        'curso': curso,
+        'entrega': entrega,
     })
 
 
