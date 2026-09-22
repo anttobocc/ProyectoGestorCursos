@@ -706,27 +706,32 @@ def tomar_asistencia(request, id):
             RegistroAsistencia.objects.update_or_create(
                 inscripcion=inscripcion, fecha=fecha, defaults={'presente': presente}
             )
+        total_clases = RegistroAsistencia.objects.filter(
+            inscripcion__curso=curso
+        ).values('fecha').distinct().count()
         for inscripcion in inscripciones:
-            total = inscripcion.registros_asistencia.count()
             presentes = inscripcion.registros_asistencia.filter(presente=True).count()
-            inscripcion.asistencia = round((presentes / total) * 100) if total else 0
+            inscripcion.asistencia = round((presentes / total_clases) * 100) if total_clases else 0
             inscripcion.save(update_fields=['asistencia'])
         messages.success(request, "Asistencia guardada correctamente.")
         return redirect(f"{request.path}?fecha={fecha.isoformat()}")
 
     fecha = parse_date(request.GET.get('fecha', '')) or timezone.localdate()
 
+    total_clases = RegistroAsistencia.objects.filter(
+        inscripcion__curso=curso
+    ).values('fecha').distinct().count()
+
     filas = []
     for inscripcion in inscripciones:
-        total = inscripcion.registros_asistencia.count()
         presentes = inscripcion.registros_asistencia.filter(presente=True).count()
         registro_dia = inscripcion.registros_asistencia.filter(fecha=fecha).first()
         presente_hoy = registro_dia.presente if registro_dia else True
-        porcentaje = round((presentes / total) * 100) if total else 0
+        porcentaje = round((presentes / total_clases) * 100) if total_clases else 0
         filas.append({
             'inscripcion': inscripcion,
             'presente': presente_hoy,
-            'total_clases': total,
+            'total_clases': total_clases,
             'porcentaje': porcentaje,
         })
 
