@@ -6,9 +6,8 @@ class Estudiante(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     email = models.EmailField()
-    documento = models.CharField(max_length=20, blank=True, null=True, verbose_name="Documento")  # TEMPORAL: sin unique todavía
+    documento = models.CharField(max_length=20, unique=True, null=True, blank=True, verbose_name="Documento")
 
-    # Vinculación con el usuario de Django
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -33,6 +32,7 @@ class Profesor(models.Model):
     nombre = models.CharField(max_length=100)
     apellido = models.CharField(max_length=100)
     email = models.EmailField()
+    profesion = models.CharField(max_length=100)
 
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -43,12 +43,11 @@ class Profesor(models.Model):
     )
 
     def __str__(self):
-        return f"{self.nombre} {self.apellido}"
+        return f"{self.nombre} {self.apellido} - {self.profesion}"
 
 class Curso(models.Model):
     nombre = models.CharField(max_length=100)
     camada = models.IntegerField()
-    imagen = models.ImageField(upload_to='cursos/portadas/', blank=True, null=True, verbose_name="Imagen de portada")
 
     profesores = models.ManyToManyField(
         Profesor,
@@ -181,7 +180,6 @@ class RegistroAsistencia(models.Model):
     def __str__(self):
         return f"{self.inscripcion} - {self.fecha} - {'Presente' if self.presente else 'Ausente'}"
 
-# Reseñas / Opiniones de los alumnos
 class Resena(models.Model):
     estudiante = models.ForeignKey(
         Estudiante, 
@@ -200,7 +198,7 @@ class Resena(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('estudiante', 'curso')  # Un alumno solo puede opinar una vez por curso
+        unique_together = ('estudiante', 'curso')
 
     def __str__(self):
         return f"Reseña de {self.estudiante} en {self.curso} ({self.calificacion}⭐)"
