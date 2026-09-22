@@ -185,8 +185,7 @@ def profesores(request):
     if query:
         profesores = Profesor.objects.filter(
             Q(nombre__icontains=query) |
-            Q(apellido__icontains=query) |
-            Q(profesion__icontains=query)
+            Q(apellido__icontains=query)
         )
     else:
         profesores = Profesor.objects.all()
@@ -221,7 +220,6 @@ def profesorFormulario(request):
                         nombre=form.cleaned_data['nombre'],
                         apellido=form.cleaned_data['apellido'],
                         email=email,
-                        profesion=form.cleaned_data['profesion'],
                         user=user
                     )
 
@@ -346,7 +344,49 @@ def estudiante_editar(request, id):
     if request.method == 'POST':
         form = EstudianteForm(request.POST, instance=estudiante)
         if form.is_valid():
-            form.save()
+            new_password = form.cleaned_data.get('new_password', '')
+            documento = form.cleaned_data.get('documento', '')
+
+            if not estudiante.user and not documento:
+                messages.error(request, "Para crear la cuenta de acceso, completá el documento.")
+                return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
+
+            if not estudiante.user and not new_password:
+                messages.error(request, "Para crear la cuenta de acceso, ingresá una contraseña.")
+                return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
+
+            if new_password and len(new_password) < 8:
+                messages.error(request, "La contraseña debe tener al menos 8 caracteres.")
+                return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
+
+            try:
+                with transaction.atomic():
+                    estudiante = form.save()
+
+                    if estudiante.user:
+                        user = estudiante.user
+                        if documento:
+                            user.username = documento
+                        user.email = estudiante.email
+                        if new_password:
+                            user.set_password(new_password)
+                        user.save()
+                    else:
+                        if User.objects.filter(username=documento).exists():
+                            messages.error(request, f"El documento '{documento}' ya está en uso por otro usuario.")
+                            return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
+                        user = User.objects.create_user(
+                            username=documento,
+                            password=new_password,
+                            email=estudiante.email
+                        )
+                        estudiante.user = user
+                        estudiante.save()
+
+            except Exception as e:
+                messages.error(request, f"Error al actualizar el estudiante: {str(e)}")
+                return render(request, 'myApp/estudiante_editar.html', {'form': form, 'estudiante': estudiante})
+
             messages.success(request, "Estudiante actualizado correctamente.")
             return redirect('myapp:estudiantes')
     else:
@@ -622,6 +662,16 @@ def mis_cursos(request):
 
 @login_required
 @profesor_required
+def curso_imagen_editar(request, id):
+    curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
+    if request.method == 'POST' and request.FILES.get('imagen'):
+        curso.imagen = request.FILES['imagen']
+        curso.save()
+        messages.success(request, "Portada del curso actualizada correctamente.")
+    return redirect('myapp:mis_cursos')
+
+@login_required
+@profesor_required
 def curso_detail(request, id):
     curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
     inscripciones = Inscripcion.objects.filter(curso=curso).select_related('estudiante')
@@ -872,6 +922,7 @@ def curso_detail_estudiante(request, id):
         })
 
     ya_reseno = Resena.objects.filter(estudiante=estudiante, curso=curso).exists()
+    docente = curso.profesores.first()
 
     return render(request, 'myApp/curso_detail_estudiante.html', {
         'curso': curso,
@@ -879,6 +930,7 @@ def curso_detail_estudiante(request, id):
         'notas': notas,
         'entregables_info': entregables_info,
         'ya_reseno': ya_reseno,
+        'docente': docente,
     })
 
 

@@ -6,7 +6,7 @@ from .views import (
     lista_estudiantes, detalle_estudiante, estudianteFormulario, estudiante_editar, estudiante_eliminar,
     profesores, profesorFormulario, profesor_editar, profesor_eliminar,
     entregable_editar, entregable_eliminar, entregable_ver, entrega_calificar,
-    mis_cursos, curso_detail, curso_entregables, estudiante_curso_eliminar, entregable_crear_en_curso, inscripcion_editar,
+    mis_cursos, curso_imagen_editar, curso_detail, curso_entregables, estudiante_curso_eliminar, entregable_crear_en_curso, inscripcion_editar,
     tomar_asistencia, nota_crear, nota_editar, nota_eliminar,
     mis_cursos_estudiante, curso_detail_estudiante, entrega_subir, resena_crear, curso_resenas,
 )
@@ -45,6 +45,7 @@ urlpatterns = [
     path('entregable/eliminar/<int:id>/', entregable_eliminar, name='entregableEliminar'),
     # Profesor
     path('mis-cursos/', mis_cursos, name='mis_cursos'),
+    path('mis-cursos/<int:id>/imagen/', curso_imagen_editar, name='curso_imagen_editar'),
     path('mis-cursos/<int:id>/', curso_detail, name='curso_detail'),
     path('mis-cursos/<int:id>/entregables/', curso_entregables, name='curso_entregables'),
     path('mis-cursos/<int:id>/asistencia/', tomar_asistencia, name='tomar_asistencia'),
