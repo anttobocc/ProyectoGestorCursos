@@ -48,6 +48,11 @@ class Profesor(models.Model):
 class Curso(models.Model):
     nombre = models.CharField(max_length=100)
     camada = models.IntegerField()
+    portada = models.ImageField(
+    upload_to='cursos/portadas/',
+    blank=True,
+    null=True
+)
 
     profesores = models.ManyToManyField(
         Profesor,
