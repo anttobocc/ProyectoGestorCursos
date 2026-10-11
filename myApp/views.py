@@ -220,6 +220,7 @@ def profesorFormulario(request):
                         nombre=form.cleaned_data['nombre'],
                         apellido=form.cleaned_data['apellido'],
                         email=email,
+                        profesion=form.cleaned_data['profesion'],
                         user=user
                     )
 
@@ -665,7 +666,7 @@ def mis_cursos(request):
 def curso_imagen_editar(request, id):
     curso = get_object_or_404(Curso, id=id, profesores__user=request.user)
     if request.method == 'POST' and request.FILES.get('imagen'):
-        curso.imagen = request.FILES['imagen']
+        curso.portada = request.FILES['imagen']
         curso.save()
         messages.success(request, "Portada del curso actualizada correctamente.")
     return redirect('myapp:mis_cursos')

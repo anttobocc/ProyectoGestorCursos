@@ -94,8 +94,8 @@
     <div class="col">
         <div class="card h-100 shadow-sm custom-card">
             <div class="curso-portada">
-                {% if curso.imagen %}
-                    <img src="{{ curso.imagen.url }}" alt="Portada de {{ curso.nombre }}">
+                {% if curso.portada %}
+                    <img src="{{ curso.portada.url }}" alt="Portada de {{ curso.nombre }}">
                 {% else %}
                     <div class="curso-portada-placeholder">
                         <i class="bi bi-code-slash"></i>
@@ -147,9 +147,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
-                    {% if curso.imagen %}
+                    {% if curso.portada %}
                     <div class="curso-portada rounded-3 mb-3" style="aspect-ratio: 16/9;">
-                        <img src="{{ curso.imagen.url }}" alt="Portada actual de {{ curso.nombre }}">
+                        <img src="{{ curso.portada.url }}" alt="Portada actual de {{ curso.nombre }}">
                     </div>
                     {% endif %}
                     <label class="form-label fw-semibold text-secondary small">Elegí una nueva imagen</label>

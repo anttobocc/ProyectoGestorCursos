@@ -21,6 +21,7 @@ class ProfesorFormulario(forms.Form):
     nombre = forms.CharField(max_length=100, label="Nombre")
     apellido = forms.CharField(max_length=100, label="Apellido")
     email = forms.EmailField(label="Correo Electrónico")
+    profesion = forms.CharField(max_length=100, label="Profesión")
     username = forms.CharField(
         max_length=150,
         label="Nombre de usuario",
@@ -55,11 +56,11 @@ class ProfesorForm(forms.ModelForm):
 
     class Meta:
         model = Profesor
-        fields = ['nombre', 'apellido', 'email']
+        fields = ['nombre', 'apellido', 'email', 'profesion']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk and hasattr(self.instance, 'user'):
+        if self.instance and self.instance.pk and self.instance.user_id:
             self.fields['username'].initial = self.instance.user.username
             self.fields['user_email'].initial = self.instance.user.email
 

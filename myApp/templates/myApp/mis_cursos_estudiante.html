@@ -39,8 +39,8 @@
     <div class="col animate__animated animate__fadeInUp" style="animation-delay: {{ forloop.counter0 }}00ms;">
         <div class="card h-100 shadow-sm custom-card">
             <div class="curso-portada">
-                {% if inscripcion.curso.imagen %}
-                    <img src="{{ inscripcion.curso.imagen.url }}" alt="Portada de {{ inscripcion.curso.nombre }}">
+                {% if inscripcion.curso.portada %}
+                    <img src="{{ inscripcion.curso.portada.url }}" alt="Portada de {{ inscripcion.curso.nombre }}">
                 {% else %}
                     <div class="curso-portada-placeholder">
                         <i class="bi bi-code-slash"></i>

@@ -64,6 +64,14 @@
                         {% endif %}
                     </div>
 
+                    <div class="mb-1">
+                        <label for="id_profesion" class="form-label fw-semibold text-secondary small mb-0">Profesión</label>
+                        {{ form.profesion|add_class:"form-control" }}
+                        {% if form.profesion.errors %}
+                        <div class="text-danger small mt-1">{{ form.profesion.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
                     <hr class="my-3">
 
                     <!-- SECCIÓN: DATOS DE ACCESO -->

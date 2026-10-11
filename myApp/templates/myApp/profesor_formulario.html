@@ -108,6 +108,14 @@
                         {% endif %}
                     </div>
 
+                    <div class="mb-2 mb-md-1">
+                        <label for="id_profesion" class="form-label fw-semibold text-secondary small mb-1">Profesión</label>
+                        {{ form.profesion|add_class:"form-control" }}
+                        {% if form.profesion.errors %}
+                        <div class="text-danger small mt-1">{{ form.profesion.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
                     <!-- NUEVOS CAMPOS DE USUARIO Y CONTRASEÑA -->
                     <div class="row g-2 mb-2">
                         <div class="col-12 col-md-6">
